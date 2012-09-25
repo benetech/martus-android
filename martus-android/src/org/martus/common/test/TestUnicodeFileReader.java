@@ -154,5 +154,5 @@ public class TestUnicodeFileReader extends TestCaseEnhanced
 	}
 
 	final String text = "Test String";
-	final String text2 = "í";
+	final String text2 = "Ã­";
 }
