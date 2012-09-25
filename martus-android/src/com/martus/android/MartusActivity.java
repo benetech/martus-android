@@ -22,7 +22,7 @@ public class MartusActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        setTitle("Mardus Android");
+        //setTitle("Mardus Android");
  	    
         final Button button = (Button) findViewById(R.id.gotoPing);
         button.setOnClickListener(new View.OnClickListener() {

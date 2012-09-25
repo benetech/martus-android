@@ -26,7 +26,7 @@ public class pingme extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ping);
-        setTitle("Mardus Android");
+        //setTitle("Mardus Android");
         
         textview = new TextView(this); 
     	textview=(TextView)findViewById(R.id.response); 
