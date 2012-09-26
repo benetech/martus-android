@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package com.martus.android;
+package org.martus.android;
 
 public final class R {
     public static final class attr {
@@ -14,9 +14,10 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int buttonPing=0x7f050002;
+        public static final int buttonPing=0x7f050003;
         public static final int gotoPing=0x7f050000;
-        public static final int response=0x7f050003;
+        public static final int response=0x7f050004;
+        public static final int response_server=0x7f050002;
         public static final int serverInfo=0x7f050001;
     }
     public static final class layout {
