@@ -1,4 +1,4 @@
-package com.martus.android;
+package org.martus.android;
 
 import java.net.URL;
 import java.util.Vector;
