@@ -364,8 +364,8 @@ public class BulletinZipUtilities
 				throw new MartusUtilities.ServerErrorException("result=" + lastResponse);
 			}
 	
-			Vector result = response.getResultVector();
-			totalSize = ((Integer)result.get(0)).intValue();
+			Object[] result = response.getResultArray();
+			totalSize = ((Integer)result[0]).intValue();
 			if(masterTotalSize == 0)
 				masterTotalSize = totalSize;
 	
@@ -374,12 +374,12 @@ public class BulletinZipUtilities
 			if(totalSize < 0)
 				throw new MartusUtilities.ServerErrorException("totalSize negative");
 	
-			int thisChunkSize = ((Integer)result.get(1)).intValue();
+			int thisChunkSize = ((Integer)result[1]).intValue();
 			if(thisChunkSize < 0 || thisChunkSize > totalSize - chunkOffset)
 				throw new MartusUtilities.ServerErrorException("chunkSize out of range: " + thisChunkSize);
 	
 			// TODO: validate that length of data == chunkSize that was returned
-			String data = (String)result.get(2);
+			String data = (String)result[2];
 			StringReader reader = new StringReader(data);
 	
 			StreamableBase64.decode(reader, outputStream);

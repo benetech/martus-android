@@ -208,7 +208,7 @@ public class ClientSideNetworkGateway implements BulletinRetrieverGatewayInterfa
 		}
 	}
 
-	public Vector downloadFieldOfficeAccountIds(MartusCrypto security, String myAccountId) throws ServerErrorException
+	public Object[] downloadFieldOfficeAccountIds(MartusCrypto security, String myAccountId) throws ServerErrorException
 	{
 		try
 		{
@@ -216,7 +216,7 @@ public class ClientSideNetworkGateway implements BulletinRetrieverGatewayInterfa
 			String resultCode = response.getResultCode();
 			if(!resultCode.equals(NetworkInterfaceConstants.OK))
 				throw new ServerErrorException(resultCode);
-			return response.getResultVector();
+			return response.getResultArray();
 		}
 		catch(MartusCrypto.MartusSignatureException e)
 		{

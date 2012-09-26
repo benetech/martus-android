@@ -40,7 +40,7 @@ public class NetworkResponse
 		{
 			resultCode = (String)rawServerReturnData.get(0);
 			if(rawServerReturnData.size() >= 2)
-				resultVector = (Vector)rawServerReturnData.get(1);
+				resultArray = (Object[])rawServerReturnData.get(1);
 		}
 	}
 	
@@ -58,7 +58,7 @@ public class NetworkResponse
 		{
 			resultCode = (String)data.get(0);
 			if(data.size() >= 2)
-				resultVector = (Vector)data.get(1);
+				resultArray = (Object[])data.get(1);
 		}
 	}
 
@@ -67,11 +67,11 @@ public class NetworkResponse
 		return resultCode;
 	}
 
-	public Vector getResultVector()
+	public Object[] getResultArray()
 	{
-		return resultVector;
+		return resultArray;
 	}
 
 	String resultCode;
-	Vector resultVector;
+	Object[] resultArray;
 }

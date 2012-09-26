@@ -92,10 +92,10 @@ public class MartusBulletinRetriever
 		if(!isServerAvailable())
 			return new ArrayList();
 		List allBulletins = new ArrayList();
-		Vector fieldOffices = serverSLL.downloadFieldOfficeAccountIds(security, security.getPublicKeyString());
-		for(int a = 0; a < fieldOffices.size(); ++a)
+		Object[] fieldOffices = serverSLL.downloadFieldOfficeAccountIds(security, security.getPublicKeyString());
+		for(int a = 0; a < fieldOffices.length; ++a)
 		{
-			String fieldOfficeAccountId = (String)fieldOffices.get(a);
+			String fieldOfficeAccountId = (String)fieldOffices[a];
 			allBulletins.addAll(getBulletinIdsForFieldOffice(fieldOfficeAccountId));
 		}
 		return allBulletins;
@@ -136,11 +136,11 @@ public class MartusBulletinRetriever
 	{
 		if(!response.getResultCode().equals(NetworkInterfaceConstants.OK))
 			throw new ServerErrorException();
-		Vector result = response.getResultVector();
+		Object[] result = response.getResultArray();
 		Vector bulletinIds = new Vector();
-		for(int i = 0; i < result.size(); ++i)
+		for(int i = 0; i < result.length; ++i)
 		{
-			String summary = (String)result.get(i);
+			String summary = (String)result[i];
 			String[] data = summary.split("=");
 			bulletinIds.add(UniversalId.createFromAccountAndLocalId(fieldOfficeAccountId,data[0]));
 		}
