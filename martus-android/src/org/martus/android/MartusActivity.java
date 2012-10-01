@@ -16,9 +16,11 @@ import android.widget.TextView;
 
 public class MartusActivity extends Activity {
 	    
-	String serverIPNew = "66.201.46.82";
+	//String serverIPNew = "66.201.46.82";
 	//String serverIPNew = "50.112.118.184";
-	
+	//String serverIPNew = "10.10.220.114";
+	String serverIPNew = "54.245.101.104"; //public QA server
+
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {

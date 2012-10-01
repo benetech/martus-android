@@ -15,8 +15,9 @@ import android.widget.TextView;
 
 public class pingme extends Activity {
 
-	String serverIPNew = "http://50.112.118.184/RPC2";
-	String serverURL = "http://66.201.46.82:988/RPC2";
+	//String serverIPNew = "http://50.112.118.184/RPC2";
+	//String serverIPNew = "http://66.201.46.82:988/RPC2";
+	String serverIPNew = "http://54.245.101.104/RPC2";     //public QA server
 	XmlRpcClient client = new XmlRpcClient();
 	String response;
 	TextView textview;
@@ -35,7 +36,7 @@ public class pingme extends Activity {
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	try {
-            		Log.v("xmlrpc", "calling: "+serverIPNew);
+            		Log.v("martus-xmlrpc", "calling: "+serverIPNew);
             		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
             		config.setServerURL(new URL(serverIPNew));
             		XmlRpcClient client = new XmlRpcClient();
@@ -43,9 +44,9 @@ public class pingme extends Activity {
             		Vector params = new Vector();
             		String result = (String) client.execute("MartusServer.ping", params);
                   	textview.setText("response: " +result);
-            		Log.v("xmlrpc", "response: "+result);
+            		Log.v("martus-xmlrpc", "response: "+result);
 				} catch (Exception e) {
-					Log.e("error", "xmlrpc call failed");
+					Log.e("martus-xmlrpc", "xmlrpc call failed", e);
 					e.printStackTrace();
 				}
             }
