@@ -3,5 +3,6 @@
 
     <string name="hello">Hello World, MartusActivity!</string>
     <string name="app_name">Martus</string>
+    <string name="create_sample_bulletin">Create Sample Bulletin</string>
 
 </resources>
