@@ -580,7 +580,7 @@ public class BulletinStore
 	// encrypting (mostly) for legacy reasons. We should stamp out all calls
 	// to this, at which point we should be able to rename saveBulletinForTesting 
 	// to simply saveBulletin, have it trust getDatabase().mustEncryptPublicData(),
-	// and then ClientBulletinStore.saveBulletin can just invoke super after clearin its cache
+	// and then MobileBulletinStore.saveBulletin can just invoke super after clearin its cache
 	// kbs. 2004-10-06
 	public void saveEncryptedBulletinForTesting(Bulletin b) throws Exception
 	{

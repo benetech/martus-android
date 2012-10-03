@@ -2,18 +2,16 @@ package org.martus.android;
 
 import java.util.Locale;
 
-import org.martus.client.bulletinstore.ClientBulletinStore;
+import org.martus.client.bulletinstore.MobileBulletinStore;
 import org.martus.client.core.ConfigInfo;
 import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.clientside.ClientSideNetworkHandlerUsingXmlRpcForNonSSL;
-import org.martus.common.FieldSpecCollection;
 import org.martus.common.HQKey;
 import org.martus.common.HQKeys;
 import org.martus.common.MiniLocalization;
 import org.martus.common.bulletin.Bulletin;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
-import org.martus.common.crypto.MockMartusSecurity;
 import org.martus.common.fieldspec.ChoiceItem;
 import org.martus.common.fieldspec.StandardFieldSpecs;
 import org.martus.common.network.NetworkResponse;
@@ -31,7 +29,7 @@ public class MartusActivity extends Activity {
 
 	//String serverIPNew = "50.112.118.184";
 	String serverIPNew = "54.245.101.104"; //public QA server
-    private ClientBulletinStore store;
+    private MobileBulletinStore store;
     private MartusSecurity martusCrypto;
     private ConfigInfo configInfo;
 
@@ -45,7 +43,7 @@ public class MartusActivity extends Activity {
         try {
             martusCrypto = new MartusSecurity();
             martusCrypto.createKeyPair();
-            store = new ClientBulletinStore(martusCrypto);
+            store = new MobileBulletinStore(martusCrypto);
             store.setTopSectionFieldSpecs(StandardFieldSpecs.getDefaultTopSetionFieldSpecs());
             store.setBottomSectionFieldSpecs(StandardFieldSpecs.getDefaultBottomSectionFieldSpecs());
             configInfo = new ConfigInfo();

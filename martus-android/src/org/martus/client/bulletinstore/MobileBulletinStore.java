@@ -56,9 +56,9 @@ import org.martus.common.packet.UniversalId;
 	both bulletins and folders, including saving and
 	loading them to/from disk.
 */
-public class ClientBulletinStore extends BulletinStore
+public class MobileBulletinStore extends BulletinStore
 {
-	public ClientBulletinStore(MartusCrypto cryptoToUse)
+	public MobileBulletinStore(MartusCrypto cryptoToUse)
 	{
 		setSignatureGenerator(cryptoToUse);
 	}
