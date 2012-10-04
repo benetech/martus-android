@@ -1,10 +1,15 @@
 package org.martus.android;
 
 import java.util.Locale;
+import java.util.Vector;
 
+import org.apache.xmlrpc.client.XmlRpcClient;
+import org.martus.client.android.PingTask;
+import org.martus.client.android.ServerInfoTask;
 import org.martus.client.bulletinstore.MobileBulletinStore;
 import org.martus.client.core.ConfigInfo;
 import org.martus.clientside.ClientSideNetworkGateway;
+import org.martus.clientside.ClientSideNetworkHandlerUsingXmlRpc;
 import org.martus.clientside.ClientSideNetworkHandlerUsingXmlRpcForNonSSL;
 import org.martus.common.HQKey;
 import org.martus.common.HQKeys;
@@ -14,11 +19,17 @@ import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.fieldspec.ChoiceItem;
 import org.martus.common.fieldspec.StandardFieldSpecs;
+import org.martus.common.network.NetworkInterface;
+import org.martus.common.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.common.network.NetworkResponse;
 import org.martus.common.network.NonSSLNetworkAPI;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,9 +40,11 @@ public class MartusActivity extends Activity {
 
 	//String serverIPNew = "50.112.118.184";
 	String serverIPNew = "54.245.101.104"; //public QA server
+    private final String serverPublicCode = "8338.1685.2173.3777.2823";
     private MobileBulletinStore store;
     private MartusSecurity martusCrypto;
     private ConfigInfo configInfo;
+    private Activity myActivity;
 
 	/** Called when the activity is first created. */
     @Override
@@ -39,6 +52,7 @@ public class MartusActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         //setTitle("Mardus Android");
+        myActivity = this;
 
         try {
             martusCrypto = new MartusSecurity();
@@ -59,7 +73,7 @@ public class MartusActivity extends Activity {
             		Intent intent = new Intent(MartusActivity.this, PingServer.class);
                     startActivity(intent);
                     } catch (Exception e) {
-					Log.e("martus", "Failed starting pingme activity");
+					Log.e("martus", "Failed starting PingServer activity");
 					e.printStackTrace();
 				}
             }
@@ -71,12 +85,28 @@ public class MartusActivity extends Activity {
             	try {
         			MartusSecurity security = new MartusSecurity();
         			security.createKeyPair();
-            		NonSSLNetworkAPI server = new ClientSideNetworkHandlerUsingXmlRpcForNonSSL(serverIPNew);
-            		String serverPublicKey = server.getServerPublicKey(security);
-            		ClientSideNetworkGateway gateway = ClientSideNetworkGateway.buildGateway(serverIPNew, serverPublicKey);
-                	NetworkResponse response = gateway.getServerInfo();
-                    Object[] resultArray = response.getResultArray();
 
+                    NonSSLNetworkAPI server = new ClientSideNetworkHandlerUsingXmlRpcForNonSSL(serverIPNew);
+                    String serverPublicKey = server.getServerPublicKey(security);
+
+                    //confirm serverPublicKey is correct
+                    final String normalizedPublicCode = MartusCrypto.removeNonDigits(serverPublicCode);
+                    final String computedCode = MartusCrypto.computePublicCode(serverPublicKey);
+                    if (! normalizedPublicCode.equals(computedCode)) {
+                        showError(myActivity, "Invalid public server code!");
+                        return;
+                    }
+
+                    ClientSideNetworkGateway gateway = ClientSideNetworkGateway.buildGateway(serverIPNew, serverPublicKey);
+
+                    //Network calls must be made in background task
+                    //final AsyncTask<ClientSideNetworkGateway, Void, NetworkResponse> infoTask = new ServerInfoTask().execute(gateway);
+                    //NetworkResponse response = infoTask.get();
+
+                    NetworkResponse response = gateway.getServerInfo();
+
+
+                    Object[] resultArray = response.getResultArray();
                     final TextView responseView = (TextView)findViewById(R.id.response_server);
                     responseView.setText("ServerInfo: " + response.getResultCode() + ", " + resultArray[0]);
             	} catch (Exception e) {
@@ -92,9 +122,14 @@ public class MartusActivity extends Activity {
                 try {
                     MartusSecurity security = new MartusSecurity();
                     security.createKeyPair();
+
+                    //security.writeKeyPair();
+                    //security.readKeyPair();
+
                     NonSSLNetworkAPI server = new ClientSideNetworkHandlerUsingXmlRpcForNonSSL(serverIPNew);
                     String serverPublicKey = server.getServerPublicKey(security);
                     ClientSideNetworkGateway gateway = ClientSideNetworkGateway.buildGateway(serverIPNew, serverPublicKey);
+
 
 
                     Bulletin sample = createBulletin();
@@ -175,6 +210,14 @@ public class MartusActivity extends Activity {
     public String getLegacyHQKey()
     {
         return configInfo.getLegacyHQKey();
+    }
+
+    public static void showError( Context context, String msg){
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        alert.setIcon(android.R.drawable.ic_dialog_alert)
+             .setTitle("Error")
+             .setMessage(msg)
+             .show();
     }
     
 }
