@@ -56,7 +56,7 @@ public class MartusActivity extends Activity {
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	try {
-            		Intent intent = new Intent(MartusActivity.this, pingme.class);
+            		Intent intent = new Intent(MartusActivity.this, PingServer.class);
                     startActivity(intent);
                     } catch (Exception e) {
 					Log.e("martus", "Failed starting pingme activity");
