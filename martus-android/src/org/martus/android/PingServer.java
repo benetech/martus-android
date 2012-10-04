@@ -38,6 +38,7 @@ public class PingServer extends Activity {
             		XmlRpcClient client = new XmlRpcClient();
             		client.setConfig(config);
 
+                    //Network calls must be made in background task
                     final AsyncTask<XmlRpcClient, Void, String> pingTask = new PingTask().execute(client);
                     String result = pingTask.get();
 

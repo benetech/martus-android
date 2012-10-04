@@ -1,15 +1,12 @@
 package org.martus.android;
 
 import java.util.Locale;
-import java.util.Vector;
 
-import org.apache.xmlrpc.client.XmlRpcClient;
-import org.martus.client.android.PingTask;
+import org.martus.client.android.PublicKeyTask;
 import org.martus.client.android.ServerInfoTask;
 import org.martus.client.bulletinstore.MobileBulletinStore;
 import org.martus.client.core.ConfigInfo;
 import org.martus.clientside.ClientSideNetworkGateway;
-import org.martus.clientside.ClientSideNetworkHandlerUsingXmlRpc;
 import org.martus.clientside.ClientSideNetworkHandlerUsingXmlRpcForNonSSL;
 import org.martus.common.HQKey;
 import org.martus.common.HQKeys;
@@ -19,15 +16,12 @@ import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.fieldspec.ChoiceItem;
 import org.martus.common.fieldspec.StandardFieldSpecs;
-import org.martus.common.network.NetworkInterface;
-import org.martus.common.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.common.network.NetworkResponse;
 import org.martus.common.network.NonSSLNetworkAPI;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -87,7 +81,10 @@ public class MartusActivity extends Activity {
         			security.createKeyPair();
 
                     NonSSLNetworkAPI server = new ClientSideNetworkHandlerUsingXmlRpcForNonSSL(serverIPNew);
-                    String serverPublicKey = server.getServerPublicKey(security);
+
+                    //Network calls must be made in background task
+                    final AsyncTask<Object, Void, String> keyTask = new PublicKeyTask().execute(server, security);
+                    String serverPublicKey = keyTask.get();
 
                     //confirm serverPublicKey is correct
                     final String normalizedPublicCode = MartusCrypto.removeNonDigits(serverPublicCode);
@@ -100,11 +97,8 @@ public class MartusActivity extends Activity {
                     ClientSideNetworkGateway gateway = ClientSideNetworkGateway.buildGateway(serverIPNew, serverPublicKey);
 
                     //Network calls must be made in background task
-                    //final AsyncTask<ClientSideNetworkGateway, Void, NetworkResponse> infoTask = new ServerInfoTask().execute(gateway);
-                    //NetworkResponse response = infoTask.get();
-
-                    NetworkResponse response = gateway.getServerInfo();
-
+                    final AsyncTask<ClientSideNetworkGateway, Void, NetworkResponse> infoTask = new ServerInfoTask().execute(gateway);
+                    NetworkResponse response = infoTask.get();
 
                     Object[] resultArray = response.getResultArray();
                     final TextView responseView = (TextView)findViewById(R.id.response_server);
