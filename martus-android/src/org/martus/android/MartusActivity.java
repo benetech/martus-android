@@ -1,9 +1,11 @@
 package org.martus.android;
 
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import org.martus.client.android.PublicKeyTask;
 import org.martus.client.android.ServerInfoTask;
+import org.martus.client.android.UploadRightsTask;
 import org.martus.client.bulletinstore.MobileBulletinStore;
 import org.martus.client.core.ConfigInfo;
 import org.martus.clientside.ClientSideNetworkGateway;
@@ -34,7 +36,10 @@ public class MartusActivity extends Activity {
 
 	//String serverIPNew = "50.112.118.184";
 	String serverIPNew = "54.245.101.104"; //public QA server
-    private final String serverPublicCode = "8338.1685.2173.3777.2823";
+    private String serverPublicCode = "8338.1685.2173.3777.2823";
+    private String magicWord = "spam";
+    private String serverPublicKey;
+
     private MobileBulletinStore store;
     private MartusSecurity martusCrypto;
     private ConfigInfo configInfo;
@@ -55,11 +60,20 @@ public class MartusActivity extends Activity {
             store.setTopSectionFieldSpecs(StandardFieldSpecs.getDefaultTopSetionFieldSpecs());
             store.setBottomSectionFieldSpecs(StandardFieldSpecs.getDefaultBottomSectionFieldSpecs());
             configInfo = new ConfigInfo();
+
+            NonSSLNetworkAPI server = new ClientSideNetworkHandlerUsingXmlRpcForNonSSL(serverIPNew);
+
+            //Network calls must be made in background task
+            final AsyncTask<Object, Void, String> keyTask = new PublicKeyTask().execute(server, martusCrypto);
+            serverPublicKey = keyTask.get();
+
         } catch (MartusCrypto.CryptoInitializationException e) {
-            Log.e("martus", "Unable to initialize", e);
+            Log.e("martus", "Unable to initialize crypto", e);
+        } catch (Exception e) {
+            Log.e("martus", "Problem getting server public key", e);
         }
 
- 	    
+
         final Button button = (Button) findViewById(R.id.gotoPing);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -77,14 +91,6 @@ public class MartusActivity extends Activity {
         buttonServerInfo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	try {
-        			MartusSecurity security = new MartusSecurity();
-        			security.createKeyPair();
-
-                    NonSSLNetworkAPI server = new ClientSideNetworkHandlerUsingXmlRpcForNonSSL(serverIPNew);
-
-                    //Network calls must be made in background task
-                    final AsyncTask<Object, Void, String> keyTask = new PublicKeyTask().execute(server, security);
-                    String serverPublicKey = keyTask.get();
 
                     //confirm serverPublicKey is correct
                     final String normalizedPublicCode = MartusCrypto.removeNonDigits(serverPublicCode);
@@ -114,22 +120,22 @@ public class MartusActivity extends Activity {
         uploadSampleButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
-                    MartusSecurity security = new MartusSecurity();
-                    security.createKeyPair();
 
-                    //security.writeKeyPair();
-                    //security.readKeyPair();
-
-                    NonSSLNetworkAPI server = new ClientSideNetworkHandlerUsingXmlRpcForNonSSL(serverIPNew);
-                    String serverPublicKey = server.getServerPublicKey(security);
                     ClientSideNetworkGateway gateway = ClientSideNetworkGateway.buildGateway(serverIPNew, serverPublicKey);
 
+                    //Network calls must be made in background task
+                    //final AsyncTask<ClientSideNetworkGateway, Void, NetworkResponse> infoTask = new ServerInfoTask().execute(gateway);
+                    //NetworkResponse response = infoTask.get();
+
+                    final AsyncTask<Object, Void, NetworkResponse> rightsTask = new UploadRightsTask().execute(gateway, martusCrypto, magicWord);
+                    NetworkResponse response = rightsTask.get();
+                    Object[] resultArray = response.getResultArray();
 
 
                     Bulletin sample = createBulletin();
+                    sample.setSealed();  // do we need to do this?
 
-                    //NetworkResponse response = gateway.getServerInfo();
-                    //Object[] resultArray = response.getResultArray();
+
 
                     final TextView responseView = (TextView)findViewById(R.id.bulletinResponseText);
                     responseView.setText("bulletin created successfully");
