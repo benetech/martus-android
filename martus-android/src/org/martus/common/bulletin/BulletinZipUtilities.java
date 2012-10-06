@@ -36,6 +36,7 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -48,6 +49,7 @@ import org.martus.common.MartusUtilities.NotYourBulletinErrorException;
 import org.martus.common.bulletinstore.BulletinStore;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.database.DatabaseKey;
+import org.martus.common.database.PacketStreamOpener;
 import org.martus.common.database.ReadableDatabase;
 import org.martus.common.database.Database.RecordHiddenException;
 import org.martus.common.network.BulletinRetrieverGatewayInterface;
@@ -65,7 +67,7 @@ import org.martus.util.inputstreamwithseek.ZipEntryInputStreamWithSeek;
 public class BulletinZipUtilities
 {
 
-	public static void exportPublicBulletinPacketsFromDatabaseToZipFile(ReadableDatabase db, DatabaseKey headerKey, File destZipFile, MartusCrypto security) throws
+	public static void exportPublicBulletinPacketsFromDatabaseToZipFile(PacketStreamOpener db, DatabaseKey headerKey, File destZipFile, MartusCrypto security) throws
 			IOException,
 			MartusCrypto.CryptoException,
 			UnsupportedEncodingException,
@@ -76,15 +78,14 @@ public class BulletinZipUtilities
 			MartusCrypto.NoKeyPairException,
 			FileNotFoundException
 	{
-		BulletinHeaderPacket bhp = null;
-	
+		BulletinHeaderPacket bhp = BulletinStore.loadBulletinHeaderPacket(db, headerKey, security);
+		FileOutputStream outputStream = new FileOutputStream(destZipFile);
+
 		try
 		{
-			bhp = BulletinStore.loadBulletinHeaderPacket(db, headerKey, security);
 			DatabaseKey[] packetKeys = bhp.getPublicPacketKeys();
 	
-			FileOutputStream outputStream = new FileOutputStream(destZipFile);
-			BulletinZipUtilities.extractPacketsToZipStream(headerKey.getAccountId(), db, packetKeys, outputStream, security);
+			BulletinZipUtilities.extractPacketsToZipStream(db, packetKeys, outputStream, security);
 		}
 		catch(Exception e)
 		{
@@ -137,7 +138,7 @@ public class BulletinZipUtilities
 		DatabaseKey[] packetKeys = BulletinZipUtilities.getAllPacketKeys(bhp);
 	
 		FileOutputStream outputStream = new FileOutputStream(destZipFile);
-		BulletinZipUtilities.extractPacketsToZipStream(headerKey.getAccountId(), db, packetKeys, outputStream, security);
+		BulletinZipUtilities.extractPacketsToZipStream(db, packetKeys, outputStream, security);
 		
 		if (!debugValidateIntegrityOfZipFilePublicPackets)
 			return;
@@ -195,15 +196,12 @@ public class BulletinZipUtilities
 		return keys;
 	}
 
-	public static void extractPacketsToZipStream(String clientId, ReadableDatabase db, DatabaseKey[] packetKeys, OutputStream outputStream, MartusCrypto security) throws
+	public static void extractPacketsToZipStream(PacketStreamOpener db, DatabaseKey[] packetKeys, OutputStream outputStream, MartusCrypto security) throws
 		IOException,
 		UnsupportedEncodingException
 	{
 		ZipOutputStream zipOut = new ZipOutputStream(outputStream);
-// TODO: Setting the method to STORED seems like it should dramatically
-// speed up writing and reading zip files. The javadocs say it is supported.
-// But every time I try it, the zip file ends up empty. kbs.
-//		zipOut.setMethod(zipOut.STORED);
+		zipOut.setLevel(Deflater.BEST_COMPRESSION);
 
 		try
 		{

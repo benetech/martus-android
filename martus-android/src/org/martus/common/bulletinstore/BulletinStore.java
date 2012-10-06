@@ -46,25 +46,26 @@ import org.martus.common.bulletin.Bulletin;
 import org.martus.common.bulletin.BulletinZipUtilities;
 import org.martus.common.bulletin.PendingAttachmentList;
 import org.martus.common.crypto.MartusCrypto;
-import org.martus.common.crypto.StreamEncryptor;
 import org.martus.common.crypto.MartusCrypto.CryptoException;
 import org.martus.common.crypto.MartusCrypto.DecryptionException;
 import org.martus.common.crypto.MartusCrypto.NoKeyPairException;
+import org.martus.common.crypto.StreamEncryptor;
 import org.martus.common.database.Database;
 import org.martus.common.database.DatabaseKey;
-import org.martus.common.database.ReadableDatabase;
 import org.martus.common.database.FileDatabase.MissingAccountMapException;
 import org.martus.common.database.FileDatabase.MissingAccountMapSignatureException;
+import org.martus.common.database.PacketStreamOpener;
+import org.martus.common.database.ReadableDatabase;
 import org.martus.common.database.ReadableDatabase.PacketVisitor;
 import org.martus.common.packet.BulletinHeaderPacket;
 import org.martus.common.packet.BulletinHistory;
 import org.martus.common.packet.FieldDataPacket;
 import org.martus.common.packet.Packet;
-import org.martus.common.packet.UniversalId;
 import org.martus.common.packet.Packet.InvalidPacketException;
 import org.martus.common.packet.Packet.SignatureVerificationException;
 import org.martus.common.packet.Packet.WrongAccountException;
 import org.martus.common.packet.Packet.WrongPacketTypeException;
+import org.martus.common.packet.UniversalId;
 import org.martus.util.StreamCopier;
 import org.martus.util.StreamFilter;
 import org.martus.util.StreamableBase64.InvalidBase64Exception;
@@ -422,7 +423,7 @@ public class BulletinStore
 		revisionWasRemoved(bhp.getUniversalId());
 	}
 
-	public static BulletinHeaderPacket loadBulletinHeaderPacket(ReadableDatabase db, DatabaseKey key, MartusCrypto security)
+	public static BulletinHeaderPacket loadBulletinHeaderPacket(PacketStreamOpener db, DatabaseKey key, MartusCrypto security)
 	throws
 		IOException,
 		CryptoException,
@@ -580,7 +581,7 @@ public class BulletinStore
 	// encrypting (mostly) for legacy reasons. We should stamp out all calls
 	// to this, at which point we should be able to rename saveBulletinForTesting 
 	// to simply saveBulletin, have it trust getDatabase().mustEncryptPublicData(),
-	// and then MobileBulletinStore.saveBulletin can just invoke super after clearin its cache
+	// and then ClientBulletinStore.saveBulletin can just invoke super after clearin its cache
 	// kbs. 2004-10-06
 	public void saveEncryptedBulletinForTesting(Bulletin b) throws Exception
 	{

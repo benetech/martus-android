@@ -33,16 +33,14 @@ import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.database.Database.RecordHiddenException;
 import org.martus.common.database.FileDatabase.MissingAccountMapSignatureException;
 import org.martus.common.packet.UniversalId;
-import org.martus.util.inputstreamwithseek.InputStreamWithSeek;
 
 
 
-public abstract class ReadableDatabase
+public abstract class ReadableDatabase implements PacketStreamOpener
 {
 	abstract public boolean doesRecordExist(DatabaseKey key);
 	abstract public int getRecordSize(DatabaseKey key) throws IOException, RecordHiddenException;
 	abstract public long getmTime(DatabaseKey key) throws IOException, RecordHiddenException;
-	abstract public InputStreamWithSeek openInputStream(DatabaseKey key, MartusCrypto decrypter) throws IOException, MartusCrypto.CryptoException;
 	abstract public String readRecord(DatabaseKey key, MartusCrypto decrypter) throws IOException, MartusCrypto.CryptoException;
 
 	abstract public void visitAllRecords(PacketVisitor visitor);
