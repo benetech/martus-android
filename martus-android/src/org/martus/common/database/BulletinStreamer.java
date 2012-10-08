@@ -25,7 +25,16 @@ public class BulletinStreamer implements PacketStreamOpener{
     @Override
     public InputStreamWithSeek openInputStream(DatabaseKey key, MartusCrypto decrypter) throws IOException, MartusCrypto.CryptoException {
         Writer writer = new StringWriter();
-        byte[] xml = bulletin.getBulletinHeaderPacket().writeXml(writer, decrypter);
+        byte[] xml = new byte[0];
+
+        if (key.getUniversalId().equals(bulletin.getBulletinHeaderPacket().getUniversalId())) {
+            xml = bulletin.getBulletinHeaderPacket().writeXml(writer, decrypter);
+        } else if (key.getUniversalId().equals(bulletin.getFieldDataPacket().getUniversalId())) {
+            xml = bulletin.getFieldDataPacket().writeXml(writer, decrypter);
+        } else if (key.getUniversalId().equals(bulletin.getPrivateFieldDataPacket().getUniversalId())) {
+            xml = bulletin.getPrivateFieldDataPacket().writeXml(writer, decrypter);
+        }
+
         return new ByteArrayInputStreamWithSeek(xml);
     }
 }
