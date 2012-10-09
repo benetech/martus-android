@@ -1,10 +1,15 @@
 package org.martus.android;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import org.martus.client.android.PublicKeyTask;
 import org.martus.client.android.ServerInfoTask;
+import org.martus.client.android.UploadBulletinTask;
 import org.martus.client.android.UploadRightsTask;
 import org.martus.client.bulletinstore.MobileBulletinStore;
 import org.martus.client.core.ConfigInfo;
@@ -12,14 +17,21 @@ import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.clientside.ClientSideNetworkHandlerUsingXmlRpcForNonSSL;
 import org.martus.common.HQKey;
 import org.martus.common.HQKeys;
+import org.martus.common.MartusUtilities;
 import org.martus.common.MiniLocalization;
 import org.martus.common.bulletin.Bulletin;
+import org.martus.common.bulletin.BulletinZipUtilities;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
+import org.martus.common.database.BulletinStreamer;
 import org.martus.common.fieldspec.ChoiceItem;
 import org.martus.common.fieldspec.StandardFieldSpecs;
+import org.martus.common.network.NetworkInterfaceConstants;
 import org.martus.common.network.NetworkResponse;
 import org.martus.common.network.NonSSLNetworkAPI;
+import org.martus.common.packet.BulletinHeaderPacket;
+import org.martus.common.packet.UniversalId;
+import org.martus.util.StreamableBase64;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -123,22 +135,28 @@ public class MartusActivity extends Activity {
 
                     ClientSideNetworkGateway gateway = ClientSideNetworkGateway.buildGateway(serverIPNew, serverPublicKey);
 
-                    //Network calls must be made in background task
-                    //final AsyncTask<ClientSideNetworkGateway, Void, NetworkResponse> infoTask = new ServerInfoTask().execute(gateway);
-                    //NetworkResponse response = infoTask.get();
-
                     final AsyncTask<Object, Void, NetworkResponse> rightsTask = new UploadRightsTask().execute(gateway, martusCrypto, magicWord);
-                    NetworkResponse response = rightsTask.get();
-                    Object[] resultArray = response.getResultArray();
+                    final NetworkResponse response = rightsTask.get();
+                    if (!response.getResultCode().equals("ok")) {
+                        showError(myActivity, "Don't have upload rights!");
+                        return;
+                    }
 
+                    final Bulletin sample = createBulletin();
+                    final BulletinStreamer bs = new BulletinStreamer(sample);
 
-                    Bulletin sample = createBulletin();
-                    sample.setSealed();  // do we need to do this?
+                    final File cacheDir = getCacheDir();
+                    //File in cache directory  - use getDir() for directory of permanent files private to this app
+                    final File file = new File(cacheDir, "preUpload");
+                    BulletinZipUtilities.exportPublicBulletinPacketsFromDatabaseToZipFile(bs, sample.getDatabaseKey(), file, martusCrypto);
 
+                    //uploadBulletinZipFile(sample.getUniversalId(), file, gateway, martusCrypto);
 
+                    final AsyncTask<Object, Void, String> uploadTask = new UploadBulletinTask().execute(sample.getUniversalId(), file, gateway, martusCrypto);
+                    String result = uploadTask.get();
 
                     final TextView responseView = (TextView)findViewById(R.id.bulletinResponseText);
-                    responseView.setText("bulletin created successfully");
+                    responseView.setText(result);
                     //responseView.setText("ServerInfo: " + response.getResultCode() + ", " + resultArray[0]);
                 } catch (Exception e) {
                     Log.e("martus", "Failed uploading bulletin", e);
@@ -158,6 +176,7 @@ public class MartusActivity extends Activity {
         b.set(Bulletin.TAGORGANIZATION, configInfo.getOrganization());
         b.set(Bulletin.TAGPUBLICINFO, configInfo.getTemplateDetails());
         b.set(Bulletin.TAGLANGUAGE, getDefaultLanguageForNewBulletin());
+        b.set(Bulletin.TAGTITLE, "Sample bulletin from Android");
         setDefaultHQKeysInBulletin(b);
         b.setDraft();
         b.setAllPrivate(true);
@@ -218,6 +237,38 @@ public class MartusActivity extends Activity {
              .setTitle("Error")
              .setMessage(msg)
              .show();
+    }
+
+    private String uploadBulletinZipFile(UniversalId uid, File tempFile, ClientSideNetworkGateway gateway, MartusCrypto crypto)
+    		throws
+                MartusUtilities.FileTooLargeException, IOException, MartusCrypto.MartusSignatureException
+    {
+        int totalSize = MartusUtilities.getCappedFileLength(tempFile);
+        int offset = 0;
+        byte[] rawBytes = new byte[NetworkInterfaceConstants.CLIENT_MAX_CHUNK_SIZE];
+        FileInputStream inputStream = new FileInputStream(tempFile);
+        String result = null;
+        while(true)
+        {
+            int chunkSize = inputStream.read(rawBytes);
+            if(chunkSize <= 0)
+                break;
+            byte[] chunkBytes = new byte[chunkSize];
+            System.arraycopy(rawBytes, 0, chunkBytes, 0, chunkSize);
+
+            String authorId = uid.getAccountId();
+            String bulletinLocalId = uid.getLocalId();
+            String encoded = StreamableBase64.encode(chunkBytes);
+
+            NetworkResponse response = gateway.putBulletinChunk(crypto,
+                                authorId, bulletinLocalId, totalSize, offset, chunkSize, encoded);
+            result = response.getResultCode();
+            if(!result.equals(NetworkInterfaceConstants.CHUNK_OK) && !result.equals(NetworkInterfaceConstants.OK))
+                break;
+            offset += chunkSize;
+        }
+        inputStream.close();
+        return result;
     }
     
 }
