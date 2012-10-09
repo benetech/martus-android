@@ -238,37 +238,5 @@ public class MartusActivity extends Activity {
              .setMessage(msg)
              .show();
     }
-
-    private String uploadBulletinZipFile(UniversalId uid, File tempFile, ClientSideNetworkGateway gateway, MartusCrypto crypto)
-    		throws
-                MartusUtilities.FileTooLargeException, IOException, MartusCrypto.MartusSignatureException
-    {
-        int totalSize = MartusUtilities.getCappedFileLength(tempFile);
-        int offset = 0;
-        byte[] rawBytes = new byte[NetworkInterfaceConstants.CLIENT_MAX_CHUNK_SIZE];
-        FileInputStream inputStream = new FileInputStream(tempFile);
-        String result = null;
-        while(true)
-        {
-            int chunkSize = inputStream.read(rawBytes);
-            if(chunkSize <= 0)
-                break;
-            byte[] chunkBytes = new byte[chunkSize];
-            System.arraycopy(rawBytes, 0, chunkBytes, 0, chunkSize);
-
-            String authorId = uid.getAccountId();
-            String bulletinLocalId = uid.getLocalId();
-            String encoded = StreamableBase64.encode(chunkBytes);
-
-            NetworkResponse response = gateway.putBulletinChunk(crypto,
-                                authorId, bulletinLocalId, totalSize, offset, chunkSize, encoded);
-            result = response.getResultCode();
-            if(!result.equals(NetworkInterfaceConstants.CHUNK_OK) && !result.equals(NetworkInterfaceConstants.OK))
-                break;
-            offset += chunkSize;
-        }
-        inputStream.close();
-        return result;
-    }
     
 }
