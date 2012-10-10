@@ -50,7 +50,6 @@ import org.martus.common.bulletinstore.BulletinStore;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.database.DatabaseKey;
 import org.martus.common.database.PacketStreamOpener;
-import org.martus.common.database.ReadableDatabase;
 import org.martus.common.database.Database.RecordHiddenException;
 import org.martus.common.network.BulletinRetrieverGatewayInterface;
 import org.martus.common.network.NetworkInterfaceConstants;
@@ -115,7 +114,7 @@ public class BulletinZipUtilities
 		}
 	}
 
-	public static void exportBulletinPacketsFromDatabaseToZipFile(ReadableDatabase db, DatabaseKey headerKey, File destZipFile, MartusCrypto security) throws
+	public static void exportBulletinPacketsFromDatabaseToZipFile(PacketStreamOpener db, DatabaseKey headerKey, File destZipFile, MartusCrypto security) throws
 			IOException,
 			MartusCrypto.CryptoException,
 			UnsupportedEncodingException,

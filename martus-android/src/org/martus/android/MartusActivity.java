@@ -1,11 +1,7 @@
 package org.martus.android;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
 import org.martus.client.android.PublicKeyTask;
 import org.martus.client.android.ServerInfoTask;
@@ -17,7 +13,6 @@ import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.clientside.ClientSideNetworkHandlerUsingXmlRpcForNonSSL;
 import org.martus.common.HQKey;
 import org.martus.common.HQKeys;
-import org.martus.common.MartusUtilities;
 import org.martus.common.MiniLocalization;
 import org.martus.common.bulletin.Bulletin;
 import org.martus.common.bulletin.BulletinZipUtilities;
@@ -26,12 +21,8 @@ import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.database.BulletinStreamer;
 import org.martus.common.fieldspec.ChoiceItem;
 import org.martus.common.fieldspec.StandardFieldSpecs;
-import org.martus.common.network.NetworkInterfaceConstants;
 import org.martus.common.network.NetworkResponse;
 import org.martus.common.network.NonSSLNetworkAPI;
-import org.martus.common.packet.BulletinHeaderPacket;
-import org.martus.common.packet.UniversalId;
-import org.martus.util.StreamableBase64;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -62,7 +53,7 @@ public class MartusActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        //setTitle("Mardus Android");
+        //setTitle("Martus Android");
         myActivity = this;
 
         try {
@@ -146,18 +137,16 @@ public class MartusActivity extends Activity {
                     final BulletinStreamer bs = new BulletinStreamer(sample);
 
                     final File cacheDir = getCacheDir();
-                    //File in cache directory  - use getDir() for directory of permanent files private to this app
-                    final File file = new File(cacheDir, "preUpload");
-                    BulletinZipUtilities.exportPublicBulletinPacketsFromDatabaseToZipFile(bs, sample.getDatabaseKey(), file, martusCrypto);
 
-                    //uploadBulletinZipFile(sample.getUniversalId(), file, gateway, martusCrypto);
+                    //File in cache directory  - use getDir() for directory of permanent files private to this app
+                    final File file = new File(cacheDir, "preUpload.zip");
+                    BulletinZipUtilities.exportBulletinPacketsFromDatabaseToZipFile(bs, sample.getDatabaseKey(), file, martusCrypto);
 
                     final AsyncTask<Object, Void, String> uploadTask = new UploadBulletinTask().execute(sample.getUniversalId(), file, gateway, martusCrypto);
                     String result = uploadTask.get();
 
                     final TextView responseView = (TextView)findViewById(R.id.bulletinResponseText);
                     responseView.setText(result);
-                    //responseView.setText("ServerInfo: " + response.getResultCode() + ", " + resultArray[0]);
                 } catch (Exception e) {
                     Log.e("martus", "Failed uploading bulletin", e);
                     e.printStackTrace();
