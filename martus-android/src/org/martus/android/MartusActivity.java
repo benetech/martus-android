@@ -2,7 +2,9 @@ package org.martus.android;
 
 import java.io.File;
 import java.util.Locale;
+import java.util.Vector;
 
+import org.martus.client.android.GetDraftBulletinsTask;
 import org.martus.client.android.PublicKeyTask;
 import org.martus.client.android.ServerInfoTask;
 import org.martus.client.android.UploadBulletinTask;
@@ -42,6 +44,7 @@ public class MartusActivity extends Activity {
     private String serverPublicCode = "8338.1685.2173.3777.2823";
     private String magicWord = "spam";
     private String serverPublicKey;
+    private String localId;
 
     private MobileBulletinStore store;
     private MartusSecurity martusCrypto;
@@ -135,6 +138,7 @@ public class MartusActivity extends Activity {
 
                     final Bulletin sample = createBulletin();
                     final BulletinStreamer bs = new BulletinStreamer(sample);
+                    localId = sample.getLocalId();
 
                     final File cacheDir = getCacheDir();
 
@@ -149,6 +153,26 @@ public class MartusActivity extends Activity {
                     responseView.setText(result);
                 } catch (Exception e) {
                     Log.e("martus", "Failed uploading bulletin", e);
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        final Button buttonCheckBulletins = (Button) findViewById(R.id.check_bulletins_button);
+        buttonCheckBulletins.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                try {
+
+                    ClientSideNetworkGateway gateway = ClientSideNetworkGateway.buildGateway(serverIPNew, serverPublicKey);
+
+                    //Network calls must be made in background task
+                    final AsyncTask<Object, Void, NetworkResponse> getIdsTask = new GetDraftBulletinsTask().execute(gateway, martusCrypto, serverPublicKey, localId);
+                    NetworkResponse response = getIdsTask.get();
+
+                    final TextView responseView = (TextView)findViewById(R.id.response_server);
+                    responseView.setText(response.getResultCode());
+                } catch (Exception e) {
+                    Log.e("martus", "Failed getting bulletin ids", e);
                     e.printStackTrace();
                 }
             }

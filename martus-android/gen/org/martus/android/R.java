@@ -15,9 +15,11 @@ public final class R {
     }
     public static final class id {
         public static final int bulletinResponseText=0x7f050004;
-        public static final int buttonPing=0x7f050005;
+        public static final int buttonPing=0x7f050007;
+        public static final int check_bulletins_button=0x7f050005;
+        public static final int check_bulletins_text=0x7f050006;
         public static final int gotoPing=0x7f050000;
-        public static final int response=0x7f050006;
+        public static final int response=0x7f050008;
         public static final int response_server=0x7f050002;
         public static final int serverInfo=0x7f050001;
         public static final int uploadSampleBulletin=0x7f050003;
@@ -28,6 +30,7 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f040001;
+        public static final int check_bulletins=0x7f040003;
         public static final int create_sample_bulletin=0x7f040002;
         public static final int hello=0x7f040000;
     }
