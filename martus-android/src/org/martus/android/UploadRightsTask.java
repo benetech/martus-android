@@ -1,4 +1,4 @@
-package org.martus.client.android;
+package org.martus.android;
 
 import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.common.Exceptions;

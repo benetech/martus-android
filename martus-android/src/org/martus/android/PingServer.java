@@ -4,11 +4,12 @@ import java.net.URL;
 
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
-import org.martus.client.android.PingTask;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,8 +19,9 @@ public class PingServer extends Activity {
 
 	//String serverIPNew = "http://50.112.118.184/RPC2";
 	//String serverIPNew = "http://66.201.46.82:988/RPC2";
-	String serverIPNew = "http://54.245.101.104/RPC2";     //public QA server
+	private final static String pingPath = "/RPC2";
 	TextView textview;
+    private String serverIP;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,14 +29,17 @@ public class PingServer extends Activity {
         setContentView(R.layout.ping);
 
         textview = new TextView(this); 
-    	textview=(TextView)findViewById(R.id.response); 
+    	textview=(TextView)findViewById(R.id.response);
+
+        SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
+        serverIP = mySettings.getString(SettingsActivity.KEY_SERVER_IP, MartusActivity.defaultServerIP + pingPath);
 	    
         final Button button = (Button) findViewById(R.id.buttonPing);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	try {
             		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-            		config.setServerURL(new URL(serverIPNew));
+            		config.setServerURL(new URL(serverIP));
             		XmlRpcClient client = new XmlRpcClient();
             		client.setConfig(config);
 

@@ -6,4 +6,29 @@
     <string name="create_sample_bulletin">Upload Bulletin</string>
     <string name="check_bulletins">Check Bulletins</string>
 
+    <!-- ============================== -->
+    <!--  settings screen  -->
+    <!-- ============================== -->
+
+    <string name="server_preferences">Server Settings</string>
+    <string name="title_server_ip_preference">IP address</string>
+    <string name="summary_server_ip_preference">Martus Server IP Address</string>
+    <string name="dialog_title_server_ip_preference">Martus server IP Address</string>
+    <string name="title_server_code_preference">Public code</string>
+    <string name="summary_server_code_preference">Martus server public code</string>
+    <string name="dialog_title_server_code_preference">Martus server public code</string>
+    <string name="title_server_magic_word_preference">Magic word</string>
+    <string name="summary_server_magic_word_preference">Martus server magic word</string>
+    <string name="magic_word_set">Already entered</string>
+    <string name="dialog_title_server_magic_word_preference">Martus server magic word</string>
+    <string name="user_preferences">User Settings</string>
+    <string name="title_author_preference">Author</string>
+    <string name="summary_author_preference">Author</string>
+    <string name="dialog_title_author_preference">Author</string>
+    <string name="title_language_preference">Preferred language</string>
+    <string name="summary_language_preference">Preferred language</string>
+    <string name="dialog_title_language_preference">Preferred language</string>
+    <string name="settings_title">Settings</string>
+    <string name="ping_menu_title">Ping server</string>
+
 </resources>

@@ -1,4 +1,4 @@
-package org.martus.client.android;
+package org.martus.android;
 
 import java.util.Vector;
 
@@ -15,21 +15,21 @@ import android.util.Log;
  * @author roms
  *         Date: 10/3/12
  */
-public class GetDraftBulletinsTask extends AsyncTask<Object, Void, NetworkResponse> {
+public class GetDraftBulletinsTask extends AsyncTask<Object, Void, String> {
     @Override
-    protected NetworkResponse doInBackground(Object... params) {
+    protected String doInBackground(Object... params) {
 
         final ClientSideNetworkGateway gateway = (ClientSideNetworkGateway)params[0];
         final MartusSecurity signer = (MartusSecurity)params[1];
         final String accountId = (String)params[2];
-        final String bulletinLocalId = (String)params[3];
 
-        NetworkResponse result = null;
+        NetworkResponse response;
+        String result = "";
 
         Vector bulletinIds = new Vector();
         try {
-            result = gateway.getBulletinChunk(signer, accountId, bulletinLocalId, 0, NetworkInterfaceConstants.CLIENT_MAX_CHUNK_SIZE);
-            result = gateway.getDraftBulletinIds(signer, accountId, bulletinIds);
+            response = gateway.getDraftBulletinIds(signer, accountId, bulletinIds);
+            result = response.getResultArray().length + "";
         } catch (MartusCrypto.MartusSignatureException e) {
             Log.e("martus", "problem getting draft bulletin ids", e);
         }

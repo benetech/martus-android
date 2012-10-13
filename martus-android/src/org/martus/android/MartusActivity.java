@@ -2,13 +2,7 @@ package org.martus.android;
 
 import java.io.File;
 import java.util.Locale;
-import java.util.Vector;
 
-import org.martus.client.android.GetDraftBulletinsTask;
-import org.martus.client.android.PublicKeyTask;
-import org.martus.client.android.ServerInfoTask;
-import org.martus.client.android.UploadBulletinTask;
-import org.martus.client.android.UploadRightsTask;
 import org.martus.client.bulletinstore.MobileBulletinStore;
 import org.martus.client.core.ConfigInfo;
 import org.martus.clientside.ClientSideNetworkGateway;
@@ -30,9 +24,14 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -40,16 +39,19 @@ import android.widget.TextView;
 public class MartusActivity extends Activity {
 
 	//String serverIPNew = "50.112.118.184";
-	String serverIPNew = "54.245.101.104"; //public QA server
-    private String serverPublicCode = "8338.1685.2173.3777.2823";
-    private String magicWord = "spam";
+	public static final String defaultServerIP = "54.245.101.104"; //public QA server
+    public static final String defaultServerPublicCode = "8338.1685.2173.3777.2823";
+    public static final String defaultMagicWord = "spam";
     private String serverPublicKey;
-    private String localId;
 
     private MobileBulletinStore store;
     private MartusSecurity martusCrypto;
     private ConfigInfo configInfo;
     private Activity myActivity;
+    private ClientSideNetworkGateway gateway = null;
+    private String serverIP;
+    private String serverPublicCode;
+    private String magicWord;
 
 	/** Called when the activity is first created. */
     @Override
@@ -59,6 +61,8 @@ public class MartusActivity extends Activity {
         //setTitle("Martus Android");
         myActivity = this;
 
+        updateSettings();
+
         try {
             martusCrypto = new MartusSecurity();
             martusCrypto.createKeyPair();
@@ -67,31 +71,18 @@ public class MartusActivity extends Activity {
             store.setBottomSectionFieldSpecs(StandardFieldSpecs.getDefaultBottomSectionFieldSpecs());
             configInfo = new ConfigInfo();
 
-            NonSSLNetworkAPI server = new ClientSideNetworkHandlerUsingXmlRpcForNonSSL(serverIPNew);
+            NonSSLNetworkAPI server = new ClientSideNetworkHandlerUsingXmlRpcForNonSSL(serverIP);
 
             //Network calls must be made in background task
             final AsyncTask<Object, Void, String> keyTask = new PublicKeyTask().execute(server, martusCrypto);
             serverPublicKey = keyTask.get();
+            gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
 
         } catch (MartusCrypto.CryptoInitializationException e) {
             Log.e("martus", "Unable to initialize crypto", e);
         } catch (Exception e) {
             Log.e("martus", "Problem getting server public key", e);
         }
-
-
-        final Button button = (Button) findViewById(R.id.gotoPing);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            	try {
-            		Intent intent = new Intent(MartusActivity.this, PingServer.class);
-                    startActivity(intent);
-                    } catch (Exception e) {
-					Log.e("martus", "Failed starting PingServer activity");
-					e.printStackTrace();
-				}
-            }
-        });
         
         final Button buttonServerInfo = (Button) findViewById(R.id.serverInfo);
         buttonServerInfo.setOnClickListener(new View.OnClickListener() {
@@ -105,8 +96,6 @@ public class MartusActivity extends Activity {
                         showError(myActivity, "Invalid public server code!");
                         return;
                     }
-
-                    ClientSideNetworkGateway gateway = ClientSideNetworkGateway.buildGateway(serverIPNew, serverPublicKey);
 
                     //Network calls must be made in background task
                     final AsyncTask<ClientSideNetworkGateway, Void, NetworkResponse> infoTask = new ServerInfoTask().execute(gateway);
@@ -127,8 +116,6 @@ public class MartusActivity extends Activity {
             public void onClick(View v) {
                 try {
 
-                    ClientSideNetworkGateway gateway = ClientSideNetworkGateway.buildGateway(serverIPNew, serverPublicKey);
-
                     final AsyncTask<Object, Void, NetworkResponse> rightsTask = new UploadRightsTask().execute(gateway, martusCrypto, magicWord);
                     final NetworkResponse response = rightsTask.get();
                     if (!response.getResultCode().equals("ok")) {
@@ -138,7 +125,6 @@ public class MartusActivity extends Activity {
 
                     final Bulletin sample = createBulletin();
                     final BulletinStreamer bs = new BulletinStreamer(sample);
-                    localId = sample.getLocalId();
 
                     final File cacheDir = getCacheDir();
 
@@ -162,15 +148,12 @@ public class MartusActivity extends Activity {
         buttonCheckBulletins.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
-
-                    ClientSideNetworkGateway gateway = ClientSideNetworkGateway.buildGateway(serverIPNew, serverPublicKey);
-
                     //Network calls must be made in background task
-                    final AsyncTask<Object, Void, NetworkResponse> getIdsTask = new GetDraftBulletinsTask().execute(gateway, martusCrypto, serverPublicKey, localId);
-                    NetworkResponse response = getIdsTask.get();
+                    final AsyncTask<Object, Void, String> getIdsTask = new GetDraftBulletinsTask().execute(gateway, martusCrypto, martusCrypto.getPublicKeyString());
+                    String response = getIdsTask.get();
 
-                    final TextView responseView = (TextView)findViewById(R.id.response_server);
-                    responseView.setText(response.getResultCode());
+                    final TextView responseView = (TextView)findViewById(R.id.check_bulletins_text);
+                    responseView.setText(response);
                 } catch (Exception e) {
                     Log.e("martus", "Failed getting bulletin ids", e);
                     e.printStackTrace();
@@ -179,7 +162,48 @@ public class MartusActivity extends Activity {
         });
     }
 
-    public Bulletin createBulletin() throws Exception
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateSettings();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.settings_menu_item:
+                intent = new Intent(MartusActivity.this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.ping_menu_item:
+                intent = new Intent(MartusActivity.this, PingServer.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void updateSettings() {
+        SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
+        serverIP = mySettings.getString(SettingsActivity.KEY_SERVER_IP, defaultServerIP);
+        serverPublicCode = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_CODE, defaultServerPublicCode);
+        magicWord = mySettings.getString(SettingsActivity.KEY_MAGIC_WORD, defaultMagicWord);
+    }
+
+    private Bulletin createBulletin() throws Exception
     {
         Bulletin b = store.createEmptyBulletin();
         configInfo.setAuthor("Test User");
@@ -196,7 +220,7 @@ public class MartusActivity extends Activity {
         return b;
     }
 
-    public String getDefaultLanguageForNewBulletin()
+    private String getDefaultLanguageForNewBulletin()
     {
         final String preferredLanguage = getCurrentLanguage();
         MiniLocalization localization = new MiniLocalization();
@@ -214,13 +238,13 @@ public class MartusActivity extends Activity {
         return Locale.getDefault().getLanguage();
     }
 
-    public void setDefaultHQKeysInBulletin(Bulletin b)
+    private void setDefaultHQKeysInBulletin(Bulletin b)
     {
         HQKeys hqKeys = getDefaultHQKeysWithFallback();
         b.setAuthorizedToReadKeys(hqKeys);
     }
 
-    public HQKeys getDefaultHQKeysWithFallback()
+    private HQKeys getDefaultHQKeysWithFallback()
     {
         try
         {
@@ -234,17 +258,17 @@ public class MartusActivity extends Activity {
         }
     }
 
-    public HQKeys getDefaultHQKeys() throws HQKeys.HQsException
+    private HQKeys getDefaultHQKeys() throws HQKeys.HQsException
     {
         return new HQKeys(configInfo.getDefaultHQKeysXml());
     }
 
-    public String getLegacyHQKey()
+    private String getLegacyHQKey()
     {
         return configInfo.getLegacyHQKey();
     }
 
-    public static void showError( Context context, String msg){
+    private static void showError( Context context, String msg){
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setIcon(android.R.drawable.ic_dialog_alert)
              .setTitle("Error")
