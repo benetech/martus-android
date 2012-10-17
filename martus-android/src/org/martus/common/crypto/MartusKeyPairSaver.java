@@ -47,7 +47,7 @@ public class MartusKeyPairSaver
 	
 	void writeKeyPair(DataOutputStream out, KeyPair keyPair) throws Exception
 	{
-		JCERSAPrivateCrtKey privateKey = (JCERSAPrivateCrtKey)keyPair.getPrivate();
+        org.spongycastle.jcajce.provider.asymmetric.rsa.BCRSAPrivateCrtKey privateKey = (org.spongycastle.jcajce.provider.asymmetric.rsa.BCRSAPrivateCrtKey)keyPair.getPrivate();
 		nextHandle = MartusKeyPairDataConstants.INITIAL_HANDLE;
 		
 		out.writeShort(ObjectStreamConstants.STREAM_MAGIC);
