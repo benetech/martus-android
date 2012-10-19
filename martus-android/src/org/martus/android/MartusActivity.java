@@ -1,7 +1,18 @@
 package org.martus.android;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import org.martus.client.bulletinstore.MobileBulletinStore;
 import org.martus.client.core.ConfigInfo;
@@ -10,21 +21,27 @@ import org.martus.clientside.ClientSideNetworkHandlerUsingXmlRpcForNonSSL;
 import org.martus.common.HQKey;
 import org.martus.common.HQKeys;
 import org.martus.common.MiniLocalization;
+import org.martus.common.bulletin.AttachmentProxy;
 import org.martus.common.bulletin.Bulletin;
 import org.martus.common.bulletin.BulletinZipUtilities;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.database.BulletinStreamer;
+import org.martus.common.database.Database;
 import org.martus.common.fieldspec.ChoiceItem;
 import org.martus.common.fieldspec.StandardFieldSpecs;
 import org.martus.common.network.NetworkResponse;
 import org.martus.common.network.NonSSLNetworkAPI;
+import org.martus.common.packet.Packet;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetFileDescriptor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -40,7 +57,7 @@ public class MartusActivity extends Activity {
 
 	//String serverIPNew = "50.112.118.184";
 	public static final String defaultServerIP = "54.245.101.104"; //public QA server
-    public static final String defaultServerPublicCode = "8338.1685.2173.3777.2823";
+    public static final String defaultServerPublicCode = "8714.7632.8884.7614.8217";
     public static final String defaultMagicWord = "spam";
     private String serverPublicKey;
 
@@ -65,7 +82,19 @@ public class MartusActivity extends Activity {
 
         try {
             martusCrypto = new MartusSecurity();
+
+            // if key doesn't exist
             martusCrypto.createKeyPair();
+/*            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            martusCrypto.writeKeyPair(out, "password".toCharArray());
+            out.close();
+            String keyPair = out.toString();
+
+            InputStream is = new ByteArrayInputStream(keyPair.getBytes());
+
+            martusCrypto.readKeyPair(is, "password".toCharArray());*/
+
+
             store = new MobileBulletinStore(martusCrypto);
             store.setTopSectionFieldSpecs(StandardFieldSpecs.getDefaultTopSetionFieldSpecs());
             store.setBottomSectionFieldSpecs(StandardFieldSpecs.getDefaultBottomSectionFieldSpecs());
@@ -124,16 +153,7 @@ public class MartusActivity extends Activity {
                     }
 
                     final Bulletin sample = createBulletin();
-                    final BulletinStreamer bs = new BulletinStreamer(sample);
-
-                    final File cacheDir = getCacheDir();
-
-                    //File in cache directory  - use getDir() for directory of permanent files private to this app
-                    final File file = new File(cacheDir, "preUpload.zip");
-                    BulletinZipUtilities.exportBulletinPacketsFromDatabaseToZipFile(bs, sample.getDatabaseKey(), file, martusCrypto);
-
-                    final AsyncTask<Object, Void, String> uploadTask = new UploadBulletinTask().execute(sample.getUniversalId(), file, gateway, martusCrypto);
-                    String result = uploadTask.get();
+                    String result = sendBulletin(sample);
 
                     final TextView responseView = (TextView)findViewById(R.id.bulletinResponseText);
                     responseView.setText(result);
@@ -162,12 +182,85 @@ public class MartusActivity extends Activity {
         });
     }
 
+    private String sendBulletin(Bulletin sample) throws IOException, MartusCrypto.CryptoException, Packet.InvalidPacketException, Packet.WrongPacketTypeException, Packet.SignatureVerificationException, Database.RecordHiddenException, InterruptedException, ExecutionException {
+        final File cacheDir = getCacheDir();
+        final BulletinStreamer bs = new BulletinStreamer(sample);
+
+        //File in cache directory  - use getDir() for directory of permanent files private to this app
+        final File file = new File(cacheDir, "preUpload.zip");
+        BulletinZipUtilities.exportBulletinPacketsFromDatabaseToZipFile(bs, sample.getDatabaseKey(), file, martusCrypto);
+
+        final AsyncTask<Object, Void, String> uploadTask = new UploadBulletinTask().execute(sample.getUniversalId(), file, gateway, martusCrypto);
+        String result = uploadTask.get();
+        file.deleteOnExit();
+        return result;
+    }
 
 
     @Override
     public void onResume() {
         super.onResume();
         updateSettings();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+
+        //Handle share/send intent from other application
+        Bundle bundle = intent.getExtras();
+        ClipData clipData = intent.getClipData();
+
+        Bulletin sample;
+        File outFile = null;
+
+        Uri uri = clipData.getItemAt(0).getUri();
+        if (uri != null) {
+            // First see if the URI can be opened as a plain text stream
+            // (of any sub-type).  If so, this is the best textual
+            // representation for it.
+            FileInputStream inputStream = null;
+            File outputDir = getCacheDir();
+            try {
+                outFile = File.createTempFile("tmp_", "jpg", outputDir);
+                // Ask for a stream of the desired type.
+                AssetFileDescriptor descr = getContentResolver()
+                        .openTypedAssetFileDescriptor(uri, "image/*", null);
+                inputStream = descr.createInputStream();
+
+                BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outFile));
+                int read;
+                byte bytes[] = new byte[1024];
+
+                while ((read = inputStream.read(bytes)) != -1) {
+                    outputStream.write(bytes, 0, read);
+                }
+
+                outputStream.flush();
+                outputStream.close();
+
+                sample = createBulletin();
+                AttachmentProxy attProxy = new AttachmentProxy(outFile);
+                sample.addPrivateAttachment(attProxy);
+
+                String result = sendBulletin(sample);
+
+                final TextView responseView = (TextView)findViewById(R.id.bulletinResponseText);
+                responseView.setText(result);
+
+            } catch (Exception e) {
+                Log.e("martus", "problem sending bulletin with attachment", e);
+            } finally {
+                if (inputStream != null) {
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                    }
+                }
+                if (outFile != null) {
+                    outFile.deleteOnExit();
+                }
+            }
+        }
     }
 
     @Override

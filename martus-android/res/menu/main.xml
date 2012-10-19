@@ -6,7 +6,8 @@
         android:title="@string/settings_title" />
 
     <item android:id="@+id/ping_menu_item"
-            android:title="@string/ping_menu_title" />
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/ping_menu_title" />
 
 </menu>
 
