@@ -70,6 +70,8 @@ public class MartusActivity extends Activity {
     private String serverPublicCode;
     private String magicWord;
 
+   private TextView responseView;
+
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,6 +79,8 @@ public class MartusActivity extends Activity {
         setContentView(R.layout.main);
         //setTitle("Martus Android");
         myActivity = this;
+
+        responseView = (TextView)findViewById(R.id.bulletinResponseText);
 
         updateSettings();
 
@@ -155,7 +159,6 @@ public class MartusActivity extends Activity {
                     final Bulletin sample = createBulletin();
                     String result = sendBulletin(sample);
 
-                    final TextView responseView = (TextView)findViewById(R.id.bulletinResponseText);
                     responseView.setText(result);
                 } catch (Exception e) {
                     Log.e("martus", "Failed uploading bulletin", e);
@@ -206,45 +209,54 @@ public class MartusActivity extends Activity {
     @Override
     protected void onNewIntent(Intent intent) {
 
-        //Handle share/send intent from other application
+        responseView.setText("");
+
         Bundle bundle = intent.getExtras();
         ClipData clipData = intent.getClipData();
 
         Bulletin sample;
-        File outFile = null;
+        File tmpAttachment = null;
 
-        Uri uri = clipData.getItemAt(0).getUri();
+        ClipData.Item item = clipData.getItemAt(0);
+        Uri uri = item.getUri();
         if (uri != null) {
-            // First see if the URI can be opened as a plain text stream
-            // (of any sub-type).  If so, this is the best textual
-            // representation for it.
+
+            String scheme = uri.getScheme();
             FileInputStream inputStream = null;
-            File outputDir = getCacheDir();
+            File attachment;
+
             try {
-                outFile = File.createTempFile("tmp_", "jpg", outputDir);
-                // Ask for a stream of the desired type.
-                AssetFileDescriptor descr = getContentResolver()
-                        .openTypedAssetFileDescriptor(uri, "image/*", null);
-                inputStream = descr.createInputStream();
+                File outputDir = getCacheDir();
+                if ("file".equalsIgnoreCase(scheme)) {
+                    String filePath = uri.getPath();
+                    attachment = new File(filePath);
+                } else {
 
-                BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outFile));
-                int read;
-                byte bytes[] = new byte[1024];
+                    tmpAttachment = File.createTempFile("tmp_", "jpg", outputDir);
+                    // Ask for a stream of the desired type.
+                    AssetFileDescriptor descr = getContentResolver()
+                            .openTypedAssetFileDescriptor(uri, "image/*", null);
+                    inputStream = descr.createInputStream();
 
-                while ((read = inputStream.read(bytes)) != -1) {
-                    outputStream.write(bytes, 0, read);
+                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpAttachment));
+                    int read;
+                    byte bytes[] = new byte[1024];
+
+                    while ((read = inputStream.read(bytes)) != -1) {
+                        outputStream.write(bytes, 0, read);
+                    }
+
+                    outputStream.flush();
+                    outputStream.close();
+                    attachment = tmpAttachment;
                 }
-
-                outputStream.flush();
-                outputStream.close();
-
                 sample = createBulletin();
-                AttachmentProxy attProxy = new AttachmentProxy(outFile);
+                AttachmentProxy attProxy = new AttachmentProxy(attachment);
                 sample.addPrivateAttachment(attProxy);
 
                 String result = sendBulletin(sample);
 
-                final TextView responseView = (TextView)findViewById(R.id.bulletinResponseText);
+
                 responseView.setText(result);
 
             } catch (Exception e) {
@@ -256,8 +268,8 @@ public class MartusActivity extends Activity {
                     } catch (IOException e) {
                     }
                 }
-                if (outFile != null) {
-                    outFile.deleteOnExit();
+                if (tmpAttachment != null) {
+                    tmpAttachment.deleteOnExit();
                 }
             }
         }
