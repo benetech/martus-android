@@ -2,11 +2,14 @@ package org.martus.common.database;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 
 import org.martus.common.bulletin.Bulletin;
 import org.martus.common.bulletin.PendingAttachmentList;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.packet.Packet;
+import org.martus.util.UnicodeStringWriter;
+import org.martus.util.UnicodeWriter;
 import org.martus.util.inputstreamwithseek.InputStreamWithSeek;
 import org.martus.util.inputstreamwithseek.StringInputStreamWithSeek;
 
@@ -25,7 +28,7 @@ public class BulletinStreamer implements PacketStreamOpener{
 
     @Override
     public InputStreamWithSeek openInputStream(DatabaseKey key, MartusCrypto crypto) throws IOException, MartusCrypto.CryptoException {
-        StringWriter writer = new StringWriter();
+        UnicodeWriter writer = UnicodeStringWriter.create();
 
         if (key.getUniversalId().equals(bulletin.getBulletinHeaderPacket().getUniversalId())) {
             bulletin.getBulletinHeaderPacket().writeXml(writer, crypto);
@@ -42,7 +45,7 @@ public class BulletinStreamer implements PacketStreamOpener{
         return new StringInputStreamWithSeek(writer.toString());
     }
 
-    private static void writePendingAttachments(PendingAttachmentList pendingAttachments, StringWriter writer, MartusCrypto crypto) throws IOException, MartusCrypto.CryptoException
+    private static void writePendingAttachments(PendingAttachmentList pendingAttachments, Writer writer, MartusCrypto crypto) throws IOException, MartusCrypto.CryptoException
     	{
     		for(int i = 0; i < pendingAttachments.size(); ++i)
     		{

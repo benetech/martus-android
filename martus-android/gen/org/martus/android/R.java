@@ -18,15 +18,17 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
+        public static final int attachment_bulletin_button=0x7f080007;
         public static final int bulletinResponseText=0x7f080003;
-        public static final int buttonPing=0x7f080006;
+        public static final int buttonPing=0x7f080008;
         public static final int check_bulletins_button=0x7f080004;
         public static final int check_bulletins_text=0x7f080005;
-        public static final int ping_menu_item=0x7f080009;
-        public static final int response=0x7f080007;
+        public static final int choose_public_key_button=0x7f080006;
+        public static final int ping_menu_item=0x7f08000b;
+        public static final int response=0x7f080009;
         public static final int response_server=0x7f080001;
         public static final int serverInfo=0x7f080000;
-        public static final int settings_menu_item=0x7f080008;
+        public static final int settings_menu_item=0x7f08000a;
         public static final int uploadSampleBulletin=0x7f080002;
     }
     public static final class layout {

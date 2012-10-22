@@ -32,4 +32,14 @@
         android:id="@+id/check_bulletins_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/choose_public_key_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select public key file" />
+    <Button
+        android:id="@+id/attachment_bulletin_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select file for attachment" />
 </LinearLayout>
