@@ -25,23 +25,18 @@ import org.martus.common.MartusUtilities;
 import org.martus.common.MiniLocalization;
 import org.martus.common.bulletin.AttachmentProxy;
 import org.martus.common.bulletin.Bulletin;
-import org.martus.common.bulletin.BulletinZipUtilities;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
-import org.martus.common.database.BulletinStreamer;
 import org.martus.common.database.Database;
 import org.martus.common.fieldspec.ChoiceItem;
 import org.martus.common.fieldspec.StandardFieldSpecs;
-import org.martus.common.network.NetworkInterfaceConstants;
 import org.martus.common.network.NetworkResponse;
 import org.martus.common.network.NonSSLNetworkAPI;
 import org.martus.common.packet.Packet;
-import org.martus.common.packet.UniversalId;
 import org.martus.util.StreamableBase64;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -232,7 +227,8 @@ public class MartusActivity extends Activity {
             sample.setAuthorizedToReadKeys(new HQKeys(hqKey));
         }
 
-        final AsyncTask<Object, Void, String> uploadTask = new UploadTask().execute(sample.getUniversalId(), getCacheDir(), gateway, martusCrypto, sample);
+        final AsyncTask<Object, Void, String> uploadTask = new UploadBulletinTask(getApplicationContext(), sample);
+        uploadTask.execute(sample.getUniversalId(), getCacheDir(), gateway, martusCrypto);
     }
 
 
@@ -249,7 +245,6 @@ public class MartusActivity extends Activity {
                 if (resultCode == RESULT_OK){
                     Uri uri = data.getData();
                     String filePath = uri.getPath();
-                    int i = 0;
 
                     try {
                         hqKey =  getPublicKey(new File(filePath));
@@ -284,7 +279,6 @@ public class MartusActivity extends Activity {
 
         responseView.setText("");
 
-        Bundle bundle = intent.getExtras();
         ClipData clipData = intent.getClipData();
 
         Bulletin sample;
@@ -381,17 +375,18 @@ public class MartusActivity extends Activity {
     private Bulletin createBulletin() throws Exception
     {
         Bulletin b = store.createEmptyBulletin();
-        configInfo.setAuthor("Test User");
         configInfo.setOrganization("Benetech");
 
-        b.set(Bulletin.TAGAUTHOR, configInfo.getAuthor());
+        SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
+        String author = mySettings.getString(SettingsActivity.KEY_AUTHOR, "Test User");
+        b.set(Bulletin.TAGAUTHOR, author);
         b.set(Bulletin.TAGORGANIZATION, configInfo.getOrganization());
         b.set(Bulletin.TAGPUBLICINFO, configInfo.getTemplateDetails());
         b.set(Bulletin.TAGLANGUAGE, getDefaultLanguageForNewBulletin());
         b.set(Bulletin.TAGTITLE, "Sample bulletin from Android");
         setDefaultHQKeysInBulletin(b);
         b.setDraft();
-        b.setAllPrivate(true);
+        //b.setAllPrivate(true);
         return b;
     }
 
@@ -488,106 +483,6 @@ public class MartusActivity extends Activity {
         String userEnteredPublicCode = "7233.6645.6763.1658.6756";
         String normalizedPublicCode = MartusCrypto.removeNonDigits(userEnteredPublicCode);
         return rawPublicCode.equals(normalizedPublicCode);
-    }
-
-    private class UploadTask extends AsyncTask<Object, Void, String> {
-
-        ProgressDialog progressDialog;
-
-        @Override
-        protected String doInBackground(Object... params) {
-
-            final UniversalId uid = (UniversalId)params[0];
-            final File cacheDir = (File)params[1];
-            final ClientSideNetworkGateway gateway = (ClientSideNetworkGateway)params[2];
-            final MartusSecurity signer = (MartusSecurity)params[3];
-            final Bulletin bulletin = (Bulletin)params[4];
-
-            String result = null;
-
-            final BulletinStreamer bs = new BulletinStreamer(bulletin);
-            final File file = new File(cacheDir, "preUpload.zip");
-
-            try {
-                BulletinZipUtilities.exportBulletinPacketsFromDatabaseToZipFile(bs, bulletin.getDatabaseKey(), file, martusCrypto);
-                result = uploadBulletinZipFile(uid, file, gateway, signer);
-            } catch (MartusUtilities.FileTooLargeException e) {
-                Log.e("martus", "file too large to upload", e);
-                result = e.getMessage();
-            } catch (IOException e) {
-                Log.e("martus", "io problem uploading file", e);
-                result = e.getMessage();
-            } catch (MartusCrypto.MartusSignatureException e) {
-                Log.e("martus", "crypto problem uploading file", e);
-                result = e.getMessage();
-            } catch (Packet.WrongPacketTypeException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (MartusCrypto.DecryptionException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (Packet.SignatureVerificationException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (MartusCrypto.NoKeyPairException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (Packet.InvalidPacketException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (MartusCrypto.CryptoException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (Database.RecordHiddenException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-
-            file.delete();
-            return result;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressDialog = ProgressDialog.show(myActivity, "Uploading bulletin...", "Please wait...");
-            Log.e("martus","!!!!!! PreExecute   !!!!!!!");
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            Log.e("martus", "!!!!!!!! PostExecute   !!!!!!!!!!");
-            if(progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
-            responseView.setText(s);
-            super.onPostExecute(s);
-        }
-
-        private String uploadBulletinZipFile(UniversalId uid, File tempFile, ClientSideNetworkGateway gateway, MartusCrypto crypto)
-            		throws
-                        MartusUtilities.FileTooLargeException, IOException, MartusCrypto.MartusSignatureException
-        {
-            int totalSize = MartusUtilities.getCappedFileLength(tempFile);
-            int offset = 0;
-            byte[] rawBytes = new byte[NetworkInterfaceConstants.CLIENT_MAX_CHUNK_SIZE];
-            FileInputStream inputStream = new FileInputStream(tempFile);
-            String result = null;
-            while(true)
-            {
-                int chunkSize = inputStream.read(rawBytes);
-                if(chunkSize <= 0)
-                    break;
-                byte[] chunkBytes = new byte[chunkSize];
-                System.arraycopy(rawBytes, 0, chunkBytes, 0, chunkSize);
-
-                String authorId = uid.getAccountId();
-                String bulletinLocalId = uid.getLocalId();
-                String encoded = StreamableBase64.encode(chunkBytes);
-
-                NetworkResponse response = gateway.putBulletinChunk(crypto,
-                                    authorId, bulletinLocalId, totalSize, offset, chunkSize, encoded);
-                result = response.getResultCode();
-                if(!result.equals(NetworkInterfaceConstants.CHUNK_OK) && !result.equals(NetworkInterfaceConstants.OK))
-                    break;
-                offset += chunkSize;
-            }
-            inputStream.close();
-            return result;
-        }
     }
     
 }

@@ -18,6 +18,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     public static final String KEY_DEFAULT_LANGUAGE = "language_preference";
     public static final String KEY_SERVER_IP = "server_ip_preference";
     public static final String KEY_SERVER_PUBLIC_CODE = "server_code_preference";
+    public static final String KEY_AUTHOR = "author_preference";
 
     String[] languageNamesArray;
     String[] languageCodesArray;
