@@ -262,8 +262,8 @@ public class MartusActivity extends Activity {
                     AttachmentProxy attachment = new AttachmentProxy(new File(filePath));
                     try {
                         Bulletin sample = createBulletin();
-                        sample.set(Bulletin.TAGTITLE, "With Attachment from Android");
-                        sample.addPrivateAttachment(attachment);
+                        sample.set(Bulletin.TAGTITLE, "Including Attachment from Android");
+                        sample.addPublicAttachment(attachment);
                         sendBulletin(sample);
                     } catch (Exception e) {
                         Log.e("martus", "problem getting attachment", e);
@@ -383,10 +383,10 @@ public class MartusActivity extends Activity {
         b.set(Bulletin.TAGORGANIZATION, configInfo.getOrganization());
         b.set(Bulletin.TAGPUBLICINFO, configInfo.getTemplateDetails());
         b.set(Bulletin.TAGLANGUAGE, getDefaultLanguageForNewBulletin());
-        b.set(Bulletin.TAGTITLE, "Sample bulletin from Android");
-        setDefaultHQKeysInBulletin(b);
+        b.set(Bulletin.TAGTITLE, "Bulletin from Android");
+        //setDefaultHQKeysInBulletin(b);
         b.setDraft();
-        //b.setAllPrivate(true);
+        b.setAllPrivate(false);
         return b;
     }
 
