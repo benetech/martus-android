@@ -29,6 +29,6 @@
     <string name="summary_language_preference">Preferred language</string>
     <string name="dialog_title_language_preference">Preferred language</string>
     <string name="settings_title">Settings</string>
-    <string name="ping_menu_title">Ping server</string>
+    <string name="ping_menu_title">Ping server</string><string name="desktop_sync_public_code">Public code:</string><string name="desktop_sync_title">Import desktop keypair</string><string name="desktop_sync_choose_file">Choose desktop keypair</string>
 
 </resources>

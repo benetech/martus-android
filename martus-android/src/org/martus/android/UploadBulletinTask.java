@@ -48,7 +48,7 @@ public class UploadBulletinTask extends AsyncTask<Object, Void, String> {
 
         String result = null;
         final BulletinStreamer bs = new BulletinStreamer(bulletin);
-        final File file = new File(cacheDir, "preUpload.zip");
+        final File file = new File(cacheDir, "toUpload.zip");
 
         try {
             BulletinZipUtilities.exportBulletinPacketsFromDatabaseToZipFile(bs, bulletin.getDatabaseKey(), file, signer);
@@ -78,7 +78,7 @@ public class UploadBulletinTask extends AsyncTask<Object, Void, String> {
             Log.e("martus", "problem serializing bulletin to zip", e);
         }
 
-        file.delete();
+        //file.delete();
         return result;
     }
 

@@ -19,6 +19,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     public static final String KEY_SERVER_IP = "server_ip_preference";
     public static final String KEY_SERVER_PUBLIC_CODE = "server_code_preference";
     public static final String KEY_AUTHOR = "author_preference";
+    public static final String KEY_DESKTOP_PUBLIC_KEY = "desktop_public_keystring";
 
     String[] languageNamesArray;
     String[] languageCodesArray;
