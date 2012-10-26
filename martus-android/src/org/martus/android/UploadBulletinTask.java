@@ -85,19 +85,21 @@ public class UploadBulletinTask extends AsyncTask<Object, Void, String> {
     }
 
     @Override
-   protected void onPreExecute() {
-       super.onPreExecute();
-       mNotificationHelper.createNotification("Uploading bulletin", bulletin.get(Bulletin.TAGTITLE));
-       Log.e("martus","!!!!!! PreExecute   !!!!!!!");
-   }
+    protected void onPreExecute() {
+        super.onPreExecute();
+        mNotificationHelper.createNotification("Uploading bulletin", bulletin.get(Bulletin.TAGTITLE));
+        Log.e("martus","!!!!!! PreExecute   !!!!!!!");
+    }
 
-   @Override
-   protected void onPostExecute(String s) {
-       Log.e("martus", "!!!!!!!! PostExecute   !!!!!!!!!!");
-       mNotificationHelper.completed(s, bulletin.get(Bulletin.TAGTITLE));
-       sender.onSent();
-       super.onPostExecute(s);
-   }
+    @Override
+    protected void onPostExecute(String s) {
+        Log.e("martus", "!!!!!!!! PostExecute   !!!!!!!!!!");
+        mNotificationHelper.completed(s, bulletin.get(Bulletin.TAGTITLE));
+        if (null != sender) {
+            sender.onSent();
+        }
+        super.onPostExecute(s);
+    }
 
     private String uploadBulletinZipFile(UniversalId uid, File tempFile, ClientSideNetworkGateway gateway, MartusCrypto crypto)
         		throws

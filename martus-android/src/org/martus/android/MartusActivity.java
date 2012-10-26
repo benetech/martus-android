@@ -200,20 +200,15 @@ public class MartusActivity extends Activity {
     @Override
     protected void onNewIntent(Intent intent) {
 
-        responseView.setText("");
-
+        boolean shouldDelete = false;
         ClipData clipData = intent.getClipData();
-
-        Bulletin sample;
-        File tmpAttachment = null;
-
         ClipData.Item item = clipData.getItemAt(0);
         Uri uri = item.getUri();
         if (uri != null) {
 
             String scheme = uri.getScheme();
             FileInputStream inputStream = null;
-            File attachment;
+            File attachment = null;
 
             try {
                 File outputDir = getCacheDir();
@@ -222,23 +217,22 @@ public class MartusActivity extends Activity {
                     attachment = new File(filePath);
                 } else {
 
-                    tmpAttachment = File.createTempFile("tmp_", "jpg", outputDir);
+                    attachment = File.createTempFile("tmp_", "jpg", outputDir);
                     // Ask for a stream of the desired type.
                     AssetFileDescriptor descr = getContentResolver()
                             .openTypedAssetFileDescriptor(uri, "image/*", null);
                     inputStream = descr.createInputStream();
 
-                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpAttachment));
+                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(attachment));
                     int read;
                     byte bytes[] = new byte[1024];
 
                     while ((read = inputStream.read(bytes)) != -1) {
                         outputStream.write(bytes, 0, read);
                     }
-
+                    shouldDelete = true;
                     outputStream.flush();
                     outputStream.close();
-                    attachment = tmpAttachment;
                 }
 
                 //todo : need to capture file and send to BulletinActivity screen
@@ -249,7 +243,7 @@ public class MartusActivity extends Activity {
                 sendBulletin(sample);*/
 
             } catch (Exception e) {
-                Log.e(AppConfig.LOG_LABEL, "problem sending bulletin with attachment", e);
+                Log.e(AppConfig.LOG_LABEL, "problem accepting attachment", e);
             } finally {
                 if (inputStream != null) {
                     try {
@@ -257,10 +251,15 @@ public class MartusActivity extends Activity {
                     } catch (IOException e) {
                     }
                 }
-                if (tmpAttachment != null) {
-                    tmpAttachment.delete();
-                }
             }
+
+            //Send attachment to BulletinActivity
+            intent = new Intent(MartusActivity.this, BulletinActivity.class);
+            // do not keep this intent in history
+            //intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.putExtra(BulletinActivity.EXTRA_ATTACHEMENT, attachment.getAbsolutePath());
+            intent.putExtra(BulletinActivity.EXTRA_SHOULD_DELETE, shouldDelete);
+            startActivity(intent);
         }
     }
 

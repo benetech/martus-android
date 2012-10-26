@@ -1,6 +1,9 @@
 package org.martus.android;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -16,8 +19,11 @@ import org.martus.common.database.Database;
 import org.martus.common.packet.Packet;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.ClipData;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,6 +40,8 @@ import android.widget.EditText;
 public class BulletinActivity extends Activity implements BulletinSender{
 
     final int ACTIVITY_CHOOSE_ATTACHMENT = 2;
+    public static final String EXTRA_ATTACHEMENT = "filePath";
+    public static final String EXTRA_SHOULD_DELETE = "shouldDelete";
 
     private Activity myActivity;
     private SharedPreferences mySettings;
@@ -47,6 +55,7 @@ public class BulletinActivity extends Activity implements BulletinSender{
     private Bulletin bulletin;
     private EditText titleText;
     private EditText summaryText;
+    private ProgressDialog dialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,6 +107,30 @@ public class BulletinActivity extends Activity implements BulletinSender{
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        int i = 1;
+
+        Intent intent = getIntent();
+        String filePath = intent.getStringExtra(EXTRA_ATTACHEMENT);
+        if (null != filePath) {
+            try {
+
+                File attachment = new File(filePath);
+                if (null == bulletin) {
+                    bulletin = createBulletin();
+                }
+                AttachmentProxy attProxy = new AttachmentProxy(attachment);
+                bulletin.addPublicAttachment(attProxy);
+
+
+            } catch (Exception e) {
+                Log.e(AppConfig.LOG_LABEL, "problem adding attachment to bulletin", e);
+            }
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch(requestCode) {
             case ACTIVITY_CHOOSE_ATTACHMENT: {
@@ -122,7 +155,27 @@ public class BulletinActivity extends Activity implements BulletinSender{
         }
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+
+        String filePath = intent.getStringExtra(EXTRA_ATTACHEMENT);
+        try {
+
+            File attachment = new File(filePath);
+            if (null == bulletin) {
+                bulletin = createBulletin();
+            }
+            AttachmentProxy attProxy = new AttachmentProxy(attachment);
+            bulletin.addPublicAttachment(attProxy);
+
+
+        } catch (Exception e) {
+            Log.e(AppConfig.LOG_LABEL, "problem adding attachment to bulletin", e);
+        }
+    }
+
     private void sendBulletin(Bulletin bulletin) throws IOException, MartusCrypto.CryptoException, Packet.InvalidPacketException, Packet.WrongPacketTypeException, Packet.SignatureVerificationException, Database.RecordHiddenException, InterruptedException, ExecutionException {
+        dialog = ProgressDialog.show(this, "Sending...", "", true, false);
 
         String author = mySettings.getString(SettingsActivity.KEY_AUTHOR, "Unknown author");
         bulletin.set(Bulletin.TAGAUTHOR, author);
@@ -158,6 +211,7 @@ public class BulletinActivity extends Activity implements BulletinSender{
 
     @Override
     public void onSent() {
+        dialog.dismiss();
         finish();
     }
 }
