@@ -45,7 +45,7 @@ public class NotificationHelper {
      * called when the background task is complete, this removes the notification from the status bar.
      * We could also use this to add a new ‘task complete’ notification
      */
-    public void completed(String resultMsg)    {
+    public void completed(String resultMsg, String title)    {
         //update notification to indicate completion
         int icon = R.drawable.stat_sys_download_done;
         if (!resultMsg.equals("ok")) {
@@ -53,7 +53,7 @@ public class NotificationHelper {
         }
         final Notification notification = new Notification.Builder(mContext)
                 .setContentTitle(mTitle)
-                .setContentText("completed with result: " + resultMsg)
+                .setContentText(title + " | sent with result: " + resultMsg)
                 .setSmallIcon(icon)
                 .setAutoCancel(true)
                 .build();

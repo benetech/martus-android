@@ -27,7 +27,8 @@
         </activity>
        <activity android:name=".PingServer"></activity>
        <activity android:name=".SettingsActivity" android:label="@string/settings_title"></activity>
-       <activity android:name=".DesktopKeyActivity" android:label="Import desktop key"></activity>
+       <activity android:name=".DesktopKeyActivity" android:label="You must first import a desktop key"></activity>
+       <activity android:name=".BulletinActivity" android:label="Create bulletin"></activity>
     </application>
 
 </manifest>

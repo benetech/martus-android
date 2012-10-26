@@ -85,7 +85,7 @@ public class DesktopKeyActivity extends Activity {
         String publicKeyString = extractPublicInfo(importFile);
 
         String publicCode = MartusCrypto.computePublicCode(publicKeyString);
-        if(!confirmPublicCode(publicCode)) {
+        if(!confirmPublicCode(publicCode, editText_code.getText().toString().trim())) {
             MartusActivity.showMessage(activity, "Public code didn't match file", "Error");
             return;
         }
@@ -113,9 +113,9 @@ public class DesktopKeyActivity extends Activity {
         return AppConfig.getInstance().getStore().getSignatureGenerator();
     }
 
-    boolean confirmPublicCode(String rawPublicCode)
+    boolean confirmPublicCode(String rawPublicCode, String userEnteredPublicCode)
     {
-        String userEnteredPublicCode = "7233.6645.6763.1658.6756";
+        String userEnteredPublicCodeHardCoded = "7233.6645.6763.1658.6756";
         String normalizedPublicCode = MartusCrypto.removeNonDigits(userEnteredPublicCode);
         return rawPublicCode.equals(normalizedPublicCode);
     }

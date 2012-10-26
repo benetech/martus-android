@@ -5,28 +5,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Locale;
-import java.util.Vector;
-import java.util.concurrent.ExecutionException;
 
-import org.martus.client.bulletinstore.MobileBulletinStore;
-import org.martus.client.core.ConfigInfo;
 import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.clientside.ClientSideNetworkHandlerUsingXmlRpcForNonSSL;
-import org.martus.common.HQKey;
-import org.martus.common.HQKeys;
-import org.martus.common.MartusUtilities;
-import org.martus.common.MiniLocalization;
-import org.martus.common.bulletin.AttachmentProxy;
 import org.martus.common.bulletin.Bulletin;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
-import org.martus.common.database.Database;
-import org.martus.common.fieldspec.ChoiceItem;
-import org.martus.common.fieldspec.StandardFieldSpecs;
 import org.martus.common.network.NetworkResponse;
 import org.martus.common.network.NonSSLNetworkAPI;
-import org.martus.common.packet.Packet;
 import org.martus.util.StreamableBase64;
 
 import android.app.Activity;
@@ -56,21 +42,15 @@ public class MartusActivity extends Activity {
     public static final String defaultMagicWord = "spam";
     private String serverPublicKey;
 
-    private MobileBulletinStore store;
     private MartusSecurity martusCrypto;
-    private ConfigInfo configInfo;
     private Activity myActivity;
     private ClientSideNetworkGateway gateway = null;
     private String serverIP;
     private String serverPublicCode;
-    private String magicWord;
-    HQKey hqKey;
 
     private TextView responseView;
 
-    final int ACTIVITY_CHOOSE_FILE = 1;
     final int ACTIVITY_CHOOSE_ATTACHMENT = 2;
-    final int ACTIVITY_CHOOSE_DESKTOP_KEY = 3;
 
 	/** Called when the activity is first created. */
     @Override
@@ -82,12 +62,14 @@ public class MartusActivity extends Activity {
 
         //setTitle("Martus Android");
         myActivity = this;
+        responseView = (TextView)findViewById(R.id.bulletinResponseText);
+        updateSettings();
+
+        martusCrypto = AppConfig.getInstance().getCrypto();
+
          if (null == martusCrypto) {
-            responseView = (TextView)findViewById(R.id.bulletinResponseText);
 
-            updateSettings();
 
-            try {
                 //martusCrypto = new MartusSecurity();
 
                 // if key doesn't exist
@@ -101,43 +83,18 @@ public class MartusActivity extends Activity {
 
                 martusCrypto.readKeyPair(is, "password".toCharArray());*/
 
-
-                //store = new MobileBulletinStore(martusCrypto);
-                //store.setTopSectionFieldSpecs(StandardFieldSpecs.getDefaultTopSetionFieldSpecs());
-                //store.setBottomSectionFieldSpecs(StandardFieldSpecs.getDefaultBottomSectionFieldSpecs());
-                //configInfo = new ConfigInfo();
-
-                //NonSSLNetworkAPI server = new ClientSideNetworkHandlerUsingXmlRpcForNonSSL(serverIP);
-
-                //Network calls must be made in background task
-                //final AsyncTask<Object, Void, String> keyTask = new PublicKeyTask().execute(server, martusCrypto);
-                //serverPublicKey = keyTask.get();
-                //gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
-
-            //} catch (MartusCrypto.CryptoInitializationException e) {
-                //Log.e("martus", "Unable to initialize crypto", e);
-            } catch (Exception e) {
-                Log.e("martus", "Problem getting server public key", e);
-            }
          }
         final Button buttonServerInfo = (Button) findViewById(R.id.serverInfo);
         buttonServerInfo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
 
-                    //confirm serverPublicKey is correct
-                    final String normalizedPublicCode = MartusCrypto.removeNonDigits(serverPublicCode);
-                    final String computedCode = MartusCrypto.computePublicCode(serverPublicKey);
-                    if (! normalizedPublicCode.equals(computedCode)) {
-                        showMessage(myActivity, "Invalid public server code!", "Error");
-                        return;
-                    }
-
                     //Network calls must be made in background task
                     final AsyncTask<ClientSideNetworkGateway, Void, NetworkResponse> infoTask = new ServerInfoTask().execute(gateway);
                     NetworkResponse response1 = infoTask.get();
 
-                    final AsyncTask<Object, Void, NetworkResponse> rightsTask = new UploadRightsTask().execute(gateway, martusCrypto, magicWord);
+                    //todo: move to upload bulletin screen
+                    final AsyncTask<Object, Void, NetworkResponse> rightsTask = new UploadRightsTask().execute(gateway, martusCrypto, defaultMagicWord);
                     final NetworkResponse response = rightsTask.get();
                     if (!response.getResultCode().equals("ok")) {
                         showMessage(myActivity, "Don't have upload rights!", "Error");
@@ -148,26 +105,17 @@ public class MartusActivity extends Activity {
                     final TextView responseView = (TextView)findViewById(R.id.response_server);
                     responseView.setText("ServerInfo: " + response1.getResultCode() + ", " + resultArray[0]);
                 } catch (Exception e) {
-                    Log.e("martus", "Failed getting server info", e);
+                    Log.e(AppConfig.LOG_LABEL, "Failed getting server info", e);
                     e.printStackTrace();
                 }
             }
         });
 
-        final Button uploadSampleButton = (Button) findViewById(R.id.uploadSampleBulletin);
-        uploadSampleButton.setOnClickListener(new View.OnClickListener() {
+        final Button createScreenBtn = (Button) findViewById(R.id.createScreen);
+        createScreenBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                try {
-
-
-
-                    final Bulletin sample = createBulletin();
-                    sendBulletin(sample);
-
-                } catch (Exception e) {
-                    Log.e("martus", "Failed uploading bulletin", e);
-                    e.printStackTrace();
-                }
+                Intent intent = new Intent(MartusActivity.this, BulletinActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -182,44 +130,56 @@ public class MartusActivity extends Activity {
                     final TextView responseView = (TextView)findViewById(R.id.check_bulletins_text);
                     responseView.setText(response);
                 } catch (Exception e) {
-                    Log.e("martus", "Failed getting bulletin ids", e);
+                    Log.e(AppConfig.LOG_LABEL, "Failed getting bulletin ids", e);
                     e.printStackTrace();
                 }
             }
         });
 
-        final Button buttonChooseAttachment = (Button) findViewById(R.id.attachment_bulletin_button);
-        buttonChooseAttachment.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    try {
-                        Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-                        chooseFile.setType("file/*");
-                        Intent intent = Intent.createChooser(chooseFile, "Choose an attachment");
-                        startActivityForResult(intent, ACTIVITY_CHOOSE_ATTACHMENT);
-                    } catch (Exception e) {
-                        Log.e("martus", "Failed choosing file", e);
-                        e.printStackTrace();
-                    }
-                }
-            });
     }
 
-    private void sendBulletin(Bulletin sample) throws IOException, MartusCrypto.CryptoException, Packet.InvalidPacketException, Packet.WrongPacketTypeException, Packet.SignatureVerificationException, Database.RecordHiddenException, InterruptedException, ExecutionException {
-
-        if (null != hqKey) {
-            sample.setAuthorizedToReadKeys(new HQKeys(hqKey));
-        }
-
-        File dir = getExternalCacheDir();
-        Log.e("martus","FILES DIR = " + dir.getAbsolutePath());
-        final AsyncTask<Object, Void, String> uploadTask = new UploadBulletinTask(getApplicationContext(), sample);
-        uploadTask.execute(sample.getUniversalId(), getExternalCacheDir(), gateway, martusCrypto);
-    }
 
     @Override
     protected void onStart() {
         super.onStart();
         checkDesktopKey();
+
+
+
+        //Not sure if this is the best place to get/set Server Public Key
+        SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
+        serverPublicKey = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
+        if (serverPublicKey.length() < 1) {
+            //Network calls must be made in background task
+            NonSSLNetworkAPI server = new ClientSideNetworkHandlerUsingXmlRpcForNonSSL(serverIP);
+            final AsyncTask<Object, Void, String> keyTask = new PublicKeyTask().execute(server, martusCrypto);
+            try {
+                serverPublicKey = keyTask.get();
+                SharedPreferences.Editor editor = mySettings.edit();
+                editor.putString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, serverPublicKey);
+                editor.commit();
+            } catch (Exception e) {
+                Log.e(AppConfig.LOG_LABEL, "Problem getting server public key", e);
+                showMessage(this, "Problem getting server public key", "Error");
+                return;
+            }
+        }
+
+        //confirm serverPublicKey is correct
+        final String normalizedPublicCode = MartusCrypto.removeNonDigits(serverPublicCode);
+        final String computedCode;
+        try {
+            computedCode = MartusCrypto.computePublicCode(serverPublicKey);
+            if (! normalizedPublicCode.equals(computedCode)) {
+                showMessage(myActivity, "Invalid public server code! Please fix in Settings screen.", "Error");
+            }
+        } catch (StreamableBase64.InvalidBase64Exception e) {
+            Log.e(AppConfig.LOG_LABEL,"problem computing public code", e);
+            showMessage(myActivity, "Problem computing public code", "Error");
+            return;
+        }
+
+        gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
     }
 
     private void checkDesktopKey() {
@@ -235,42 +195,6 @@ public class MartusActivity extends Activity {
     public void onResume() {
         super.onResume();
         updateSettings();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch(requestCode) {
-            case ACTIVITY_CHOOSE_FILE: {
-                if (resultCode == RESULT_OK){
-                    Uri uri = data.getData();
-                    String filePath = uri.getPath();
-
-                    try {
-                        hqKey =  getPublicKey(new File(filePath));
-                    } catch (Exception e) {
-                        Log.e("martus", "problem getting HQ key", e);
-                    }
-                }
-                break;
-            }
-            case ACTIVITY_CHOOSE_ATTACHMENT: {
-                if (resultCode == RESULT_OK) {
-                    Uri uri = data.getData();
-                    String filePath = uri.getPath();
-
-                    AttachmentProxy attachment = new AttachmentProxy(new File(filePath));
-                    try {
-                        Bulletin sample = createBulletin();
-                        sample.set(Bulletin.TAGTITLE, "Including Attachment from Android");
-                        sample.addPublicAttachment(attachment);
-                        sendBulletin(sample);
-                    } catch (Exception e) {
-                        Log.e("martus", "problem getting attachment", e);
-                    }
-                }
-                break;
-            }
-        }
     }
 
     @Override
@@ -316,14 +240,16 @@ public class MartusActivity extends Activity {
                     outputStream.close();
                     attachment = tmpAttachment;
                 }
-                sample = createBulletin();
+
+                //todo : need to capture file and send to BulletinActivity screen
+/*                sample = createBulletin();
                 AttachmentProxy attProxy = new AttachmentProxy(attachment);
                 sample.addPublicAttachment(attProxy);
 
-                sendBulletin(sample);
+                sendBulletin(sample);*/
 
             } catch (Exception e) {
-                Log.e("martus", "problem sending bulletin with attachment", e);
+                Log.e(AppConfig.LOG_LABEL, "problem sending bulletin with attachment", e);
             } finally {
                 if (inputStream != null) {
                     try {
@@ -368,120 +294,14 @@ public class MartusActivity extends Activity {
         SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
         serverIP = mySettings.getString(SettingsActivity.KEY_SERVER_IP, defaultServerIP);
         serverPublicCode = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_CODE, defaultServerPublicCode);
-        magicWord = mySettings.getString(SettingsActivity.KEY_MAGIC_WORD, defaultMagicWord);
-    }
-
-    private Bulletin createBulletin() throws Exception
-    {
-        Bulletin b = store.createEmptyBulletin();
-        configInfo.setOrganization("Benetech");
-
-        SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
-        String author = mySettings.getString(SettingsActivity.KEY_AUTHOR, "Test User");
-        b.set(Bulletin.TAGAUTHOR, author);
-        b.set(Bulletin.TAGORGANIZATION, configInfo.getOrganization());
-        b.set(Bulletin.TAGPUBLICINFO, configInfo.getTemplateDetails());
-        b.set(Bulletin.TAGLANGUAGE, getDefaultLanguageForNewBulletin());
-        b.set(Bulletin.TAGTITLE, "Bulletin from Android");
-        //setDefaultHQKeysInBulletin(b);
-        b.setDraft();
-        b.setAllPrivate(false);
-        return b;
-    }
-
-    private String getDefaultLanguageForNewBulletin()
-    {
-        final String preferredLanguage = getCurrentLanguage();
-        MiniLocalization localization = new MiniLocalization();
-        ChoiceItem[] availableLanguages = localization.getLanguageNameChoices();
-        for (ChoiceItem item : availableLanguages) {
-            if (item.getCode().equals(preferredLanguage))
-                return preferredLanguage;
-        }
-
-        return MiniLocalization.LANGUAGE_OTHER;
-    }
-
-    private String getCurrentLanguage()
-    {
-        return Locale.getDefault().getLanguage();
-    }
-
-    private void setDefaultHQKeysInBulletin(Bulletin b)
-    {
-        HQKeys hqKeys = getDefaultHQKeysWithFallback();
-        b.setAuthorizedToReadKeys(hqKeys);
-    }
-
-    private HQKeys getDefaultHQKeysWithFallback()
-    {
-        try
-        {
-            return getDefaultHQKeys();
-        }
-        catch (HQKeys.HQsException e)
-        {
-            e.printStackTrace();
-            HQKey legacyKey = new HQKey(getLegacyHQKey());
-            return new HQKeys(legacyKey);
-        }
-    }
-
-    private HQKeys getDefaultHQKeys() throws HQKeys.HQsException
-    {
-        return new HQKeys(configInfo.getDefaultHQKeysXml());
-    }
-
-    private String getLegacyHQKey()
-    {
-        return configInfo.getLegacyHQKey();
     }
 
     public static void showMessage(Context context, String msg, String title){
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setIcon(android.R.drawable.ic_dialog_alert)
-             .setTitle("Error")
+             .setTitle(title)
              .setMessage(msg)
              .show();
-    }
-
-    // use desktop exported public account id as HQ key
-
-    public HQKey getPublicKey(File importFile) throws Exception
-    	{
-
-
-    		String publicKeyString = extractPublicInfo(importFile);
-
-    		String publicCode = MartusCrypto.computePublicCode(publicKeyString);
-    		if(!confirmPublicCode(publicCode))
-
-    			return null;
-            return new HQKey(publicKeyString, "romsDesktop");
-    	}
-
-    public String extractPublicInfo(File file) throws
-    		IOException,
-    		StreamableBase64.InvalidBase64Exception,
-                MartusUtilities.PublicInformationInvalidException
-    {
-        Vector importedPublicKeyInfo = MartusUtilities.importClientPublicKeyFromFile(file);
-        String publicKey = (String) importedPublicKeyInfo.get(0);
-        String signature = (String) importedPublicKeyInfo.get(1);
-        MartusUtilities.validatePublicInfo(publicKey, signature, getSecurity());
-        return publicKey;
-    }
-
-    public MartusCrypto getSecurity()
-    {
-        return store.getSignatureGenerator();
-    }
-
-    boolean confirmPublicCode(String rawPublicCode)
-    {
-        String userEnteredPublicCode = "7233.6645.6763.1658.6756";
-        String normalizedPublicCode = MartusCrypto.removeNonDigits(userEnteredPublicCode);
-        return rawPublicCode.equals(normalizedPublicCode);
     }
     
 }

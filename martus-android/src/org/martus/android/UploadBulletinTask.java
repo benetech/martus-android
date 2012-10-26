@@ -32,10 +32,12 @@ public class UploadBulletinTask extends AsyncTask<Object, Void, String> {
 
     private NotificationHelper mNotificationHelper;
     private Bulletin bulletin;
+    private BulletinSender sender;
 
-    public UploadBulletinTask(Context context, Bulletin bulletin) {
+    public UploadBulletinTask(Context context, Bulletin bulletin, BulletinSender sender) {
         mNotificationHelper = new NotificationHelper(context, bulletin.getUniversalId().hashCode());
         this.bulletin = bulletin;
+        this.sender = sender;
     }
 
     @Override
@@ -92,7 +94,8 @@ public class UploadBulletinTask extends AsyncTask<Object, Void, String> {
    @Override
    protected void onPostExecute(String s) {
        Log.e("martus", "!!!!!!!! PostExecute   !!!!!!!!!!");
-       mNotificationHelper.completed(s);
+       mNotificationHelper.completed(s, bulletin.get(Bulletin.TAGTITLE));
+       sender.onSent();
        super.onPostExecute(s);
    }
 

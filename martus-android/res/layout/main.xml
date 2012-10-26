@@ -15,10 +15,10 @@
         android:layout_height="wrap_content"
         />
     <Button
-    	android:id="@+id/uploadSampleBulletin"
+    	android:id="@+id/createScreen"
        	android:layout_width="wrap_content"
       	android:layout_height="wrap_content"
-      	android:text="@string/create_sample_bulletin" />
+      	android:text="@string/create_sample_bulletin" android:focusableInTouchMode="false"/>
     <TextView
         android:id="@+id/bulletinResponseText"
         android:layout_width="fill_parent"
@@ -32,9 +32,4 @@
         android:id="@+id/check_bulletins_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
-    <Button
-        android:id="@+id/attachment_bulletin_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Select file for attachment" />
 </LinearLayout>

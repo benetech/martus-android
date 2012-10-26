@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<GridLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android"
+        android:focusableInTouchMode="false" android:focusable="true" android:columnCount="4" android:clickable="false">
+    <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_row="0" android:layout_column="3">
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Send"
+                android:id="@+id/sendToMartus" android:layout_row="0" android:layout_column="2"
+                android:layout_gravity="right" />
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+Attachment"
+                android:id="@+id/addAttachment" android:layout_row="0" android:layout_column="3"
+                android:layout_gravity="right"/>
+    </GridLayout>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Title: "
+            android:id="@+id/createBulletinTitleLabel" android:layout_row="1" android:layout_column="0"
+            android:layout_gravity="right"/>
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/createBulletinTitle" android:layout_row="1" android:layout_column="1"
+            android:singleLine="false" android:layout_columnSpan="3" android:layout_gravity="left|right"
+            android:focusable="true"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Summary:"
+            android:id="@+id/createBulletinSummaryLabel" android:layout_row="2" android:layout_column="0"
+            android:linksClickable="true"/>
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/bulletinSummary" android:layout_row="3" android:layout_column="0"
+            android:inputType="textMultiLine"
+            android:textIsSelectable="false" android:layout_columnSpan="4" android:layout_gravity="left|right"
+            android:gravity="left|top" />
+</GridLayout>

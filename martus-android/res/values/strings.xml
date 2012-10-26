@@ -3,7 +3,7 @@
 
     <string name="hello">Hello World, MartusActivity!</string>
     <string name="app_name">Martus</string>
-    <string name="create_sample_bulletin">Upload Bulletin</string>
+    <string name="create_sample_bulletin">Create Bulletin</string>
     <string name="check_bulletins">Check Bulletins</string>
 
     <!-- ============================== -->

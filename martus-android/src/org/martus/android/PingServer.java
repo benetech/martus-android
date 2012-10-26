@@ -40,7 +40,7 @@ public class PingServer extends Activity {
     	textview=(TextView)findViewById(R.id.response);
 
         SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
-        serverIP = mySettings.getString(SettingsActivity.KEY_SERVER_IP, MartusActivity.defaultServerIP + pingPath);
+        serverIP = "http://" + mySettings.getString(SettingsActivity.KEY_SERVER_IP, MartusActivity.defaultServerIP + pingPath);
 	    
         final Button button = (Button) findViewById(R.id.buttonPing);
         button.setOnClickListener(new View.OnClickListener() {

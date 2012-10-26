@@ -20,6 +20,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     public static final String KEY_SERVER_PUBLIC_CODE = "server_code_preference";
     public static final String KEY_AUTHOR = "author_preference";
     public static final String KEY_DESKTOP_PUBLIC_KEY = "desktop_public_keystring";
+    public static final String KEY_SERVER_PUBLIC_KEY = "server_public_keystring";
 
     String[] languageNamesArray;
     String[] languageCodesArray;
@@ -50,17 +51,19 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
     private void setPreferenceSummary(SharedPreferences sharedPreferences, String key) {
         Preference preference = findPreference(key);
-        if (key.equals(KEY_MAGIC_WORD)) {
-            //don't want to show the magic word - just indicate that its been set
-            preference.setSummary(R.string.magic_word_set);
-        } else if (key.equals(KEY_DEFAULT_LANGUAGE)) {
-            //need to show description of language as the summary, not the language code
-            final String languageCode = sharedPreferences.getString(key, "?");
-            final int index = Arrays.asList(languageCodesArray).indexOf(languageCode);
-            preference.setSummary(languageNamesArray[index]);
-        } else {
-            // Set summary to be the selected value
-            preference.setSummary(sharedPreferences.getString(key, ""));
+        if (null != preference) {
+            if (key.equals(KEY_MAGIC_WORD)) {
+                //don't want to show the magic word - just indicate that its been set
+                preference.setSummary(R.string.magic_word_set);
+            } else if (key.equals(KEY_DEFAULT_LANGUAGE)) {
+                //need to show description of language as the summary, not the language code
+                final String languageCode = sharedPreferences.getString(key, "?");
+                final int index = Arrays.asList(languageCodesArray).indexOf(languageCode);
+                preference.setSummary(languageNamesArray[index]);
+            } else {
+                // Set summary to be the selected value
+                preference.setSummary(sharedPreferences.getString(key, ""));
+            }
         }
     }
 
