@@ -33,7 +33,12 @@
        <activity android:name=".PingServer"></activity>
        <activity android:name=".SettingsActivity" android:label="@string/settings_title"></activity>
        <activity android:name=".DesktopKeyActivity" android:label="You must first import a desktop key"></activity>
-       <activity android:name=".BulletinActivity" android:label="Create bulletin"></activity>
+       <activity
+           android:name=".BulletinActivity"
+           android:screenOrientation="portrait"
+           android:configChanges="orientation"
+           android:label="Create bulletin">
+       </activity>
     </application>
 
 </manifest>

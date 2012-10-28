@@ -211,7 +211,7 @@ public class MartusActivity extends Activity {
             File attachment = null;
 
             try {
-                File outputDir = getCacheDir();
+                File outputDir = getExternalCacheDir();
                 if ("file".equalsIgnoreCase(scheme)) {
                     String filePath = uri.getPath();
                     attachment = new File(filePath);

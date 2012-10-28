@@ -18,22 +18,30 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int attachment_bulletin_button=0x7f080007;
-        public static final int bulletinResponseText=0x7f080003;
+        public static final int addAttachment=0x7f08000b;
+        public static final int bulletinResponseText=0x7f080005;
+        public static final int bulletinSummary=0x7f08000f;
         public static final int buttonPing=0x7f080008;
-        public static final int check_bulletins_button=0x7f080004;
-        public static final int check_bulletins_text=0x7f080005;
-        public static final int choose_public_key_button=0x7f080006;
-        public static final int ping_menu_item=0x7f08000b;
+        public static final int check_bulletins_button=0x7f080006;
+        public static final int check_bulletins_text=0x7f080007;
+        public static final int createBulletinSummaryLabel=0x7f08000e;
+        public static final int createBulletinTitle=0x7f08000d;
+        public static final int createBulletinTitleLabel=0x7f08000c;
+        public static final int createScreen=0x7f080004;
+        public static final int desktopCodeText=0x7f080000;
+        public static final int desktopKeyChooseFile=0x7f080001;
+        public static final int ping_menu_item=0x7f080011;
         public static final int response=0x7f080009;
-        public static final int response_server=0x7f080001;
-        public static final int serverInfo=0x7f080000;
-        public static final int settings_menu_item=0x7f08000a;
-        public static final int uploadSampleBulletin=0x7f080002;
+        public static final int response_server=0x7f080003;
+        public static final int sendToMartus=0x7f08000a;
+        public static final int serverInfo=0x7f080002;
+        public static final int settings_menu_item=0x7f080010;
     }
     public static final class layout {
-        public static final int main=0x7f030000;
-        public static final int ping=0x7f030001;
+        public static final int desktop_sync=0x7f030000;
+        public static final int main=0x7f030001;
+        public static final int ping=0x7f030002;
+        public static final int send_bulletin=0x7f030003;
     }
     public static final class menu {
         public static final int main=0x7f070000;
@@ -42,6 +50,9 @@ public final class R {
         public static final int app_name=0x7f060001;
         public static final int check_bulletins=0x7f060003;
         public static final int create_sample_bulletin=0x7f060002;
+        public static final int desktop_sync_choose_file=0x7f06001a;
+        public static final int desktop_sync_public_code=0x7f060018;
+        public static final int desktop_sync_title=0x7f060019;
         public static final int dialog_title_author_preference=0x7f060012;
         public static final int dialog_title_language_preference=0x7f060015;
         public static final int dialog_title_server_code_preference=0x7f06000a;
