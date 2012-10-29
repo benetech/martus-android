@@ -41,9 +41,7 @@ public class BulletinActivity extends Activity implements BulletinSender{
 
     final int ACTIVITY_CHOOSE_ATTACHMENT = 2;
     public static final String EXTRA_ATTACHEMENT = "filePath";
-    public static final String EXTRA_SHOULD_DELETE = "shouldDelete";
 
-    private Activity myActivity;
     private SharedPreferences mySettings;
     private MobileBulletinStore store;
     private HQKey hqKey;
@@ -63,12 +61,13 @@ public class BulletinActivity extends Activity implements BulletinSender{
         setContentView(R.layout.send_bulletin);
 
 
-        myActivity = this;
         mySettings = PreferenceManager.getDefaultSharedPreferences(this);
         hqKey = new HQKey(mySettings.getString(SettingsActivity.KEY_DESKTOP_PUBLIC_KEY, ""));
         store = AppConfig.getInstance().getStore();
         updateSettings();
         gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
+
+        addAttachmentFromIntent();
 
         titleText = (EditText)findViewById(R.id.createBulletinTitle);
         summaryText = (EditText)findViewById(R.id.bulletinSummary);
@@ -109,23 +108,61 @@ public class BulletinActivity extends Activity implements BulletinSender{
     @Override
     protected void onStart() {
         super.onStart();
-        int i = 1;
+    }
 
+    private void addAttachmentFromIntent() {
         Intent intent = getIntent();
-        String filePath = intent.getStringExtra(EXTRA_ATTACHEMENT);
-        if (null != filePath) {
-            try {
+        ClipData clipData = intent.getClipData();
+        if (null != clipData) {
 
-                File attachment = new File(filePath);
-                if (null == bulletin) {
-                    bulletin = createBulletin();
+            ClipData.Item item = clipData.getItemAt(0);
+            Uri uri = item.getUri();
+            if (uri != null) {
+
+                String scheme = uri.getScheme();
+                FileInputStream inputStream = null;
+                File attachment;
+
+                try {
+                    File outputDir = getCacheDir();
+                    if ("file".equalsIgnoreCase(scheme)) {
+                        String filePath = uri.getPath();
+                        attachment = new File(filePath);
+                    } else {
+
+                        attachment = File.createTempFile("tmp_", ".jpg", outputDir);
+                        // Ask for a stream of the desired type.
+                        AssetFileDescriptor descr = getContentResolver()
+                                .openTypedAssetFileDescriptor(uri, "image/*", null);
+                        inputStream = descr.createInputStream();
+
+                        BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(attachment));
+                        int read;
+                        byte bytes[] = new byte[1024];
+
+                        while ((read = inputStream.read(bytes)) != -1) {
+                            outputStream.write(bytes, 0, read);
+                        }
+
+                        outputStream.flush();
+                        outputStream.close();
+                    }
+
+                    if (null == bulletin) {
+                        bulletin = createBulletin();
+                    }
+                    AttachmentProxy attProxy = new AttachmentProxy(attachment);
+                    bulletin.addPublicAttachment(attProxy);
+                } catch (Exception e) {
+                    Log.e(AppConfig.LOG_LABEL, "problem adding attachment to bulletin", e);
+                } finally {
+                    if (inputStream != null) {
+                        try {
+                            inputStream.close();
+                        } catch (IOException e) {
+                        }
+                    }
                 }
-                AttachmentProxy attProxy = new AttachmentProxy(attachment);
-                bulletin.addPublicAttachment(attProxy);
-
-
-            } catch (Exception e) {
-                Log.e(AppConfig.LOG_LABEL, "problem adding attachment to bulletin", e);
             }
         }
     }
@@ -172,6 +209,11 @@ public class BulletinActivity extends Activity implements BulletinSender{
         } catch (Exception e) {
             Log.e(AppConfig.LOG_LABEL, "problem adding attachment to bulletin", e);
         }
+
+
+
+
+
     }
 
     private void sendBulletin(Bulletin bulletin) throws IOException, MartusCrypto.CryptoException, Packet.InvalidPacketException, Packet.WrongPacketTypeException, Packet.SignatureVerificationException, Database.RecordHiddenException, InterruptedException, ExecutionException {

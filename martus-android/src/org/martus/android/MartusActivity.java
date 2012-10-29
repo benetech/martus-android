@@ -1,14 +1,7 @@
 package org.martus.android;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.clientside.ClientSideNetworkHandlerUsingXmlRpcForNonSSL;
-import org.martus.common.bulletin.Bulletin;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.NetworkResponse;
@@ -17,12 +10,9 @@ import org.martus.util.StreamableBase64;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.AssetFileDescriptor;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -195,72 +185,6 @@ public class MartusActivity extends Activity {
     public void onResume() {
         super.onResume();
         updateSettings();
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-
-        boolean shouldDelete = false;
-        ClipData clipData = intent.getClipData();
-        ClipData.Item item = clipData.getItemAt(0);
-        Uri uri = item.getUri();
-        if (uri != null) {
-
-            String scheme = uri.getScheme();
-            FileInputStream inputStream = null;
-            File attachment = null;
-
-            try {
-                File outputDir = getExternalCacheDir();
-                if ("file".equalsIgnoreCase(scheme)) {
-                    String filePath = uri.getPath();
-                    attachment = new File(filePath);
-                } else {
-
-                    attachment = File.createTempFile("tmp_", "jpg", outputDir);
-                    // Ask for a stream of the desired type.
-                    AssetFileDescriptor descr = getContentResolver()
-                            .openTypedAssetFileDescriptor(uri, "image/*", null);
-                    inputStream = descr.createInputStream();
-
-                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(attachment));
-                    int read;
-                    byte bytes[] = new byte[1024];
-
-                    while ((read = inputStream.read(bytes)) != -1) {
-                        outputStream.write(bytes, 0, read);
-                    }
-                    shouldDelete = true;
-                    outputStream.flush();
-                    outputStream.close();
-                }
-
-                //todo : need to capture file and send to BulletinActivity screen
-/*                sample = createBulletin();
-                AttachmentProxy attProxy = new AttachmentProxy(attachment);
-                sample.addPublicAttachment(attProxy);
-
-                sendBulletin(sample);*/
-
-            } catch (Exception e) {
-                Log.e(AppConfig.LOG_LABEL, "problem accepting attachment", e);
-            } finally {
-                if (inputStream != null) {
-                    try {
-                        inputStream.close();
-                    } catch (IOException e) {
-                    }
-                }
-            }
-
-            //Send attachment to BulletinActivity
-            intent = new Intent(MartusActivity.this, BulletinActivity.class);
-            // do not keep this intent in history
-            //intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-            intent.putExtra(BulletinActivity.EXTRA_ATTACHEMENT, attachment.getAbsolutePath());
-            intent.putExtra(BulletinActivity.EXTRA_SHOULD_DELETE, shouldDelete);
-            startActivity(intent);
-        }
     }
 
     @Override

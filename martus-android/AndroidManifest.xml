@@ -24,11 +24,7 @@
               <category android:name="android.intent.category.DEFAULT" />
               <data android:mimeType="image/*" />
             </intent-filter>-->
-            <intent-filter>
-              <action android:name="android.intent.action.SEND" />
-              <category android:name="android.intent.category.DEFAULT" />
-              <data android:mimeType="*/*" />
-            </intent-filter>
+
         </activity>
        <activity android:name=".PingServer"></activity>
        <activity android:name=".SettingsActivity" android:label="@string/settings_title"></activity>
@@ -38,6 +34,11 @@
            android:screenOrientation="portrait"
            android:configChanges="orientation"
            android:label="Create bulletin">
+           <intent-filter>
+             <action android:name="android.intent.action.SEND" />
+             <category android:name="android.intent.category.DEFAULT" />
+             <data android:mimeType="*/*" />
+           </intent-filter>
        </activity>
     </application>
 
