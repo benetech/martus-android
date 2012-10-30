@@ -72,6 +72,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 
+import org.martus.android.AppConfig;
 import org.spongycastle.jce.X509Principal;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.x509.X509V1CertificateGenerator;
@@ -81,6 +82,8 @@ import org.martus.common.network.SimpleX509TrustManager;
 import org.martus.util.StreamableBase64;
 import org.martus.util.inputstreamwithseek.ByteArrayInputStreamWithSeek;
 import org.martus.util.inputstreamwithseek.InputStreamWithSeek;
+
+import android.util.Log;
 
 public class MartusSecurity extends MartusCrypto
 {
@@ -815,7 +818,8 @@ public class MartusSecurity extends MartusCrypto
 		catch(Exception e)
 		{
 			//System.out.println("pbeEncryptDecrypt: " + e);
-		}
+            Log.e(AppConfig.LOG_LABEL, "EncryptDecrypt problem", e);
+        }
 
 		return null;
 	}

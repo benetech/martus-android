@@ -1,5 +1,9 @@
 package org.martus.android;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+
 import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.clientside.ClientSideNetworkHandlerUsingXmlRpcForNonSSL;
 import org.martus.common.crypto.MartusCrypto;
@@ -57,23 +61,19 @@ public class MartusActivity extends Activity {
 
         martusCrypto = AppConfig.getInstance().getCrypto();
 
-         if (null == martusCrypto) {
-
-
-                //martusCrypto = new MartusSecurity();
-
-                // if key doesn't exist
-                //martusCrypto.createKeyPair();
-    /*            ByteArrayOutputStream out = new ByteArrayOutputStream();
+/*             try {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
                 martusCrypto.writeKeyPair(out, "password".toCharArray());
                 out.close();
                 String keyPair = out.toString();
 
                 InputStream is = new ByteArrayInputStream(keyPair.getBytes());
 
-                martusCrypto.readKeyPair(is, "password".toCharArray());*/
+                martusCrypto.readKeyPair(is, "password".toCharArray());
+             } catch (Exception e) {
+                 Log.e(AppConfig.LOG_LABEL,"write/read problem", e);
+             }*/
 
-         }
         final Button buttonServerInfo = (Button) findViewById(R.id.serverInfo);
         buttonServerInfo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
