@@ -37,10 +37,11 @@ public class AppConfig {
         // Constructor hidden because this is a singleton
         try {
             martusCrypto = new MartusSecurity();
+            martusCrypto.createKeyPair();
         } catch (MartusCrypto.CryptoInitializationException e) {
             Log.e(LOG_LABEL, "unable to initialize crypto", e);
         }
-        martusCrypto.createKeyPair();
+
         store = new MobileBulletinStore(martusCrypto);
         store.setTopSectionFieldSpecs(StandardFieldSpecs.getDefaultTopSetionFieldSpecs());
         store.setBottomSectionFieldSpecs(StandardFieldSpecs.getDefaultBottomSectionFieldSpecs());

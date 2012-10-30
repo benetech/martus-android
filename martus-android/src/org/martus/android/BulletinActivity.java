@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
 import org.martus.client.bulletinstore.MobileBulletinStore;
 import org.martus.clientside.ClientSideNetworkGateway;
@@ -14,9 +13,6 @@ import org.martus.common.HQKey;
 import org.martus.common.HQKeys;
 import org.martus.common.bulletin.AttachmentProxy;
 import org.martus.common.bulletin.Bulletin;
-import org.martus.common.crypto.MartusCrypto;
-import org.martus.common.database.Database;
-import org.martus.common.packet.Packet;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -40,7 +36,7 @@ import android.widget.EditText;
 public class BulletinActivity extends Activity implements BulletinSender{
 
     final int ACTIVITY_CHOOSE_ATTACHMENT = 2;
-    public static final String EXTRA_ATTACHEMENT = "filePath";
+    public static final String EXTRA_ATTACHMENT = "filePath";
 
     private SharedPreferences mySettings;
     private MobileBulletinStore store;
@@ -48,7 +44,6 @@ public class BulletinActivity extends Activity implements BulletinSender{
     private String serverPublicKey;
     private ClientSideNetworkGateway gateway = null;
     private String serverIP;
-    private String magicWord;
 
     private Bulletin bulletin;
     private EditText titleText;
@@ -67,6 +62,15 @@ public class BulletinActivity extends Activity implements BulletinSender{
         updateSettings();
         gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
 
+
+        if (null == bulletin) {
+            try {
+                bulletin = createBulletin();
+            } catch (Exception e) {
+                Log.e(AppConfig.LOG_LABEL, "problem creating bulletin", e);
+                MartusActivity.showMessage(this, "couldn't create new bulletin", "Error");
+            }
+        }
         addAttachmentFromIntent();
 
         titleText = (EditText)findViewById(R.id.createBulletinTitle);
@@ -92,9 +96,7 @@ public class BulletinActivity extends Activity implements BulletinSender{
         sendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
-                    if (null == bulletin) {
-                        bulletin = createBulletin();
-                    }
+
                     sendBulletin(bulletin);
                 } catch (Exception e) {
                     Log.e(AppConfig.LOG_LABEL, "Failed sending bulletin", e);
@@ -147,10 +149,6 @@ public class BulletinActivity extends Activity implements BulletinSender{
                         outputStream.flush();
                         outputStream.close();
                     }
-
-                    if (null == bulletin) {
-                        bulletin = createBulletin();
-                    }
                     AttachmentProxy attProxy = new AttachmentProxy(attachment);
                     bulletin.addPublicAttachment(attProxy);
                 } catch (Exception e) {
@@ -178,9 +176,6 @@ public class BulletinActivity extends Activity implements BulletinSender{
 
                         AttachmentProxy attachment = new AttachmentProxy(new File(filePath));
                         try {
-                            if (null == bulletin) {
-                                bulletin = createBulletin();
-                            }
                             bulletin.addPublicAttachment(attachment);
                         } catch (Exception e) {
                             Log.e(AppConfig.LOG_LABEL, "problem getting attachment", e);
@@ -195,13 +190,10 @@ public class BulletinActivity extends Activity implements BulletinSender{
     @Override
     protected void onNewIntent(Intent intent) {
 
-        String filePath = intent.getStringExtra(EXTRA_ATTACHEMENT);
+        String filePath = intent.getStringExtra(EXTRA_ATTACHMENT);
         try {
 
             File attachment = new File(filePath);
-            if (null == bulletin) {
-                bulletin = createBulletin();
-            }
             AttachmentProxy attProxy = new AttachmentProxy(attachment);
             bulletin.addPublicAttachment(attProxy);
 
@@ -210,13 +202,9 @@ public class BulletinActivity extends Activity implements BulletinSender{
             Log.e(AppConfig.LOG_LABEL, "problem adding attachment to bulletin", e);
         }
 
-
-
-
-
     }
 
-    private void sendBulletin(Bulletin bulletin) throws IOException, MartusCrypto.CryptoException, Packet.InvalidPacketException, Packet.WrongPacketTypeException, Packet.SignatureVerificationException, Database.RecordHiddenException, InterruptedException, ExecutionException {
+    private void sendBulletin(Bulletin bulletin)  {
         dialog = ProgressDialog.show(this, "Sending...", "", true, false);
 
         String author = mySettings.getString(SettingsActivity.KEY_AUTHOR, "Unknown author");
@@ -247,7 +235,7 @@ public class BulletinActivity extends Activity implements BulletinSender{
 
     private void updateSettings() {
         serverIP = mySettings.getString(SettingsActivity.KEY_SERVER_IP, MartusActivity.defaultServerIP);
-        magicWord = mySettings.getString(SettingsActivity.KEY_MAGIC_WORD, MartusActivity.defaultMagicWord);
+        //magicWord = mySettings.getString(SettingsActivity.KEY_MAGIC_WORD, MartusActivity.defaultMagicWord);
         serverPublicKey = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
     }
 
