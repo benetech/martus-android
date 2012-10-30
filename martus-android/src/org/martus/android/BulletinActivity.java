@@ -13,7 +13,6 @@ import org.martus.common.HQKey;
 import org.martus.common.HQKeys;
 import org.martus.common.bulletin.AttachmentProxy;
 import org.martus.common.bulletin.Bulletin;
-import org.martus.common.crypto.MartusCrypto;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -121,7 +120,9 @@ public class BulletinActivity extends Activity implements BulletinSender{
         filePath = intent.getStringExtra(EXTRA_ATTACHMENT);
 
         try {
+
             if (null != filePath) {
+                //attachment passed directly from another app via EXTRA_ATTACHMENT parameter
                 attachment = new File(filePath);
             } else {
                 ClipData clipData = intent.getClipData();
@@ -135,10 +136,11 @@ public class BulletinActivity extends Activity implements BulletinSender{
 
                         File outputDir = getCacheDir();
                         if ("file".equalsIgnoreCase(scheme)) {
+                            //attachment passed via SEND intent (most likely from external file chooser)
                             filePath = uri.getPath();
                             attachment = new File(filePath);
                         } else {
-
+                            //attachment passed as media content
                             attachment = File.createTempFile("tmp_", ".jpg", outputDir);
                             // Ask for a stream of the desired type.
                             AssetFileDescriptor descr = getContentResolver()
