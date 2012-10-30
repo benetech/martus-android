@@ -13,6 +13,7 @@ import org.martus.common.HQKey;
 import org.martus.common.HQKeys;
 import org.martus.common.bulletin.AttachmentProxy;
 import org.martus.common.bulletin.Bulletin;
+import org.martus.common.crypto.MartusCrypto;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -114,66 +115,63 @@ public class BulletinActivity extends Activity implements BulletinSender{
 
     private void addAttachmentFromIntent() {
         String filePath;
+        File attachment = null;
+        FileInputStream inputStream = null;
         Intent intent = getIntent();
-
         filePath = intent.getStringExtra(EXTRA_ATTACHMENT);
-        try {
 
-            File attachment = new File(filePath);
-            AttachmentProxy attProxy = new AttachmentProxy(attachment);
-            bulletin.addPublicAttachment(attProxy);
-            return;
+        try {
+            if (null != filePath) {
+                attachment = new File(filePath);
+            } else {
+                ClipData clipData = intent.getClipData();
+                if (null != clipData) {
+
+                    ClipData.Item item = clipData.getItemAt(0);
+                    Uri uri = item.getUri();
+                    if (uri != null) {
+
+                        String scheme = uri.getScheme();
+
+                        File outputDir = getCacheDir();
+                        if ("file".equalsIgnoreCase(scheme)) {
+                            filePath = uri.getPath();
+                            attachment = new File(filePath);
+                        } else {
+
+                            attachment = File.createTempFile("tmp_", ".jpg", outputDir);
+                            // Ask for a stream of the desired type.
+                            AssetFileDescriptor descr = getContentResolver()
+                                    .openTypedAssetFileDescriptor(uri, "image/*", null);
+                            inputStream = descr.createInputStream();
+
+                            BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(attachment));
+                            int read;
+                            byte bytes[] = new byte[1024];
+
+                            while ((read = inputStream.read(bytes)) != -1) {
+                                outputStream.write(bytes, 0, read);
+                            }
+
+                            outputStream.flush();
+                            outputStream.close();
+                        }
+
+                    }
+                }
+            }
+            if (null != attachment) {
+                AttachmentProxy attProxy = new AttachmentProxy(attachment);
+                bulletin.addPublicAttachment(attProxy);
+            }
         } catch (Exception e) {
             Log.e(AppConfig.LOG_LABEL, "problem adding attachment to bulletin", e);
-        }
-
-
-        ClipData clipData = intent.getClipData();
-        if (null != clipData) {
-
-            ClipData.Item item = clipData.getItemAt(0);
-            Uri uri = item.getUri();
-            if (uri != null) {
-
-                String scheme = uri.getScheme();
-                FileInputStream inputStream = null;
-                File attachment;
-
+            MartusActivity.showMessage(this, "problem adding attachment to bulletin", "Error");
+        } finally {
+            if (inputStream != null) {
                 try {
-                    File outputDir = getCacheDir();
-                    if ("file".equalsIgnoreCase(scheme)) {
-                        filePath = uri.getPath();
-                        attachment = new File(filePath);
-                    } else {
-
-                        attachment = File.createTempFile("tmp_", ".jpg", outputDir);
-                        // Ask for a stream of the desired type.
-                        AssetFileDescriptor descr = getContentResolver()
-                                .openTypedAssetFileDescriptor(uri, "image/*", null);
-                        inputStream = descr.createInputStream();
-
-                        BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(attachment));
-                        int read;
-                        byte bytes[] = new byte[1024];
-
-                        while ((read = inputStream.read(bytes)) != -1) {
-                            outputStream.write(bytes, 0, read);
-                        }
-
-                        outputStream.flush();
-                        outputStream.close();
-                    }
-                    AttachmentProxy attProxy = new AttachmentProxy(attachment);
-                    bulletin.addPublicAttachment(attProxy);
-                } catch (Exception e) {
-                    Log.e(AppConfig.LOG_LABEL, "problem adding attachment to bulletin", e);
-                } finally {
-                    if (inputStream != null) {
-                        try {
-                            inputStream.close();
-                        } catch (IOException e) {
-                        }
-                    }
+                    inputStream.close();
+                } catch (IOException e) {
                 }
             }
         }
