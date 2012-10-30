@@ -36,7 +36,7 @@ import android.widget.EditText;
 public class BulletinActivity extends Activity implements BulletinSender{
 
     final int ACTIVITY_CHOOSE_ATTACHMENT = 2;
-    public static final String EXTRA_ATTACHMENT = "filePath";
+    public static final String EXTRA_ATTACHMENT = "org.martus.android.filePath";
 
     private SharedPreferences mySettings;
     private MobileBulletinStore store;
@@ -113,7 +113,21 @@ public class BulletinActivity extends Activity implements BulletinSender{
     }
 
     private void addAttachmentFromIntent() {
+        String filePath;
         Intent intent = getIntent();
+
+        filePath = intent.getStringExtra(EXTRA_ATTACHMENT);
+        try {
+
+            File attachment = new File(filePath);
+            AttachmentProxy attProxy = new AttachmentProxy(attachment);
+            bulletin.addPublicAttachment(attProxy);
+            return;
+        } catch (Exception e) {
+            Log.e(AppConfig.LOG_LABEL, "problem adding attachment to bulletin", e);
+        }
+
+
         ClipData clipData = intent.getClipData();
         if (null != clipData) {
 
@@ -128,7 +142,7 @@ public class BulletinActivity extends Activity implements BulletinSender{
                 try {
                     File outputDir = getCacheDir();
                     if ("file".equalsIgnoreCase(scheme)) {
-                        String filePath = uri.getPath();
+                        filePath = uri.getPath();
                         attachment = new File(filePath);
                     } else {
 

@@ -213,6 +213,17 @@ public class MartusActivity extends Activity {
         }
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+
+        String filePath = intent.getStringExtra(BulletinActivity.EXTRA_ATTACHMENT);
+        if (null != filePath) {
+            Intent bulletinIntent = new Intent(MartusActivity.this, BulletinActivity.class);
+            bulletinIntent.putExtra(BulletinActivity.EXTRA_ATTACHMENT, filePath);
+            startActivity(bulletinIntent);
+        }
+    }
+
     private void updateSettings() {
         SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
         serverIP = mySettings.getString(SettingsActivity.KEY_SERVER_IP, defaultServerIP);
