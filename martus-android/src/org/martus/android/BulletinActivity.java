@@ -219,7 +219,16 @@ public class BulletinActivity extends Activity implements BulletinSender{
     }
 
     private void sendBulletin(Bulletin bulletin)  {
-        dialog = ProgressDialog.show(this, "Sending...", "", true, false);
+
+        dialog = new ProgressDialog(this);
+        dialog.setTitle("Sending...");
+        dialog.setIndeterminate(false);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setMax(100);
+        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        dialog.setProgress(0);
+        dialog.show();
+
 
         String author = mySettings.getString(SettingsActivity.KEY_AUTHOR, "Unknown author");
         bulletin.set(Bulletin.TAGAUTHOR, author);
@@ -228,7 +237,7 @@ public class BulletinActivity extends Activity implements BulletinSender{
         bulletin.set(Bulletin.TAGTITLE, title);
         bulletin.set(Bulletin.TAGSUMMARY, summary);
 
-        final AsyncTask<Object, Void, String> uploadTask = new UploadBulletinTask(getApplicationContext(), bulletin, this);
+        final AsyncTask<Object, Integer, String> uploadTask = new UploadBulletinTask(getApplicationContext(), bulletin, this);
         uploadTask.execute(bulletin.getUniversalId(), getCacheDir(), gateway, AppConfig.getInstance().getCrypto());
     }
 
@@ -257,5 +266,10 @@ public class BulletinActivity extends Activity implements BulletinSender{
     public void onSent() {
         dialog.dismiss();
         finish();
+    }
+
+    @Override
+    public void onProgressUpdate(int progress) {
+        dialog.setProgress(progress);
     }
 }

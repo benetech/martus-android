@@ -31,10 +31,25 @@ public class NotificationHelper {
 
         //create the content which is shown in the notification pulldown
         final Notification notification = new Notification.Builder(mContext)
-                 .setContentTitle(title)
+                 .setContentTitle(mTitle)
                  .setContentText(subject)
                  .setSmallIcon(R.drawable.stat_notify_sync)
                  .setOngoing(true)
+                 .setProgress(10000, 0, false)
+                 .build();
+
+        //show the notification
+        mNotificationManager.notify(mNotificationId, notification);
+    }
+
+    public void updateProgress(String subject, String title, int progress) {
+        //create the content which is shown in the notification pulldown
+        final Notification notification = new Notification.Builder(mContext)
+                 .setContentTitle(mTitle)
+                 .setContentText(subject)
+                 .setSmallIcon(R.drawable.stat_notify_sync)
+                 .setOngoing(true)
+                 .setProgress(100, progress, false)
                  .build();
 
         //show the notification

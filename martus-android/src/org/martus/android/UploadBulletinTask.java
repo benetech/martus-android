@@ -18,17 +18,15 @@ import org.martus.common.packet.Packet;
 import org.martus.common.packet.UniversalId;
 import org.martus.util.StreamableBase64;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.TextView;
 
 /**
  * @author roms
  *         Date: 10/3/12
  */
-public class UploadBulletinTask extends AsyncTask<Object, Void, String> {
+public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
 
     private NotificationHelper mNotificationHelper;
     private Bulletin bulletin;
@@ -87,18 +85,25 @@ public class UploadBulletinTask extends AsyncTask<Object, Void, String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        mNotificationHelper.createNotification("Uploading bulletin", bulletin.get(Bulletin.TAGTITLE));
-        Log.e("martus","!!!!!! PreExecute   !!!!!!!");
+        mNotificationHelper.createNotification("Starting send", bulletin.get(Bulletin.TAGTITLE));
     }
 
     @Override
     protected void onPostExecute(String s) {
-        Log.e("martus", "!!!!!!!! PostExecute   !!!!!!!!!!");
         mNotificationHelper.completed(s, bulletin.get(Bulletin.TAGTITLE));
         if (null != sender) {
             sender.onSent();
         }
         super.onPostExecute(s);
+    }
+
+    @Override
+    protected void onProgressUpdate(Integer... progress) {
+        super.onProgressUpdate(progress);
+        if (null != sender) {
+            sender.onProgressUpdate(progress[0]);
+            mNotificationHelper.updateProgress("Sending ...",  bulletin.get(Bulletin.TAGTITLE), progress[0]);
+        }
     }
 
     private String uploadBulletinZipFile(UniversalId uid, File tempFile, ClientSideNetworkGateway gateway, MartusCrypto crypto)
@@ -128,6 +133,8 @@ public class UploadBulletinTask extends AsyncTask<Object, Void, String> {
             if(!result.equals(NetworkInterfaceConstants.CHUNK_OK) && !result.equals(NetworkInterfaceConstants.OK))
                 break;
             offset += chunkSize;
+
+            publishProgress(offset * 100 / totalSize);
         }
         inputStream.close();
         return result;
