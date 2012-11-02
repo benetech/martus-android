@@ -171,6 +171,10 @@ public class MartusJceKeyPair extends MartusKeyPair
 		{
 			//System.out.println("MartusSecurity.extractPublicKey: " + e);
 		}
+        catch(IllegalArgumentException expectedForInvalidKey)
+        {
+        	//System.out.println("MartusSecurity.extractPublicKey: " + e);
+        }
 	
 		return null;
 	}

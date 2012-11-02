@@ -31,11 +31,11 @@ import java.io.ObjectStreamConstants;
 import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 
-import org.spongycastle.jce.provider.JCERSAPrivateCrtKey;
-import org.spongycastle.jce.provider.JCERSAPublicKey;
 
 public class MartusKeyPairLoader
 {
@@ -350,8 +350,8 @@ public class MartusKeyPairLoader
 		RSAPublicKeySpec publicSpec = new RSAPublicKeySpec(modulus, publicExponent);
 		RSAPrivateCrtKeySpec privateSpec = new RSAPrivateCrtKeySpec(modulus, publicExponent, privateExponent, primeP, primeQ, primeExponentP, primeExponentQ, crtCoefficient);
 		KeyFactory factory = KeyFactory.getInstance("RSA", "BC");
-		JCERSAPublicKey publicKey = (JCERSAPublicKey)factory.generatePublic(publicSpec);
-		JCERSAPrivateCrtKey privateCRTKey = (JCERSAPrivateCrtKey)factory.generatePrivate(privateSpec);
+		PublicKey publicKey = factory.generatePublic(publicSpec);
+		PrivateKey privateCRTKey = factory.generatePrivate(privateSpec);
 		
 		KeyPair keyPair = new KeyPair(publicKey, privateCRTKey);
 		return keyPair;

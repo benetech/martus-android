@@ -31,7 +31,7 @@ import java.io.ObjectStreamConstants;
 import java.math.BigInteger;
 import java.security.KeyPair;
 
-import org.spongycastle.jce.provider.JCERSAPrivateCrtKey;
+import org.spongycastle.jcajce.provider.asymmetric.rsa.BCRSAPrivateCrtKey;
 
 public class MartusKeyPairSaver
 {
@@ -47,7 +47,7 @@ public class MartusKeyPairSaver
 	
 	void writeKeyPair(DataOutputStream out, KeyPair keyPair) throws Exception
 	{
-        org.spongycastle.jcajce.provider.asymmetric.rsa.BCRSAPrivateCrtKey privateKey = (org.spongycastle.jcajce.provider.asymmetric.rsa.BCRSAPrivateCrtKey)keyPair.getPrivate();
+        BCRSAPrivateCrtKey privateKey = (BCRSAPrivateCrtKey)keyPair.getPrivate();
 		nextHandle = MartusKeyPairDataConstants.INITIAL_HANDLE;
 		
 		out.writeShort(ObjectStreamConstants.STREAM_MAGIC);
@@ -68,7 +68,7 @@ public class MartusKeyPairSaver
 			writeClassFooter(out);
 		}
 	
-		// JCERSAPrivateCrtKey
+		// BCRSAPrivateCrtKey
 		{
 			writeObjectClassHeader(out, MartusKeyPairDataConstants.BCE_JCE_PROVIDER_JCERSAPRIVATE_CRT_KEY_CLASS_NAME, MartusKeyPairDataConstants.BCE_JCE_RSA_PRIVATE_KEY_CLASS_UID);
 
