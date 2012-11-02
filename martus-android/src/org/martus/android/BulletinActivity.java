@@ -37,6 +37,9 @@ public class BulletinActivity extends Activity implements BulletinSender{
 
     final int ACTIVITY_CHOOSE_ATTACHMENT = 2;
     public static final String EXTRA_ATTACHMENT = "org.martus.android.filePath";
+    public static final String EXTRA_ACCOUNT_ID = "org.martus.android.accountId";
+    public static final String EXTRA_LOCAL_ID = "org.martus.android.localId";
+    public static final String EXTRA_BULLETIN_TITLE = "org.martus.android.title";
 
     private SharedPreferences mySettings;
     private MobileBulletinStore store;
@@ -49,6 +52,7 @@ public class BulletinActivity extends Activity implements BulletinSender{
     private EditText titleText;
     private EditText summaryText;
     private ProgressDialog dialog;
+    UploadIntentService uploadService;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,7 +65,7 @@ public class BulletinActivity extends Activity implements BulletinSender{
         store = AppConfig.getInstance().getStore();
         updateSettings();
         gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
-
+        uploadService = new UploadIntentService(gateway, AppConfig.getInstance().getCrypto());
 
         if (null == bulletin) {
             try {
@@ -220,6 +224,9 @@ public class BulletinActivity extends Activity implements BulletinSender{
 
     private void sendBulletin(Bulletin bulletin)  {
 
+        //todo: zip bulletin first
+        // then send
+
         dialog = new ProgressDialog(this);
         dialog.setTitle("Sending...");
         dialog.setIndeterminate(false);
@@ -236,6 +243,9 @@ public class BulletinActivity extends Activity implements BulletinSender{
         String summary = summaryText.getText().toString().trim();
         bulletin.set(Bulletin.TAGTITLE, title);
         bulletin.set(Bulletin.TAGSUMMARY, summary);
+
+        //final AsyncTask<Object, Integer, Integer> zipTask = new ZipBulletinTask(bulletin, this);
+        //zipTask.execute(getCacheDir(), AppConfig.getInstance().getCrypto());
 
         final AsyncTask<Object, Integer, String> uploadTask = new UploadBulletinTask(getApplicationContext(), bulletin, this);
         uploadTask.execute(bulletin.getUniversalId(), getCacheDir(), gateway, AppConfig.getInstance().getCrypto());
@@ -266,6 +276,12 @@ public class BulletinActivity extends Activity implements BulletinSender{
     public void onSent() {
         dialog.dismiss();
         finish();
+    }
+
+    @Override
+    public void onZipped() {
+        dialog.dismiss();
+        uploadService.startService(null);
     }
 
     @Override

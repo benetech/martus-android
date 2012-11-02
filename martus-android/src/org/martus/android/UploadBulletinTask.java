@@ -47,10 +47,13 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
         final MartusSecurity signer = (MartusSecurity)params[3];
 
         String result = null;
-        final BulletinStreamer bs = new BulletinStreamer(bulletin);
-        final File file = new File(cacheDir, "toUpload.zip");
+        File file = null;
+        File tmpBulletin = null;
 
         try {
+            tmpBulletin = File.createTempFile("tmp_", ".bull", cacheDir);
+            final BulletinStreamer bs = new BulletinStreamer(bulletin, tmpBulletin);
+            file = File.createTempFile("tmp_upload_", ".zip", cacheDir);
             BulletinZipUtilities.exportBulletinPacketsFromDatabaseToZipFile(bs, bulletin.getDatabaseKey(), file, signer);
             result = uploadBulletinZipFile(uid, file, gateway, signer);
         } catch (MartusUtilities.FileTooLargeException e) {
@@ -76,21 +79,24 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
             Log.e("martus", "problem serializing bulletin to zip", e);
         } catch (Database.RecordHiddenException e) {
             Log.e("martus", "problem serializing bulletin to zip", e);
+        } finally {
+            if (null != file) file.delete();
+            if (null != tmpBulletin) tmpBulletin.delete();
         }
 
-        //file.delete();
+
         return result;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        mNotificationHelper.createNotification("Starting send", bulletin.get(Bulletin.TAGTITLE));
+        mNotificationHelper.createNotification("Martus - " + bulletin.get(Bulletin.TAGTITLE), "Starting send ...");
     }
 
     @Override
     protected void onPostExecute(String s) {
-        mNotificationHelper.completed(s, bulletin.get(Bulletin.TAGTITLE));
+        mNotificationHelper.completed(s);
         if (null != sender) {
             sender.onSent();
         }
@@ -102,7 +108,7 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
         super.onProgressUpdate(progress);
         if (null != sender) {
             sender.onProgressUpdate(progress[0]);
-            mNotificationHelper.updateProgress("Sending ...",  bulletin.get(Bulletin.TAGTITLE), progress[0]);
+            mNotificationHelper.updateProgress("Sending ...",   progress[0]);
         }
     }
 

@@ -8,4 +8,5 @@ public interface BulletinSender {
 
     public void onSent();
     public void onProgressUpdate(int progress);
+    public void onZipped();
 }
