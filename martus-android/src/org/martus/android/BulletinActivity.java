@@ -20,10 +20,12 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -111,11 +113,6 @@ public class BulletinActivity extends Activity implements BulletinSender{
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
     private void addAttachmentFromIntent() {
         String filePath;
         File attachment = null;
@@ -138,17 +135,17 @@ public class BulletinActivity extends Activity implements BulletinSender{
 
                         String scheme = uri.getScheme();
 
-                        File outputDir = getCacheDir();
                         if ("file".equalsIgnoreCase(scheme)) {
                             //attachment passed via SEND intent (most likely from external file chooser)
                             filePath = uri.getPath();
                             attachment = new File(filePath);
                         } else {
                             //attachment passed as media content
-                            attachment = File.createTempFile("tmp_", ".jpg", outputDir);
+                            String fileName = getFileNameFromUri(uri);
+                            attachment = new File(getCacheDir(), fileName);
                             // Ask for a stream of the desired type.
                             AssetFileDescriptor descr = getContentResolver()
-                                    .openTypedAssetFileDescriptor(uri, "image/*", null);
+                                    .openTypedAssetFileDescriptor(uri, "*/*", null);
                             inputStream = descr.createInputStream();
 
                             BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(attachment));
@@ -287,5 +284,16 @@ public class BulletinActivity extends Activity implements BulletinSender{
     @Override
     public void onProgressUpdate(int progress) {
         dialog.setProgress(progress);
+    }
+
+    private String getFileNameFromUri(Uri uri) {
+        Cursor cursor = managedQuery(uri,
+                                   new String[] { MediaStore.Images.Media.DATA },
+                                   null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+
+        String path =  cursor.getString(column_index);
+        return new File(path).getName();
     }
 }
