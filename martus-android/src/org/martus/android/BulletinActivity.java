@@ -225,12 +225,9 @@ public class BulletinActivity extends Activity implements BulletinSender{
         // then send
 
         dialog = new ProgressDialog(this);
-        dialog.setTitle("Sending...");
-        dialog.setIndeterminate(false);
+        dialog.setTitle("Packaging...");
+        dialog.setIndeterminate(true);
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setMax(100);
-        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        dialog.setProgress(0);
         dialog.show();
 
 
@@ -241,11 +238,10 @@ public class BulletinActivity extends Activity implements BulletinSender{
         bulletin.set(Bulletin.TAGTITLE, title);
         bulletin.set(Bulletin.TAGSUMMARY, summary);
 
-        //final AsyncTask<Object, Integer, Integer> zipTask = new ZipBulletinTask(bulletin, this);
-        //zipTask.execute(getCacheDir(), AppConfig.getInstance().getCrypto());
+        final AsyncTask<Object, Integer, File> zipTask = new ZipBulletinTask(bulletin, this);
+        zipTask.execute(getCacheDir(), AppConfig.getInstance().getCrypto());
 
-        final AsyncTask<Object, Integer, String> uploadTask = new UploadBulletinTask(getApplicationContext(), bulletin, this);
-        uploadTask.execute(bulletin.getUniversalId(), getCacheDir(), gateway, AppConfig.getInstance().getCrypto());
+
     }
 
     private Bulletin createBulletin() throws Exception
@@ -276,9 +272,22 @@ public class BulletinActivity extends Activity implements BulletinSender{
     }
 
     @Override
-    public void onZipped() {
+    public void onZipped(File zippedFile) {
         dialog.dismiss();
-        uploadService.startService(null);
+        dialog = new ProgressDialog(this);
+        dialog.setTitle("Sending...");
+        dialog.setIndeterminate(false);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setMax(100);
+        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        dialog.setProgress(0);
+        dialog.show();
+
+        //uploadService.startService(null);
+        final AsyncTask<Object, Integer, String> uploadTask = new UploadBulletinTask(getApplicationContext(), bulletin, this);
+        uploadTask.execute(bulletin.getUniversalId(), zippedFile, gateway, AppConfig.getInstance().getCrypto());
+
+
     }
 
     @Override

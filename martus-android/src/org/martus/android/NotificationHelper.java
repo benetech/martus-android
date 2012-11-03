@@ -1,6 +1,5 @@
 package org.martus.android;
 
-import android.R;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -33,7 +32,7 @@ public class NotificationHelper {
         final Notification notification = new Notification.Builder(mContext)
                  .setContentTitle(mTitle)
                  .setContentText(subject)
-                 .setSmallIcon(R.drawable.stat_notify_sync)
+                 .setSmallIcon(android.R.drawable.stat_notify_sync)
                  .setOngoing(true)
                  .setProgress(10000, 0, false)
                  .build();
@@ -47,7 +46,7 @@ public class NotificationHelper {
         final Notification notification = new Notification.Builder(mContext)
                  .setContentTitle(mTitle)
                  .setContentText(subject)
-                 .setSmallIcon(R.drawable.stat_notify_sync)
+                 .setSmallIcon(android.R.drawable.stat_notify_sync)
                  .setOngoing(true)
                  .setProgress(100, progress, false)
                  .build();
@@ -62,9 +61,9 @@ public class NotificationHelper {
      */
     public void completed(String resultMsg)    {
         //update notification to indicate completion
-        int icon = R.drawable.stat_sys_download_done;
+        int icon = android.R.drawable.stat_sys_download_done;
         if (!resultMsg.equals("ok")) {
-            icon = R.drawable.stat_notify_error;
+            icon = android.R.drawable.stat_notify_error;
         }
         final Notification notification = new Notification.Builder(mContext)
                 .setContentTitle(mTitle)

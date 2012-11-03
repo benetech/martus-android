@@ -7,14 +7,10 @@ import java.io.IOException;
 import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.common.MartusUtilities;
 import org.martus.common.bulletin.Bulletin;
-import org.martus.common.bulletin.BulletinZipUtilities;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
-import org.martus.common.database.BulletinStreamer;
-import org.martus.common.database.Database;
 import org.martus.common.network.NetworkInterfaceConstants;
 import org.martus.common.network.NetworkResponse;
-import org.martus.common.packet.Packet;
 import org.martus.common.packet.UniversalId;
 import org.martus.util.StreamableBase64;
 
@@ -42,20 +38,14 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
     protected String doInBackground(Object... params) {
 
         final UniversalId uid = (UniversalId)params[0];
-        final File cacheDir = (File)params[1];
+        final File zippedFile = (File)params[1];
         final ClientSideNetworkGateway gateway = (ClientSideNetworkGateway)params[2];
         final MartusSecurity signer = (MartusSecurity)params[3];
 
         String result = null;
-        File file = null;
-        File tmpBulletin = null;
 
         try {
-            tmpBulletin = File.createTempFile("tmp_", ".bull", cacheDir);
-            final BulletinStreamer bs = new BulletinStreamer(bulletin, tmpBulletin);
-            file = File.createTempFile("tmp_upload_", ".zip", cacheDir);
-            BulletinZipUtilities.exportBulletinPacketsFromDatabaseToZipFile(bs, bulletin.getDatabaseKey(), file, signer);
-            result = uploadBulletinZipFile(uid, file, gateway, signer);
+            result = uploadBulletinZipFile(uid, zippedFile, gateway, signer);
         } catch (MartusUtilities.FileTooLargeException e) {
             Log.e("martus", "file too large to upload", e);
             result = e.getMessage();
@@ -65,23 +55,8 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
         } catch (MartusCrypto.MartusSignatureException e) {
             Log.e("martus", "crypto problem uploading file", e);
             result = e.getMessage();
-        } catch (Packet.WrongPacketTypeException e) {
-            Log.e("martus", "problem serializing bulletin to zip", e);
-        } catch (MartusCrypto.DecryptionException e) {
-            Log.e("martus", "problem serializing bulletin to zip", e);
-        } catch (Packet.SignatureVerificationException e) {
-            Log.e("martus", "problem serializing bulletin to zip", e);
-        } catch (MartusCrypto.NoKeyPairException e) {
-            Log.e("martus", "problem serializing bulletin to zip", e);
-        } catch (Packet.InvalidPacketException e) {
-            Log.e("martus", "problem serializing bulletin to zip", e);
-        } catch (MartusCrypto.CryptoException e) {
-            Log.e("martus", "problem serializing bulletin to zip", e);
-        } catch (Database.RecordHiddenException e) {
-            Log.e("martus", "problem serializing bulletin to zip", e);
         } finally {
-            if (null != file) file.delete();
-            if (null != tmpBulletin) tmpBulletin.delete();
+            if (null != zippedFile) zippedFile.delete();
         }
 
 
