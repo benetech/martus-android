@@ -44,9 +44,10 @@ public class ZipBulletinTask extends AsyncTask<Object, Integer, File> {
 
         File tmpBulletin = null;
 
-        final File file = new File(cacheDir, "toUpload.zip");
+        File file = null;
 
         try {
+            file = File.createTempFile("tmp_send_", ".zip", cacheDir);
             tmpBulletin = File.createTempFile("tmp_", ".bull", cacheDir);
             final BulletinStreamer bs = new BulletinStreamer(bulletin, tmpBulletin);
             BulletinZipUtilities.exportBulletinPacketsFromDatabaseToZipFile(bs, bulletin.getDatabaseKey(), file, signer);
