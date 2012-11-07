@@ -3,6 +3,7 @@ package org.martus.android;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.support.v4.app.NotificationCompat;
 
 /**
  * @author roms
@@ -29,7 +30,7 @@ public class NotificationHelper {
         mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
         //create the content which is shown in the notification pulldown
-        final Notification notification = new Notification.Builder(mContext)
+        final Notification notification = new NotificationCompat.Builder(mContext)
                  .setContentTitle(mTitle)
                  .setContentText(subject)
                  .setSmallIcon(android.R.drawable.stat_notify_sync)
@@ -43,7 +44,7 @@ public class NotificationHelper {
 
     public void updateProgress(String subject, int progress) {
         //create the content which is shown in the notification pulldown
-        final Notification notification = new Notification.Builder(mContext)
+        final Notification notification = new NotificationCompat.Builder(mContext)
                  .setContentTitle(mTitle)
                  .setContentText(subject)
                  .setSmallIcon(android.R.drawable.stat_notify_sync)
@@ -65,7 +66,7 @@ public class NotificationHelper {
         if (!resultMsg.equals("ok")) {
             icon = android.R.drawable.stat_notify_error;
         }
-        final Notification notification = new Notification.Builder(mContext)
+        final Notification notification = new NotificationCompat.Builder(mContext)
                 .setContentTitle(mTitle)
                 .setContentText("Sent with result: " + resultMsg)
                 .setSmallIcon(icon)

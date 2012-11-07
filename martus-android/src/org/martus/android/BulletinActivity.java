@@ -23,6 +23,7 @@ import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -119,6 +120,7 @@ public class BulletinActivity extends Activity implements BulletinSender{
         FileInputStream inputStream = null;
         Intent intent = getIntent();
         filePath = intent.getStringExtra(EXTRA_ATTACHMENT);
+        Uri uri = null;
 
         try {
 
@@ -126,41 +128,50 @@ public class BulletinActivity extends Activity implements BulletinSender{
                 //attachment passed directly from another app via EXTRA_ATTACHMENT parameter
                 attachment = new File(filePath);
             } else {
-                ClipData clipData = intent.getClipData();
-                if (null != clipData) {
 
-                    ClipData.Item item = clipData.getItemAt(0);
-                    Uri uri = item.getUri();
-                    if (uri != null) {
+                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                    ClipData clipData = intent.getClipData();
+                    if (null != clipData) {
+                        ClipData.Item item = clipData.getItemAt(0);
+                        uri = item.getUri();
+                    }
+                } else {
+                    uri = intent.getData();
+                    Bundle bundle = intent.getExtras();
+                    if (bundle.containsKey(Intent.EXTRA_STREAM)) {
+                        uri = (Uri)bundle.get(Intent.EXTRA_STREAM);
+                    }
+                }
 
-                        String scheme = uri.getScheme();
+                if (uri != null) {
 
-                        if ("file".equalsIgnoreCase(scheme)) {
-                            //attachment passed via SEND intent (most likely from external file chooser)
-                            filePath = uri.getPath();
-                            attachment = new File(filePath);
-                        } else {
-                            //attachment passed as media content
-                            String fileName = getFileNameFromUri(uri);
-                            attachment = new File(getCacheDir(), fileName);
-                            // Ask for a stream of the desired type.
-                            AssetFileDescriptor descr = getContentResolver()
-                                    .openTypedAssetFileDescriptor(uri, "*/*", null);
-                            inputStream = descr.createInputStream();
+                    String scheme = uri.getScheme();
 
-                            BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(attachment));
-                            int read;
-                            byte bytes[] = new byte[1024];
+                    if ("file".equalsIgnoreCase(scheme)) {
+                        //attachment passed via SEND intent (most likely from external file chooser)
+                        filePath = uri.getPath();
+                        attachment = new File(filePath);
+                    } else {
+                        //attachment passed as media content
+                        String fileName = getFileNameFromUri(uri);
+                        attachment = new File(getCacheDir(), fileName);
+                        // Ask for a stream of the desired type.
+                        AssetFileDescriptor descr = getContentResolver()
+                                .openTypedAssetFileDescriptor(uri, "*/*", null);
+                        inputStream = descr.createInputStream();
 
-                            while ((read = inputStream.read(bytes)) != -1) {
-                                outputStream.write(bytes, 0, read);
-                            }
+                        BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(attachment));
+                        int read;
+                        byte bytes[] = new byte[1024];
 
-                            outputStream.flush();
-                            outputStream.close();
+                        while ((read = inputStream.read(bytes)) != -1) {
+                            outputStream.write(bytes, 0, read);
                         }
 
+                        outputStream.flush();
+                        outputStream.close();
                     }
+
                 }
             }
             if (null != attachment) {
