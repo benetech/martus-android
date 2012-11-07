@@ -31,7 +31,6 @@ import junit.framework.TestSuite;
 
 import org.martus.common.bulletin.TestAttachmentProxy;
 import org.martus.common.bulletin.TestBulletin;
-import org.martus.common.bulletin.TestBulletinHtmlGenerator;
 import org.martus.common.bulletin.TestBulletinLoader;
 import org.martus.common.bulletin.TestBulletinZipImporter;
 import org.martus.common.bulletin.TestBulletinZipUtilities;
@@ -39,18 +38,11 @@ import org.martus.common.bulletinstore.TestBulletinStore;
 import org.martus.common.bulletinstore.TestBulletinStoreCache;
 import org.martus.common.bulletinstore.TestLeafNodeCache;
 import org.martus.common.field.TestMartusDropdownField;
-import org.martus.common.field.TestMartusField;
-import org.martus.common.field.TestMartusSearchableGridColumnField;
 import org.martus.common.fieldspec.TestCustomDropDownFieldSpec;
 import org.martus.common.fieldspec.TestCustomFieldSpecValidator;
 import org.martus.common.fieldspec.TestCustomFieldTemplate;
-import org.martus.common.fieldspec.TestDateFieldSpec;
-import org.martus.common.fieldspec.TestDateRangeFieldSpec;
-import org.martus.common.fieldspec.TestDropDownFieldSpec;
 import org.martus.common.fieldspec.TestFieldSpec;
 import org.martus.common.fieldspec.TestMiniFieldSpec;
-import org.martus.common.utilities.TestDateUtilities;
-import org.martus.common.utilities.TestMartusFlexidate;
 
 
 public class TestCommon
@@ -79,7 +71,6 @@ public class TestCommon
 		suite.addTest(new TestSuite(TestBulletin.class));
 		suite.addTest(new TestSuite(TestBulletinHeaderPacket.class));
 		suite.addTest(new TestSuite(TestBulletinHistory.class));
-		suite.addTest(new TestSuite(TestBulletinHtmlGenerator.class));
 		suite.addTest(new TestSuite(TestBulletinLoader.class));
 		suite.addTest(new TestSuite(TestBulletinStore.class));
 		suite.addTest(new TestSuite(TestBulletinStoreCache.class));
@@ -94,10 +85,6 @@ public class TestCommon
 		suite.addTest(new TestSuite(TestCustomFieldSpecValidator.class));
 		suite.addTest(new TestSuite(TestCustomFieldTemplate.class));
 		suite.addTest(new TestSuite(TestDatabaseKey.class));
-		suite.addTest(new TestSuite(TestDateFieldSpec.class));
-		suite.addTest(new TestSuite(TestDateRangeFieldSpec.class));
-		suite.addTest(new TestSuite(TestDateUtilities.class));
-		suite.addTest(new TestSuite(TestDropDownFieldSpec.class));
 		suite.addTest(new TestSuite(TestFieldDataPacket.class));
 		suite.addTest(new TestSuite(TestFieldSpec.class));
 		suite.addTest(new TestSuite(TestFileDatabase.class));
@@ -112,21 +99,16 @@ public class TestCommon
 		suite.addTest(new TestSuite(TestMagicWordEntry.class));
 		suite.addTest(new TestSuite(TestMagicWords.class));
 		suite.addTest(new TestSuite(TestMartusDropdownField.class));
-		suite.addTest(new TestSuite(TestMartusField.class));
-		suite.addTest(new TestSuite(TestMartusFlexidate.class));
 		suite.addTest(new TestSuite(TestMartusKeyPair.class));
-		suite.addTest(new TestSuite(TestMartusSearchableGridColumnField.class));
 		suite.addTest(new TestSuite(TestMartusSecurity.class));
 		suite.addTest(new TestSuite(TestMartusUtilities.class));
 		suite.addTest(new TestSuite(TestMartusXml.class));
 		suite.addTest(new TestSuite(TestMessageFieldSpec.class));
 		suite.addTest(new TestSuite(TestMiniFieldSpec.class));
-		suite.addTest(new TestSuite(TestMiniLocalization.class));
 		suite.addTest(new TestSuite(TestPacket.class));
 		suite.addTest(new TestSuite(TestServerFileDatabase.class));
 		suite.addTest(new TestSuite(TestUnicodeFileReader.class));
 		suite.addTest(new TestSuite(TestUnicodeFileWriter.class));
-		suite.addTest(new TestSuite(TestUniversalId.class));
 		suite.addTest(new TestSuite(TestXmlWriterFilter.class));
 		suite.addTest(new TestSuite(TestZipEntryInputStream.class));
 
