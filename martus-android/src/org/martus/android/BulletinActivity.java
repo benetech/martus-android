@@ -16,14 +16,12 @@ import org.martus.common.bulletin.Bulletin;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ClipData;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -104,7 +102,7 @@ public class BulletinActivity extends Activity implements BulletinSender{
             public void onClick(View v) {
                 try {
 
-                    sendBulletin(bulletin);
+                    zipBulletin(bulletin);
                 } catch (Exception e) {
                     Log.e(AppConfig.LOG_LABEL, "Failed sending bulletin", e);
                     e.printStackTrace();
@@ -120,35 +118,26 @@ public class BulletinActivity extends Activity implements BulletinSender{
         FileInputStream inputStream = null;
         Intent intent = getIntent();
         filePath = intent.getStringExtra(EXTRA_ATTACHMENT);
-        Uri uri = null;
+        Uri uri;
 
         try {
-
             if (null != filePath) {
                 //attachment passed directly from another app via EXTRA_ATTACHMENT parameter
                 attachment = new File(filePath);
             } else {
-
-                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-                    ClipData clipData = intent.getClipData();
-                    if (null != clipData) {
-                        ClipData.Item item = clipData.getItemAt(0);
-                        uri = item.getUri();
-                    }
-                } else {
-                    uri = intent.getData();
-                    Bundle bundle = intent.getExtras();
+                //check if file uri was passed via Android Send
+                uri = intent.getData();
+                Bundle bundle = intent.getExtras();
+                if (null != bundle) {
                     if (bundle.containsKey(Intent.EXTRA_STREAM)) {
                         uri = (Uri)bundle.get(Intent.EXTRA_STREAM);
                     }
                 }
-
                 if (uri != null) {
-
                     String scheme = uri.getScheme();
 
                     if ("file".equalsIgnoreCase(scheme)) {
-                        //attachment passed via SEND intent (most likely from external file chooser)
+                        //uri is direct path of file
                         filePath = uri.getPath();
                         attachment = new File(filePath);
                     } else {
@@ -174,6 +163,8 @@ public class BulletinActivity extends Activity implements BulletinSender{
 
                 }
             }
+
+            //attachment was passed via intent
             if (null != attachment) {
                 AttachmentProxy attProxy = new AttachmentProxy(attachment);
                 bulletin.addPublicAttachment(attProxy);
@@ -230,17 +221,13 @@ public class BulletinActivity extends Activity implements BulletinSender{
 
     }
 
-    private void sendBulletin(Bulletin bulletin)  {
-
-        //todo: zip bulletin first
-        // then send
+    private void zipBulletin(Bulletin bulletin)  {
 
         dialog = new ProgressDialog(this);
         dialog.setTitle("Packaging...");
         dialog.setIndeterminate(true);
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
-
 
         String author = mySettings.getString(SettingsActivity.KEY_AUTHOR, "Unknown author");
         bulletin.set(Bulletin.TAGAUTHOR, author);
@@ -251,7 +238,6 @@ public class BulletinActivity extends Activity implements BulletinSender{
 
         final AsyncTask<Object, Integer, File> zipTask = new ZipBulletinTask(bulletin, this);
         zipTask.execute(getCacheDir(), AppConfig.getInstance().getCrypto());
-
 
     }
 
@@ -285,6 +271,10 @@ public class BulletinActivity extends Activity implements BulletinSender{
     @Override
     public void onZipped(File zippedFile) {
         dialog.dismiss();
+        sendZippedBulletin(zippedFile);
+    }
+
+    private void sendZippedBulletin(File zippedFile) {
         dialog = new ProgressDialog(this);
         dialog.setTitle("Sending...");
         dialog.setIndeterminate(false);
@@ -294,11 +284,8 @@ public class BulletinActivity extends Activity implements BulletinSender{
         dialog.setProgress(0);
         dialog.show();
 
-        //uploadService.startService(null);
         final AsyncTask<Object, Integer, String> uploadTask = new UploadBulletinTask(getApplicationContext(), bulletin, this);
         uploadTask.execute(bulletin.getUniversalId(), zippedFile, gateway, AppConfig.getInstance().getCrypto());
-
-
     }
 
     @Override
