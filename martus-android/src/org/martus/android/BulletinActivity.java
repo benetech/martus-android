@@ -53,7 +53,6 @@ public class BulletinActivity extends Activity implements BulletinSender{
     private EditText titleText;
     private EditText summaryText;
     private ProgressDialog dialog;
-    UploadIntentService uploadService;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,7 +65,6 @@ public class BulletinActivity extends Activity implements BulletinSender{
         store = AppConfig.getInstance().getStore();
         updateSettings();
         gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
-        uploadService = new UploadIntentService(gateway, AppConfig.getInstance().getCrypto());
 
         if (null == bulletin) {
             try {
