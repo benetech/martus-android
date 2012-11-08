@@ -12,6 +12,7 @@ import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.database.BulletinStreamer;
 import org.martus.common.database.Database;
+import org.martus.common.database.ReadableDatabase;
 import org.martus.common.network.NetworkInterfaceConstants;
 import org.martus.common.network.NetworkResponse;
 import org.martus.common.packet.Packet;
@@ -41,6 +42,7 @@ public class ZipBulletinTask extends AsyncTask<Object, Integer, File> {
 
         final File cacheDir = (File)params[0];
         final MartusSecurity signer = (MartusSecurity)params[1];
+        final ReadableDatabase db = (ReadableDatabase)params[2];
 
         File tmpBulletin = null;
 
@@ -48,9 +50,11 @@ public class ZipBulletinTask extends AsyncTask<Object, Integer, File> {
 
         try {
             file = File.createTempFile("tmp_send_", ".zip", cacheDir);
-            tmpBulletin = File.createTempFile("tmp_", ".bull", cacheDir);
-            final BulletinStreamer bs = new BulletinStreamer(bulletin, tmpBulletin);
-            BulletinZipUtilities.exportBulletinPacketsFromDatabaseToZipFile(bs, bulletin.getDatabaseKey(), file, signer);
+            //tmpBulletin = File.createTempFile("tmp_", ".bull", cacheDir);
+            //final BulletinStreamer bs = new BulletinStreamer(bulletin, tmpBulletin);
+            //BulletinZipUtilities.exportBulletinPacketsFromDatabaseToZipFile(bs, bulletin.getDatabaseKey(), file, signer);
+
+            BulletinZipUtilities.exportBulletinPacketsFromDatabaseToZipFile(db, bulletin.getDatabaseKey(), file, signer);
         } catch (Exception e) {
             Log.e("martus", "problem serializing bulletin to zip", e);
         }

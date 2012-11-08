@@ -21,7 +21,7 @@ public class MartusApplication extends Application {
     protected void initSingletons()
     {
         // Initialize the instance of MySingleton
-        AppConfig.initInstance();
+        AppConfig.initInstance(this.getCacheDir());
     }
 
     public void customAppMethod()

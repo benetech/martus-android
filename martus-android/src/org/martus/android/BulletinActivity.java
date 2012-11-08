@@ -7,12 +7,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Locale;
 
+import org.martus.client.bulletinstore.ClientBulletinStore;
 import org.martus.client.bulletinstore.MobileBulletinStore;
 import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.common.HQKey;
 import org.martus.common.HQKeys;
 import org.martus.common.bulletin.AttachmentProxy;
 import org.martus.common.bulletin.Bulletin;
+import org.martus.common.bulletinstore.BulletinStore;
+import org.martus.common.packet.UniversalId;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -43,7 +46,7 @@ public class BulletinActivity extends Activity implements BulletinSender{
     public static final String EXTRA_BULLETIN_TITLE = "org.martus.android.title";
 
     private SharedPreferences mySettings;
-    private MobileBulletinStore store;
+    private ClientBulletinStore store;
     private HQKey hqKey;
     private String serverPublicKey;
     private ClientSideNetworkGateway gateway = null;
@@ -233,9 +236,16 @@ public class BulletinActivity extends Activity implements BulletinSender{
         String summary = summaryText.getText().toString().trim();
         bulletin.set(Bulletin.TAGTITLE, title);
         bulletin.set(Bulletin.TAGSUMMARY, summary);
+        try {
+            store.saveBulletin(bulletin);
+        } catch (Exception e) {
+            Log.e(AppConfig.LOG_LABEL, "problem saving bulletin", e);
+            dialog.dismiss();
+            MartusActivity.showMessage(this, "problem saving bulletin, " + e.getMessage(), "Error");
+        }
 
         final AsyncTask<Object, Integer, File> zipTask = new ZipBulletinTask(bulletin, this);
-        zipTask.execute(getCacheDir(), AppConfig.getInstance().getCrypto());
+        zipTask.execute(getCacheDir(), AppConfig.getInstance().getCrypto(), store.getDatabase());
 
     }
 
@@ -282,7 +292,14 @@ public class BulletinActivity extends Activity implements BulletinSender{
         dialog.setProgress(0);
         dialog.show();
 
-        final AsyncTask<Object, Integer, String> uploadTask = new UploadBulletinTask(getApplicationContext(), bulletin, this);
+        String bulletinTitle = bulletin.get(Bulletin.TAGTITLE);
+        UniversalId bulletinId = bulletin.getUniversalId();
+        try {
+            store.destroyBulletin(bulletin);
+        } catch (IOException e) {
+            Log.e(AppConfig.LOG_LABEL, "problem destroying bulletin", e);
+        }
+        final AsyncTask<Object, Integer, String> uploadTask = new UploadBulletinTask(getApplicationContext(), bulletinTitle, this, bulletinId);
         uploadTask.execute(bulletin.getUniversalId(), zippedFile, gateway, AppConfig.getInstance().getCrypto());
     }
 

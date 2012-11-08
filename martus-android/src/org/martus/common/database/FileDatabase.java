@@ -100,11 +100,11 @@ abstract public class FileDatabase extends Database
 	{
 		accountMap = new TreeMap();
 		mTimeMap = new HashMap();
-		loadAccountMap();
+/*		loadAccountMap();
 		if(isAccountMapExpected(absoluteBaseDir) && !accountMapFile.exists())
 		{
 			throw new MissingAccountMapException();
-		}
+		}*/
 	}
 
 	public static boolean isAccountMapExpected(File baseDirectory)
@@ -645,7 +645,8 @@ abstract public class FileDatabase extends Database
 	synchronized public void loadAccountMap() throws FileVerificationException, MissingAccountMapSignatureException
 	{
 		accountMap.clear();
-		if(!accountMapFile.exists())
+        return;
+/*		if(!accountMapFile.exists())
 			return;
 		try
 		{
@@ -666,7 +667,7 @@ abstract public class FileDatabase extends Database
 		{
 			System.out.println("FileDatabase.loadMap: " + e);
 			return;
-		}
+		}*/
 	}
 
 	public void addParsedAccountEntry(Map m, String entry)

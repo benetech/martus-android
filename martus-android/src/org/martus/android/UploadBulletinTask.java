@@ -25,12 +25,12 @@ import android.util.Log;
 public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
 
     private NotificationHelper mNotificationHelper;
-    private Bulletin bulletin;
+    private String bulletinTitle;
     private BulletinSender sender;
 
-    public UploadBulletinTask(Context context, Bulletin bulletin, BulletinSender sender) {
-        mNotificationHelper = new NotificationHelper(context, bulletin.getUniversalId().hashCode());
-        this.bulletin = bulletin;
+    public UploadBulletinTask(Context context, String bulletinTitle, BulletinSender sender, UniversalId bulletinId) {
+        mNotificationHelper = new NotificationHelper(context, bulletinId.hashCode());
+        this.bulletinTitle = bulletinTitle;
         this.sender = sender;
     }
 
@@ -66,7 +66,7 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        mNotificationHelper.createNotification("Martus - " + bulletin.get(Bulletin.TAGTITLE), "Starting send ...");
+        mNotificationHelper.createNotification("Martus - " + bulletinTitle, "Starting send ...");
     }
 
     @Override

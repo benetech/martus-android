@@ -1,6 +1,10 @@
 package org.martus.android;
 
+import java.io.File;
+
+import org.martus.client.bulletinstore.ClientBulletinStore;
 import org.martus.client.bulletinstore.MobileBulletinStore;
+import org.martus.common.bulletinstore.BulletinStore;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.fieldspec.StandardFieldSpecs;
@@ -16,15 +20,15 @@ public class AppConfig {
     public static final String LOG_LABEL = "martus";
 
     private static AppConfig instance;
-    private MobileBulletinStore store;
+    private ClientBulletinStore store;
     private MartusSecurity martusCrypto;
 
     public String customVar;
 
-    public static void initInstance() {
+    public static void initInstance(File cacheDir) {
         if (instance == null) {
             // Create the instance
-            instance = new AppConfig();
+            instance = new AppConfig(cacheDir);
         }
     }
 
@@ -33,7 +37,7 @@ public class AppConfig {
         return instance;
     }
 
-    private AppConfig() {
+    private AppConfig(File cacheDir) {
         // Constructor hidden because this is a singleton
         try {
             martusCrypto = new MartusSecurity();
@@ -42,16 +46,24 @@ public class AppConfig {
             Log.e(LOG_LABEL, "unable to initialize crypto", e);
         }
 
-        store = new MobileBulletinStore(martusCrypto);
+        store = new ClientBulletinStore(martusCrypto);
+        try {
+            store.doAfterSigninInitialization(cacheDir);
+        } catch (Exception e) {
+            Log.e(LOG_LABEL, "unable to initialize store", e);
+        }
+
+        //store = new MobileBulletinStore(martusCrypto);
         store.setTopSectionFieldSpecs(StandardFieldSpecs.getDefaultTopSetionFieldSpecs());
         store.setBottomSectionFieldSpecs(StandardFieldSpecs.getDefaultBottomSectionFieldSpecs());
+
     }
 
     public MartusSecurity getCrypto() {
         return martusCrypto;
     }
 
-    public MobileBulletinStore getStore() {
+    public ClientBulletinStore getStore() {
         return store;
     }
 
