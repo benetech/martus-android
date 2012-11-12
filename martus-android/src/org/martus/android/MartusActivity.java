@@ -1,9 +1,5 @@
 package org.martus.android;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-
 import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.clientside.ClientSideNetworkHandlerUsingXmlRpcForNonSSL;
 import org.martus.common.crypto.MartusCrypto;
@@ -30,7 +26,6 @@ import android.widget.TextView;
 
 public class MartusActivity extends Activity {
 
-	//String serverIPNew = "50.112.118.184";
 	public static final String defaultServerIP = "54.245.101.104"; //public QA server
     public static final String defaultServerPublicCode = "8714.7632.8884.7614.8217";
     public static final String defaultMagicWord = "spam";
@@ -52,27 +47,11 @@ public class MartusActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        //checkDesktopKey();
-
-        //setTitle("Martus Android");
         myActivity = this;
         responseView = (TextView)findViewById(R.id.bulletinResponseText);
         updateSettings();
 
         martusCrypto = AppConfig.getInstance().getCrypto();
-
-/*             try {
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                martusCrypto.writeKeyPair(out, "password".toCharArray());
-                out.close();
-                byte[] keyPair = out.toString();
-
-                InputStream is = new ByteArrayInputStream(keyPair.getBytes());
-
-                martusCrypto.readKeyPair(is, "password".toCharArray());
-             } catch (Exception e) {
-                 Log.e(AppConfig.LOG_LABEL,"write/read problem", e);
-             }*/
 
         final Button buttonServerInfo = (Button) findViewById(R.id.serverInfo);
         buttonServerInfo.setOnClickListener(new View.OnClickListener() {
@@ -133,8 +112,6 @@ public class MartusActivity extends Activity {
     protected void onStart() {
         super.onStart();
         checkDesktopKey();
-
-
 
         //Not sure if this is the best place to get/set Server Public Key
         SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
