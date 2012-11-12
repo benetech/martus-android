@@ -65,7 +65,7 @@ public class MartusActivity extends Activity {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 martusCrypto.writeKeyPair(out, "password".toCharArray());
                 out.close();
-                String keyPair = out.toString();
+                byte[] keyPair = out.toString();
 
                 InputStream is = new ByteArrayInputStream(keyPair.getBytes());
 
