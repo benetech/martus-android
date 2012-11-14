@@ -45,6 +45,7 @@ public class MartusActivity extends Activity {
     private String serverPublicKey;
     private String password;
 
+    private static final int CREATE_ACCOUNT_DIALOG = 3;
     private static final int PASSWORD_DIALOG = 4;
 
     private MartusSecurity martusCrypto;
@@ -72,11 +73,8 @@ public class MartusActivity extends Activity {
             if (isAccountCreated()) {
                 showDialog(PASSWORD_DIALOG);
             } else {
-                try {
-                    createAccount("password");
-                } catch (Exception e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                }
+                //showDialog(CREATE_ACCOUNT_DIALOG);
+                createAccount("password");
             }
         }
 
@@ -232,7 +230,6 @@ public class MartusActivity extends Activity {
     protected Dialog onCreateDialog(int id) {
         switch (id) {
             case PASSWORD_DIALOG:
-                // This example shows how to add a custom layout to an AlertDialog
                 LayoutInflater factory = LayoutInflater.from(this);
                 final View passwordEntryView = factory.inflate(R.layout.password_dialog, null);
                 final EditText passwordText = (EditText) passwordEntryView.findViewById(R.id.password_edit);
@@ -289,24 +286,29 @@ public class MartusActivity extends Activity {
         return true;
     }
 
-    private void createAccount(String password) throws Exception {
+    private void createAccount(String password)  {
         SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(MartusActivity.this);
         // create new keypair and store in prefs
         martusCrypto.createKeyPair();
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        martusCrypto.writeKeyPair(out, "password".toCharArray());
-        out.close();
-        byte[] keyPairData = out.toByteArray();
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            martusCrypto.writeKeyPair(out, "password".toCharArray());
+            out.close();
+            byte[] keyPairData = out.toByteArray();
 
-        // write keypair to prefs
-        // need to first base64 encode so we can write to prefs
-        String encodedKeyPair = Base64.encodeToString(keyPairData, Base64.NO_WRAP);
+            // write keypair to prefs
+            // need to first base64 encode so we can write to prefs
+            String encodedKeyPair = Base64.encodeToString(keyPairData, Base64.NO_WRAP);
 
-        // write to prefs
-        SharedPreferences.Editor editor = mySettings.edit();
-        editor.putString(SettingsActivity.KEY_KEY_PAIR, encodedKeyPair);
-        editor.commit();
+            // write to prefs
+            SharedPreferences.Editor editor = mySettings.edit();
+            editor.putString(SettingsActivity.KEY_KEY_PAIR, encodedKeyPair);
+            editor.commit();
+        } catch (Exception e) {
+            Log.e(AppConfig.LOG_LABEL, "Problem creating account", e);
+            showMessage(MartusActivity.this, "Problem creating account", "Error");
+        }
     }
 
     private void updateSettings() {

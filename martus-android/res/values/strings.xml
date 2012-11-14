@@ -43,5 +43,6 @@
     <string name="alert_dialog_ok">OK</string>
     <string name="password_dialog_ok">OK</string>
     <string name="password_dialog_cancel">Cancel</string>
+    <string name="create_account_dialog_title">Create new password</string>
 
 </resources>

@@ -1,35 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<GridLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:useDefaultMargins="true"
-        android:alignmentMode="alignBounds"
-        android:rowOrderPreserved="false"
-
-        android:columnCount="4"
-        >
-
-        <TextView
-                android:text="@string/desktop_sync_public_code"
-
-                android:layout_gravity="right"
-                android:layout_row="1" android:layout_column="0" android:layout_height="wrap_content"
-                android:layout_width="wrap_content"/>
+    <TextView
+            android:text="@string/desktop_sync_public_code"
+            android:layout_marginTop="20dip"
+            android:layout_gravity="left"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dip"
+            android:layout_marginRight="20dip"
+            android:layout_width="wrap_content"/>
 
     <EditText
-                android:ems="8"
-                android:layout_row="1"  android:layout_height="fill_parent"
-                android:layout_gravity="left" android:layout_width="fill_parent"
-                android:hint="Desktop Public Code"
-                android:id="@+id/desktopCodeText"/>
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="20dip"
+            android:layout_marginRight="20dip"
+            android:scrollHorizontally="true"
+            android:autoText="false"
+            android:capitalize="none"
+            android:gravity="fill_horizontal"
+            android:hint="Desktop Public Code"
+            android:id="@+id/desktopCodeText"/>
 
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dip"
+            android:layout_marginRight="20dip"
+            android:layout_gravity="right"
             android:text="@string/desktop_sync_choose_file"
             android:id="@+id/desktopKeyChooseFile" android:layout_row="2" android:layout_column="1"/>
-</GridLayout>
+</LinearLayout>
