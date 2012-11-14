@@ -48,34 +48,6 @@ public class AppConfig {
         // Constructor hidden because this is a singleton
         try {
             martusCrypto = new MartusSecurity();
-            SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(context);
-
-            // attempt to read keypair from prefs
-            String keyPair = mySettings.getString(SettingsActivity.KEY_KEY_PAIR, "");
-            if (keyPair.length() < 1) {
-                // create new keypair and store in prefs
-                martusCrypto.createKeyPair();
-
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                martusCrypto.writeKeyPair(out, "password".toCharArray());
-                out.close();
-                byte[] keyPairData = out.toByteArray();
-
-                // write keypair to prefs
-                // need to first base64 encode so we can write to prefs
-                String encodedKeyPair = Base64.encodeToString(keyPairData, Base64.NO_WRAP);
-
-                // write to prefs
-                SharedPreferences.Editor editor = mySettings.edit();
-                editor.putString(SettingsActivity.KEY_KEY_PAIR, encodedKeyPair);
-                editor.commit();
-            } else {
-                // construct keypair from value read from prefs
-                byte[] decodedKeyPair = Base64.decode(keyPair, Base64.NO_WRAP);
-                InputStream is = new ByteArrayInputStream(decodedKeyPair);
-                martusCrypto.readKeyPair(is, "password".toCharArray());
-            }
-
         } catch (Exception e) {
             Log.e(LOG_LABEL, "unable to initialize crypto", e);
         }

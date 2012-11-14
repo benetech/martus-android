@@ -1,5 +1,10 @@
 package org.martus.android;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.clientside.ClientSideNetworkHandlerUsingXmlRpcForNonSSL;
 import org.martus.common.crypto.MartusCrypto;
@@ -10,18 +15,26 @@ import org.martus.util.StreamableBase64;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class MartusActivity extends Activity {
@@ -30,6 +43,9 @@ public class MartusActivity extends Activity {
     public static final String defaultServerPublicCode = "8714.7632.8884.7614.8217";
     public static final String defaultMagicWord = "spam";
     private String serverPublicKey;
+    private String password;
+
+    private static final int PASSWORD_DIALOG = 4;
 
     private MartusSecurity martusCrypto;
     private Activity myActivity;
@@ -52,6 +68,17 @@ public class MartusActivity extends Activity {
         updateSettings();
 
         martusCrypto = AppConfig.getInstance().getCrypto();
+        if (!martusCrypto.hasKeyPair()) {
+            if (isAccountCreated()) {
+                showDialog(PASSWORD_DIALOG);
+            } else {
+                try {
+                    createAccount("password");
+                } catch (Exception e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+            }
+        }
 
         final Button buttonServerInfo = (Button) findViewById(R.id.serverInfo);
         buttonServerInfo.setOnClickListener(new View.OnClickListener() {
@@ -199,6 +226,87 @@ public class MartusActivity extends Activity {
             bulletinIntent.putExtra(BulletinActivity.EXTRA_ATTACHMENT, filePath);
             startActivity(bulletinIntent);
         }
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case PASSWORD_DIALOG:
+                // This example shows how to add a custom layout to an AlertDialog
+                LayoutInflater factory = LayoutInflater.from(this);
+                final View passwordEntryView = factory.inflate(R.layout.password_dialog, null);
+                final EditText passwordText = (EditText) passwordEntryView.findViewById(R.id.password_edit);
+
+                return new AlertDialog.Builder(MartusActivity.this)
+                    .setIconAttribute(android.R.attr.alertDialogIcon)
+                    .setTitle(R.string.password_dialog_title)
+                    .setView(passwordEntryView)
+                    .setPositiveButton(R.string.password_dialog_ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            password = passwordText.getText().toString().trim();
+                            boolean confirmed = confirmAccount(password);
+                            if (!confirmed) {
+                                MartusActivity.this.finish();
+                            }
+                            dialog.dismiss();
+                        }
+                    })
+                    .setNegativeButton(R.string.password_dialog_cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            MartusActivity.this.finish();
+                        }
+                    })
+                    .create();
+        }
+
+        return null;
+    }
+
+    private boolean isAccountCreated() {
+        SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(MartusActivity.this);
+
+        // attempt to read keypair from prefs
+        String keyPairString = mySettings.getString(SettingsActivity.KEY_KEY_PAIR, "");
+        return keyPairString.length() > 1;
+    }
+
+    private boolean confirmAccount(String password)  {
+
+        SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(MartusActivity.this);
+        String keyPairString = mySettings.getString(SettingsActivity.KEY_KEY_PAIR, "");
+
+        // construct keypair from value read from prefs
+        byte[] decodedKeyPair = Base64.decode(keyPairString, Base64.NO_WRAP);
+        InputStream is = new ByteArrayInputStream(decodedKeyPair);
+        try {
+            martusCrypto.readKeyPair(is, password.toCharArray());
+        } catch (Exception e) {
+            Log.e(AppConfig.LOG_LABEL, "Problem confirming password", e);
+            return false;
+        }
+        return true;
+    }
+
+    private void createAccount(String password) throws Exception {
+        SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(MartusActivity.this);
+        // create new keypair and store in prefs
+        martusCrypto.createKeyPair();
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        martusCrypto.writeKeyPair(out, "password".toCharArray());
+        out.close();
+        byte[] keyPairData = out.toByteArray();
+
+        // write keypair to prefs
+        // need to first base64 encode so we can write to prefs
+        String encodedKeyPair = Base64.encodeToString(keyPairData, Base64.NO_WRAP);
+
+        // write to prefs
+        SharedPreferences.Editor editor = mySettings.edit();
+        editor.putString(SettingsActivity.KEY_KEY_PAIR, encodedKeyPair);
+        editor.commit();
     }
 
     private void updateSettings() {
