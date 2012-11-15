@@ -30,9 +30,9 @@
     <string name="dialog_title_language_preference">Preferred language</string>
     <string name="settings_title">Settings</string>
     <string name="ping_menu_title">Ping server</string>
-    <string name="desktop_sync_public_code">Public code:</string>
+    <string name="desktop_sync_public_code">First enter public code:</string>
     <string name="desktop_sync_title">You must first import a desktop key</string>
-    <string name="desktop_sync_choose_file">Choose desktop keypair</string>
+    <string name="desktop_sync_choose_file">Then choose desktop account file</string>
     <string name="settings_password">Enter Password:</string>
     <string name="settings_password2">Enter password again:</string>
     <string name="settings_pwd_equal">Passwords match</string>
@@ -44,5 +44,6 @@
     <string name="password_dialog_ok">OK</string>
     <string name="password_dialog_cancel">Cancel</string>
     <string name="create_account_dialog_title">Create new password</string>
+    <string name="quit_menu_title">Exit</string>
 
 </resources>

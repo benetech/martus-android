@@ -115,7 +115,6 @@ public class DesktopKeyActivity extends Activity {
 
     boolean confirmPublicCode(String rawPublicCode, String userEnteredPublicCode)
     {
-        String userEnteredPublicCodeHardCoded = "7233.6645.6763.1658.6756";
         String normalizedPublicCode = MartusCrypto.removeNonDigits(userEnteredPublicCode);
         return rawPublicCode.equals(normalizedPublicCode);
     }

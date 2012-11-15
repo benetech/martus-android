@@ -56,7 +56,7 @@ public class MartusActivity extends Activity {
 
     private TextView responseView;
 
-    final int ACTIVITY_CHOOSE_ATTACHMENT = 2;
+    final int ACTIVITY_DESKTOP_KEY = 2;
 
 	/** Called when the activity is first created. */
     @Override
@@ -73,8 +73,7 @@ public class MartusActivity extends Activity {
             if (isAccountCreated()) {
                 showDialog(PASSWORD_DIALOG);
             } else {
-                //showDialog(CREATE_ACCOUNT_DIALOG);
-                createAccount("password");
+                showDialog(CREATE_ACCOUNT_DIALOG);
             }
         }
 
@@ -132,12 +131,125 @@ public class MartusActivity extends Activity {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (martusCrypto.hasKeyPair()) {
+            checkDesktopKey();
+            confirmServerPublicKey();
+        }
+        updateSettings();
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+         if (requestCode == ACTIVITY_DESKTOP_KEY) {
+            confirmServerPublicKey();
+         }
+    }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        checkDesktopKey();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.settings_menu_item:
+                intent = new Intent(MartusActivity.this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.ping_menu_item:
+                intent = new Intent(MartusActivity.this, PingServer.class);
+                startActivity(intent);
+                return true;
+            case R.id.quit_menu_item:
+                martusCrypto.clearKeyPair();
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+
+        String filePath = intent.getStringExtra(BulletinActivity.EXTRA_ATTACHMENT);
+        if (null != filePath) {
+            Intent bulletinIntent = new Intent(MartusActivity.this, BulletinActivity.class);
+            bulletinIntent.putExtra(BulletinActivity.EXTRA_ATTACHMENT, filePath);
+            startActivity(bulletinIntent);
+        }
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        LayoutInflater factory = LayoutInflater.from(this);
+        switch (id) {
+            case CREATE_ACCOUNT_DIALOG:
+
+                    final View createAccountDialog = factory.inflate(R.layout.create_account, null);
+                    final EditText newPasswordText = (EditText) createAccountDialog.findViewById(R.id.new_password_field);
+
+                    return new AlertDialog.Builder(MartusActivity.this)
+                        .setIconAttribute(android.R.attr.alertDialogIcon)
+                        .setTitle(R.string.create_account_dialog_title)
+                        .setView(createAccountDialog)
+                        .setPositiveButton(R.string.password_dialog_ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                password = newPasswordText.getText().toString().trim();
+                                createAccount(password);
+                                dialog.dismiss();
+                                checkDesktopKey();
+                            }
+                        })
+                        .setNegativeButton(R.string.password_dialog_cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                MartusActivity.this.finish();
+                            }
+                        })
+                        .create();
+            case PASSWORD_DIALOG:
+                final View passwordEntryView = factory.inflate(R.layout.password_dialog, null);
+                final EditText passwordText = (EditText) passwordEntryView.findViewById(R.id.password_edit);
+
+                return new AlertDialog.Builder(MartusActivity.this)
+                    .setIconAttribute(android.R.attr.alertDialogIcon)
+                    .setTitle(R.string.password_dialog_title)
+                    .setView(passwordEntryView)
+                    .setPositiveButton(R.string.password_dialog_ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            password = passwordText.getText().toString().trim();
+                            boolean confirmed = confirmAccount(password);
+                            confirmServerPublicKey();
+                            if (!confirmed) {
+                                MartusActivity.this.finish();
+                            }
+                            dialog.dismiss();
+                        }
+                    })
+                    .setNegativeButton(R.string.password_dialog_cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            MartusActivity.this.finish();
+                        }
+                    })
+                    .create();
+        }
+
+        return null;
+    }
+
+    private void confirmServerPublicKey() {
         //Not sure if this is the best place to get/set Server Public Key
         SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
         serverPublicKey = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
@@ -179,86 +291,8 @@ public class MartusActivity extends Activity {
         String desktopPublicKeyString = mySettings.getString(SettingsActivity.KEY_DESKTOP_PUBLIC_KEY, "");
         if (desktopPublicKeyString.length() < 1) {
             Intent intent = new Intent(MartusActivity.this, DesktopKeyActivity.class);
-            startActivityForResult(intent, ACTIVITY_CHOOSE_ATTACHMENT);
+            startActivityForResult(intent, ACTIVITY_DESKTOP_KEY);
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        updateSettings();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
-
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.settings_menu_item:
-                intent = new Intent(MartusActivity.this, SettingsActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.ping_menu_item:
-                intent = new Intent(MartusActivity.this, PingServer.class);
-                startActivity(intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-
-        String filePath = intent.getStringExtra(BulletinActivity.EXTRA_ATTACHMENT);
-        if (null != filePath) {
-            Intent bulletinIntent = new Intent(MartusActivity.this, BulletinActivity.class);
-            bulletinIntent.putExtra(BulletinActivity.EXTRA_ATTACHMENT, filePath);
-            startActivity(bulletinIntent);
-        }
-    }
-
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case PASSWORD_DIALOG:
-                LayoutInflater factory = LayoutInflater.from(this);
-                final View passwordEntryView = factory.inflate(R.layout.password_dialog, null);
-                final EditText passwordText = (EditText) passwordEntryView.findViewById(R.id.password_edit);
-
-                return new AlertDialog.Builder(MartusActivity.this)
-                    .setIconAttribute(android.R.attr.alertDialogIcon)
-                    .setTitle(R.string.password_dialog_title)
-                    .setView(passwordEntryView)
-                    .setPositiveButton(R.string.password_dialog_ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                            password = passwordText.getText().toString().trim();
-                            boolean confirmed = confirmAccount(password);
-                            if (!confirmed) {
-                                MartusActivity.this.finish();
-                            }
-                            dialog.dismiss();
-                        }
-                    })
-                    .setNegativeButton(R.string.password_dialog_cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                            MartusActivity.this.finish();
-                        }
-                    })
-                    .create();
-        }
-
-        return null;
     }
 
     private boolean isAccountCreated() {
@@ -293,7 +327,7 @@ public class MartusActivity extends Activity {
 
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            martusCrypto.writeKeyPair(out, "password".toCharArray());
+            martusCrypto.writeKeyPair(out, password.toCharArray());
             out.close();
             byte[] keyPairData = out.toByteArray();
 
