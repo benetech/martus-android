@@ -29,7 +29,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -50,18 +49,14 @@ public class MartusActivity extends Activity {
     private String serverIP;
     private String serverPublicCode;
 
-    private TextView responseView;
-
     final int ACTIVITY_DESKTOP_KEY = 2;
 
-	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
         myActivity = this;
-        responseView = (TextView)findViewById(R.id.bulletinResponseText);
         updateSettings();
 
         martusCrypto = AppConfig.getInstance().getCrypto();
@@ -72,49 +67,6 @@ public class MartusActivity extends Activity {
                 showDialog(CREATE_ACCOUNT_DIALOG);
             }
         }
-
-        final Button buttonServerInfo = (Button) findViewById(R.id.serverInfo);
-        buttonServerInfo.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try {
-
-                    //Network calls must be made in background task
-                    final AsyncTask<ClientSideNetworkGateway, Void, NetworkResponse> infoTask = new ServerInfoTask().execute(gateway);
-                    NetworkResponse response1 = infoTask.get();
-
-                    Object[] resultArray = response1.getResultArray();
-                    final TextView responseView = (TextView)findViewById(R.id.response_server);
-                    responseView.setText("ServerInfo: " + response1.getResultCode() + ", " + resultArray[0]);
-                } catch (Exception e) {
-                    Log.e(AppConfig.LOG_LABEL, "Failed getting server info", e);
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        final Button createScreenBtn = (Button) findViewById(R.id.createScreen);
-        createScreenBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(MartusActivity.this, BulletinActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        final Button buttonCheckBulletins = (Button) findViewById(R.id.check_bulletins_button);
-        buttonCheckBulletins.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try {
-                    //Network calls must be made in background task
-                    final AsyncTask<Object, Void, String> getIdsTask = new GetDraftBulletinsTask().execute(gateway, martusCrypto, martusCrypto.getPublicKeyString());
-                    String response = getIdsTask.get();
-
-                    final TextView responseView = (TextView)findViewById(R.id.check_bulletins_text);
-                    responseView.setText(response);
-                } catch (Exception e) {
-                    Log.e(AppConfig.LOG_LABEL, "Failed getting bulletin ids", e);
-                }
-            }
-        });
 
     }
 
@@ -143,6 +95,38 @@ public class MartusActivity extends Activity {
                  Log.e(AppConfig.LOG_LABEL, "Problem verifying upload rights");
              }
          }
+    }
+
+    public void verifyServer(View view) {
+        try {
+            //Network calls must be made in background task
+            final AsyncTask<ClientSideNetworkGateway, Void, NetworkResponse> infoTask = new ServerInfoTask().execute(gateway);
+            NetworkResponse response1 = infoTask.get();
+
+            Object[] resultArray = response1.getResultArray();
+            final TextView responseView = (TextView)findViewById(R.id.response_server);
+            responseView.setText("ServerInfo: " + response1.getResultCode() + ", " + resultArray[0]);
+        } catch (Exception e) {
+            Log.e(AppConfig.LOG_LABEL, "Failed getting server info", e);
+            e.printStackTrace();
+        }
+    }
+
+    public void sendBulletin(View view) {
+        Intent intent = new Intent(MartusActivity.this, BulletinActivity.class);
+        startActivity(intent);
+    }
+
+    public void getBulletinCount(View view) {
+        try {
+            final AsyncTask<Object, Void, String> getIdsTask = new GetDraftBulletinsTask().execute(gateway, martusCrypto, martusCrypto.getPublicKeyString());
+            String response = getIdsTask.get();
+
+            final TextView responseView = (TextView)findViewById(R.id.check_bulletins_text);
+            responseView.setText(response);
+        } catch (Exception e) {
+            Log.e(AppConfig.LOG_LABEL, "Failed getting bulletin count", e);
+        }
     }
 
     @Override

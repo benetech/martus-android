@@ -8,6 +8,7 @@
     	android:id="@+id/serverInfo"
        	android:layout_width="wrap_content"
       	android:layout_height="wrap_content"
+        android:onClick="verifyServer"
       	android:text="Server Info" />
     <TextView
         android:id="@+id/response_server"
@@ -18,7 +19,8 @@
     	android:id="@+id/createScreen"
        	android:layout_width="wrap_content"
       	android:layout_height="wrap_content"
-      	android:text="@string/create_sample_bulletin" android:focusableInTouchMode="false"/>
+          android:onClick="sendBulletin"
+      	android:text="@string/create_sample_bulletin"/>
     <TextView
         android:id="@+id/bulletinResponseText"
         android:layout_width="fill_parent"
@@ -27,6 +29,7 @@
         android:id="@+id/check_bulletins_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="getBulletinCount"
         android:text="@string/check_bulletins" />
     <TextView
         android:id="@+id/check_bulletins_text"
