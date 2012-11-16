@@ -73,7 +73,7 @@ public class MobileBulletinStore extends BulletinStore
 
 	}
 
-    private void saveBulletin(Bulletin b) throws
+    public void saveBulletin(Bulletin b) throws
         			IOException,
         			MartusCrypto.CryptoException
     {
