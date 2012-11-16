@@ -19,7 +19,7 @@
     	android:id="@+id/createScreen"
        	android:layout_width="wrap_content"
       	android:layout_height="wrap_content"
-          android:onClick="sendBulletin"
+        android:onClick="sendBulletin"
       	android:text="@string/create_sample_bulletin"/>
     <TextView
         android:id="@+id/bulletinResponseText"
