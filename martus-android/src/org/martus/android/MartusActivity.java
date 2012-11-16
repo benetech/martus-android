@@ -82,14 +82,6 @@ public class MartusActivity extends Activity {
                     final AsyncTask<ClientSideNetworkGateway, Void, NetworkResponse> infoTask = new ServerInfoTask().execute(gateway);
                     NetworkResponse response1 = infoTask.get();
 
-                    //todo: move to upload bulletin screen
-                    final AsyncTask<Object, Void, NetworkResponse> rightsTask = new UploadRightsTask().execute(gateway, martusCrypto, defaultMagicWord);
-                    final NetworkResponse response = rightsTask.get();
-                    if (!response.getResultCode().equals("ok")) {
-                        showMessage(myActivity, "Don't have upload rights!", "Error");
-                        return;
-                    }
-
                     Object[] resultArray = response1.getResultArray();
                     final TextView responseView = (TextView)findViewById(R.id.response_server);
                     responseView.setText("ServerInfo: " + response1.getResultCode() + ", " + resultArray[0]);
