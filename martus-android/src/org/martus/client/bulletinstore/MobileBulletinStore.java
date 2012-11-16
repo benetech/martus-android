@@ -27,34 +27,28 @@ Boston, MA 02111-1307, USA.
 package org.martus.client.bulletinstore;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 
 import org.martus.common.FieldSpecCollection;
-import org.martus.common.MartusLogger;
 import org.martus.common.MartusUtilities.FileVerificationException;
 import org.martus.common.bulletin.Bulletin;
 import org.martus.common.bulletinstore.BulletinStore;
 import org.martus.common.crypto.MartusCrypto;
-import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
 import org.martus.common.database.ClientFileDatabase;
 import org.martus.common.database.Database;
-import org.martus.common.database.DatabaseKey;
 import org.martus.common.database.FileDatabase.MissingAccountMapException;
 import org.martus.common.database.FileDatabase.MissingAccountMapSignatureException;
 import org.martus.common.fieldspec.StandardFieldSpecs;
+import org.martus.common.packet.BulletinHeaderPacket;
+import org.martus.common.packet.FieldDataPacket;
+import org.martus.common.packet.Packet;
 import org.martus.common.packet.UniversalId;
 
 
 /*
 	This class represents a collection of bulletins
-	(and also a collection of folders) stored on the
-	client pc.
-
-	It is responsible for managing the lifetimes of
-	both bulletins and folders, including saving and
-	loading them to/from disk.
+	stored on the mobile device.
 */
 public class MobileBulletinStore extends BulletinStore
 {
@@ -74,78 +68,41 @@ public class MobileBulletinStore extends BulletinStore
 	{
 		super.doAfterSigninInitialization(dataRootDirectory, db);
 
-
 		topSectionFieldSpecs = StandardFieldSpecs.getDefaultTopSetionFieldSpecs();
 		bottomSectionFieldSpecs = StandardFieldSpecs.getDefaultBottomSectionFieldSpecs();
 
-		loadCache();
-
-		File obsoleteCacheFile = new File(getStoreRootDir(), OBSOLETE_CACHE_FILE_NAME);
-		obsoleteCacheFile.delete();
-
 	}
 
-	public void prepareToExitNormally() throws Exception
-	{
-		MartusLogger.logBeginProcess("saveSessionKeyCache");
-		saveBulletinDataCache();
-		MartusLogger.logEndProcess("saveSessionKeyCache");
+    private void saveBulletin(Bulletin b) throws
+        			IOException,
+        			MartusCrypto.CryptoException
+    {
+        MartusCrypto signer = b.getSignatureGenerator();
+        BulletinHeaderPacket bhp = b.getBulletinHeaderPacket();
 
-		MartusLogger.logBeginProcess("saveFieldSpecCache");
-		MartusLogger.logEndProcess("saveFieldSpecCache");
-	}
+        FieldDataPacket publicDataPacket = b.getFieldDataPacket();
+        boolean shouldEncryptPublicData = (b.isDraft() || b.isAllPrivate());
+        publicDataPacket.setEncrypted(shouldEncryptPublicData);
 
+        byte[] dataSig = createPacketSignature(publicDataPacket, signer);
+        bhp.setFieldDataSignature(dataSig);
 
-	public boolean mustEncryptPublicData()
-	{
-		return getDatabase().mustEncryptLocalData();
-	}
+        Packet privatePacket = b.getPrivateFieldDataPacket();
+        byte[] privateDataSig = createPacketSignature(privatePacket, signer);
+        bhp.setPrivateFieldDataSignature(privateDataSig);
 
-	public boolean isMyBulletin(UniversalId uid)
-	{
-		return(uid.getAccountId().equals(getAccountId()));
-	}
+        bhp.updateLastSavedTime();
+    }
 
+    private byte[] createPacketSignature(Packet packet, MartusCrypto signer) throws IOException {
+        StringWriter headerWriter = new StringWriter();
+        byte[] sig = packet.writeXml(headerWriter, signer);
+        return sig;
+    }
 
 	public void deleteAllData() throws Exception
 	{
 		super.deleteAllData();
-	}
-
-
-	public void scrubAllData() throws Exception
-	{
-		class PacketScrubber implements Database.PacketVisitor
-		{
-			PacketScrubber(Database databaseToUse)
-			{
-				db = databaseToUse;
-			}
-
-			public void visit(DatabaseKey key)
-			{
-				try
-				{
-					db.scrubRecord(key);
-					db.discardRecord(key);
-					revisionWasRemoved(key.getUniversalId());
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace();
-				}
-			}
-
-			Database db;
-		}
-
-		PacketScrubber ac = new PacketScrubber(getWriteableDatabase());
-		getDatabase().visitAllRecords(ac);
-	}
-
-	public void signAccountMap() throws MartusSignatureException, IOException
-	{
-		getWriteableDatabase().signAccountMap();
 	}
 
 	public FieldSpecCollection getBottomSectionFieldSpecs()
@@ -169,57 +126,6 @@ public class MobileBulletinStore extends BulletinStore
 		bottomSectionFieldSpecs = newFieldSpecs;
 	}
 
-
-	protected void loadCache()
-	{
-		//System.out.println("BulletinStore.loadCache");
-		File cacheFile = getCacheFileForAccount(getStoreRootDir());
-		if(!cacheFile.exists())
-			return;
-
-		byte[] sessionKeyCache = new byte[(int)cacheFile.length()];
-		try
-		{
-			FileInputStream in = new FileInputStream(cacheFile);
-			in.read(sessionKeyCache);
-			in.close();
-			getSignatureGenerator().setSessionKeyCache(sessionKeyCache);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			cacheFile.delete();
-		}
-	}
-
-	protected void saveBulletinDataCache()
-	{
-		//System.out.println("BulletinStore.saveCache");
-		try
-		{
-			byte[] sessionKeyCache = getSignatureGenerator().getSessionKeyCache();
-			File cacheFile = new File(getStoreRootDir(), CACHE_FILE_NAME);
-			FileOutputStream out = new FileOutputStream(cacheFile);
-			out.write(sessionKeyCache);
-			out.close();
-		}
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-
-	public static File getCacheFileForAccount(File accountDir)
-	{
-		return new File(accountDir, CACHE_FILE_NAME);
-	}
-
-	private File getFieldSpecCacheFile()
-	{
-		return new File(getStoreRootDir(), FIELD_SPEC_CACHE_FILE_NAME);
-	}
 
 	public boolean bulletinHasCurrentFieldSpecs(Bulletin b)
 	{
@@ -266,10 +172,6 @@ public class MobileBulletinStore extends BulletinStore
 		clone.createDraftCopyOf(original, getDatabase());
 		return clone;
 	}
-
-	private static final String CACHE_FILE_NAME = "skcache.dat";
-	private static final String OBSOLETE_CACHE_FILE_NAME = "sfcache.dat";
-	private static final String FIELD_SPEC_CACHE_FILE_NAME = "fscache.dat";
 
 	private FieldSpecCollection topSectionFieldSpecs;
 	private FieldSpecCollection bottomSectionFieldSpecs;
