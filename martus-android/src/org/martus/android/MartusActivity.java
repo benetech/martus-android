@@ -2,7 +2,6 @@ package org.martus.android;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.martus.clientside.ClientSideNetworkGateway;
@@ -23,8 +22,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,7 +29,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -124,7 +120,6 @@ public class MartusActivity extends Activity {
                     responseView.setText(response);
                 } catch (Exception e) {
                     Log.e(AppConfig.LOG_LABEL, "Failed getting bulletin ids", e);
-                    e.printStackTrace();
                 }
             }
         });
@@ -144,6 +139,17 @@ public class MartusActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
          if (requestCode == ACTIVITY_DESKTOP_KEY) {
             confirmServerPublicKey();
+
+             //todo: will need to happen whenever server ip changes (putting here for now)
+             try {
+                 final AsyncTask<Object, Void, NetworkResponse> rightsTask = new UploadRightsTask().execute(gateway, martusCrypto, defaultMagicWord);
+                 final NetworkResponse response = rightsTask.get();
+                 if (!response.getResultCode().equals("ok")) {
+                     showMessage(myActivity, "Don't have upload rights!", "Error");
+                 }
+             } catch (Exception e) {
+                 Log.e(AppConfig.LOG_LABEL, "Problem verifying upload rights");
+             }
          }
     }
 
@@ -230,10 +236,14 @@ public class MartusActivity extends Activity {
 
                             password = passwordText.getText().toString().trim();
                             boolean confirmed = confirmAccount(password);
-                            confirmServerPublicKey();
                             if (!confirmed) {
                                 MartusActivity.this.finish();
                             }
+
+                            SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(MartusActivity.this);
+                            serverPublicKey = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
+                            gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
+
                             dialog.dismiss();
                         }
                     })
