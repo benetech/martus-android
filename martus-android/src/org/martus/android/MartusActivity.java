@@ -15,6 +15,7 @@ import org.martus.util.StreamableBase64;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -40,14 +41,13 @@ public class MartusActivity extends Activity {
     private String serverPublicKey;
     private String password;
 
-    private static final int CREATE_ACCOUNT_DIALOG = 3;
-    private static final int PASSWORD_DIALOG = 4;
-
     private MartusSecurity martusCrypto;
-    private Activity myActivity;
+    private static Activity myActivity;
     private ClientSideNetworkGateway gateway = null;
     private String serverIP;
     private String serverPublicCode;
+
+    DialogFragment newAccountDialog;
 
     final int ACTIVITY_DESKTOP_KEY = 2;
 
@@ -62,9 +62,9 @@ public class MartusActivity extends Activity {
         martusCrypto = AppConfig.getInstance().getCrypto();
         if (!martusCrypto.hasKeyPair()) {
             if (isAccountCreated()) {
-                showDialog(PASSWORD_DIALOG);
+                showLoginDialog();
             } else {
-                showDialog(CREATE_ACCOUNT_DIALOG);
+                showCreateAccountDialog();
             }
         }
 
@@ -168,71 +168,6 @@ public class MartusActivity extends Activity {
             bulletinIntent.putExtra(BulletinActivity.EXTRA_ATTACHMENT, filePath);
             startActivity(bulletinIntent);
         }
-    }
-
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        LayoutInflater factory = LayoutInflater.from(this);
-        switch (id) {
-            case CREATE_ACCOUNT_DIALOG:
-
-                    final View createAccountDialog = factory.inflate(R.layout.create_account, null);
-                    final EditText newPasswordText = (EditText) createAccountDialog.findViewById(R.id.new_password_field);
-
-                    return new AlertDialog.Builder(MartusActivity.this)
-                        .setIconAttribute(android.R.attr.alertDialogIcon)
-                        .setTitle(R.string.create_account_dialog_title)
-                        .setView(createAccountDialog)
-                        .setPositiveButton(R.string.password_dialog_ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-
-                                password = newPasswordText.getText().toString().trim();
-                                createAccount(password);
-                                dialog.dismiss();
-                                checkDesktopKey();
-                            }
-                        })
-                        .setNegativeButton(R.string.password_dialog_cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-
-                                MartusActivity.this.finish();
-                            }
-                        })
-                        .create();
-            case PASSWORD_DIALOG:
-                final View passwordEntryView = factory.inflate(R.layout.password_dialog, null);
-                final EditText passwordText = (EditText) passwordEntryView.findViewById(R.id.password_edit);
-
-                return new AlertDialog.Builder(MartusActivity.this)
-                    .setIconAttribute(android.R.attr.alertDialogIcon)
-                    .setTitle(R.string.password_dialog_title)
-                    .setView(passwordEntryView)
-                    .setPositiveButton(R.string.password_dialog_ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                            password = passwordText.getText().toString().trim();
-                            boolean confirmed = confirmAccount(password);
-                            if (!confirmed) {
-                                MartusActivity.this.finish();
-                            }
-
-                            SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(MartusActivity.this);
-                            serverPublicKey = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
-                            gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
-
-                            dialog.dismiss();
-                        }
-                    })
-                    .setNegativeButton(R.string.password_dialog_cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                            MartusActivity.this.finish();
-                        }
-                    })
-                    .create();
-        }
-
-        return null;
     }
 
     private void confirmServerPublicKey() {
@@ -344,5 +279,114 @@ public class MartusActivity extends Activity {
              .setMessage(msg)
              .show();
     }
+
+    void showLoginDialog() {
+        DialogFragment loginDialog = LoginDialogFragment.newInstance();
+        loginDialog.show(getFragmentManager(), "login");
+    }
+
+    public void doLoginPositiveClick(EditText passwordText) {
+        password = passwordText.getText().toString().trim();
+        boolean confirmed = confirmAccount(password);
+        if (!confirmed) {
+            MartusActivity.this.finish();
+        }
+
+        SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(MartusActivity.this);
+        serverPublicKey = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
+        gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
+    }
+
+    public void doLoginNegativeClick() {
+        this.finish();
+    }
+
+    public static class LoginDialogFragment extends DialogFragment {
+
+        public static LoginDialogFragment newInstance() {
+            LoginDialogFragment frag = new LoginDialogFragment();
+            Bundle args = new Bundle();
+            frag.setArguments(args);
+            return frag;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            LayoutInflater factory = LayoutInflater.from(myActivity);
+            final View passwordEntryView = factory.inflate(R.layout.password_dialog, null);
+            final EditText passwordText = (EditText) passwordEntryView.findViewById(R.id.password_edit);
+            return new AlertDialog.Builder(getActivity())
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle(R.string.password_dialog_title)
+                .setView(passwordEntryView)
+                .setPositiveButton(R.string.alert_dialog_ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                ((MartusActivity) getActivity()).doLoginPositiveClick(passwordText);
+                            }
+                        }
+                )
+                .setNegativeButton(R.string.password_dialog_cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                ((MartusActivity) getActivity()).doLoginNegativeClick();
+                            }
+                        }
+                )
+                .create();
+        }
+    }
+
+    void showCreateAccountDialog() {
+        newAccountDialog = CreateAccountDialogFragment.newInstance();
+        newAccountDialog.show(getFragmentManager(), "create");
+    }
+
+    public void doCreateAccountPositiveClick(EditText passwordText) {
+        password = passwordText.getText().toString().trim();
+        createAccount(password);
+        checkDesktopKey();
+        newAccountDialog.dismiss();
+    }
+
+    public void doCreateAccountNegativeClick() {
+        this.finish();
+    }
+
+    public static class CreateAccountDialogFragment extends DialogFragment {
+
+            public static CreateAccountDialogFragment newInstance() {
+                CreateAccountDialogFragment frag = new CreateAccountDialogFragment();
+                Bundle args = new Bundle();
+                frag.setArguments(args);
+                return frag;
+            }
+
+            @Override
+            public Dialog onCreateDialog(Bundle savedInstanceState) {
+                LayoutInflater factory = LayoutInflater.from(myActivity);
+                final View createAccountDialog = factory.inflate(R.layout.create_account, null);
+                final EditText newPasswordText = (EditText) createAccountDialog.findViewById(R.id.new_password_field);
+                return new AlertDialog.Builder(getActivity())
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle(R.string.create_account_dialog_title)
+                    .setView(createAccountDialog)
+                    .setPositiveButton(R.string.alert_dialog_ok,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ((MartusActivity) getActivity()).doCreateAccountPositiveClick(newPasswordText);
+                                }
+                            }
+                    )
+                    .setNegativeButton(R.string.password_dialog_cancel,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ((MartusActivity) getActivity()).doCreateAccountNegativeClick();
+                                }
+                            }
+                    )
+                    .create();
+            }
+        }
     
 }

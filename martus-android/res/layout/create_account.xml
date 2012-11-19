@@ -27,6 +27,7 @@
         android:capitalize="none"
         android:gravity="fill_horizontal"
         android:password="true"
+        android:hint="New password"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </LinearLayout>

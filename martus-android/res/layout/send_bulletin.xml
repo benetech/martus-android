@@ -11,12 +11,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Send"
+                android:contentDescription="Send"
                 android:id="@+id/sendToMartus" android:layout_row="0" android:layout_column="2"
                 android:layout_gravity="right" />
         <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="+Attachment"
+                android:text="Add attachment"
+                android:contentDescription="Add attachment"
                 android:id="@+id/addAttachment" android:layout_row="0" android:layout_column="3"
                 android:layout_gravity="right"/>
     </GridLayout>
@@ -44,6 +46,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/bulletinSummary" android:layout_row="3" android:layout_column="0"
             android:inputType="textMultiLine"
+            android:hint="Enter optional summary"
             android:textIsSelectable="false" android:layout_columnSpan="4" android:layout_gravity="left|right"
             android:gravity="left|top" />
 </GridLayout>
