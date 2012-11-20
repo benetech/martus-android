@@ -8,17 +8,20 @@ import java.io.IOException;
 import java.util.Locale;
 
 import org.martus.client.bulletinstore.ClientBulletinStore;
-import org.martus.client.bulletinstore.MobileBulletinStore;
 import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.common.HQKey;
 import org.martus.common.HQKeys;
 import org.martus.common.bulletin.AttachmentProxy;
 import org.martus.common.bulletin.Bulletin;
-import org.martus.common.bulletinstore.BulletinStore;
+import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.packet.UniversalId;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
@@ -61,6 +64,11 @@ public class BulletinActivity extends Activity implements BulletinSender{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.send_bulletin);
+
+        MartusSecurity martusCrypto = AppConfig.getInstance().getCrypto();
+        if (!martusCrypto.hasKeyPair()) {
+            showLoginRequiredDialog();
+        }
 
 
         mySettings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -306,6 +314,43 @@ public class BulletinActivity extends Activity implements BulletinSender{
     @Override
     public void onProgressUpdate(int progress) {
         dialog.setProgress(progress);
+    }
+
+    void showLoginRequiredDialog() {
+        DialogFragment loginDialog = LoginRequiredDialog.newInstance();
+        loginDialog.show(getFragmentManager(), "login");
+    }
+
+    public static class LoginRequiredDialog extends DialogFragment {
+
+        public static LoginRequiredDialog newInstance() {
+            LoginRequiredDialog frag = new LoginRequiredDialog();
+            Bundle args = new Bundle();
+            frag.setArguments(args);
+            return frag;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return new AlertDialog.Builder(getActivity())
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("You must first login!")
+                .setMessage("And then send the file again.")
+                .setPositiveButton(R.string.alert_dialog_ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                ((BulletinActivity) getActivity()).onLoginRequiredDialogClicked();
+                            }
+                        }
+                )
+                .create();
+        }
+    }
+
+    public void onLoginRequiredDialogClicked() {
+        BulletinActivity.this.finish();
+        Intent intent = new Intent(BulletinActivity.this, MartusActivity.class);
+        startActivity(intent);
     }
 
     private String getFileNameFromUri(Uri uri) {

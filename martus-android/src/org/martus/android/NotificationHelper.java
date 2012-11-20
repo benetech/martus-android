@@ -62,8 +62,14 @@ public class NotificationHelper {
      */
     public void completed(String resultMsg)    {
         //update notification to indicate completion
-        int icon = android.R.drawable.stat_sys_download_done;
-        if (!resultMsg.equals("ok")) {
+        int icon;
+        if (null != resultMsg) {
+            icon = android.R.drawable.stat_sys_download_done;
+            if (!resultMsg.equals("ok")) {
+                icon = android.R.drawable.stat_notify_error;
+            }
+        } else {
+            resultMsg = "failed - likely need to login to Martus";
             icon = android.R.drawable.stat_notify_error;
         }
         final Notification notification = new NotificationCompat.Builder(mContext)
