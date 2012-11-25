@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import org.martus.client.bulletinstore.ClientBulletinStore;
@@ -70,7 +71,6 @@ public class BulletinActivity extends Activity implements BulletinSender{
             showLoginRequiredDialog();
         }
 
-
         mySettings = PreferenceManager.getDefaultSharedPreferences(this);
         hqKey = new HQKey(mySettings.getString(SettingsActivity.KEY_DESKTOP_PUBLIC_KEY, ""));
         store = AppConfig.getInstance().getStore();
@@ -123,64 +123,79 @@ public class BulletinActivity extends Activity implements BulletinSender{
 
     private void addAttachmentFromIntent() {
         String filePath;
-        File attachment = null;
-        FileInputStream inputStream = null;
+        ArrayList<File> attachments = new ArrayList<File>(1);
+
         Intent intent = getIntent();
         filePath = intent.getStringExtra(EXTRA_ATTACHMENT);
-        Uri uri;
 
         try {
             if (null != filePath) {
-                //attachment passed directly from another app via EXTRA_ATTACHMENT parameter
-                attachment = new File(filePath);
+                attachments.add(new File(filePath));
             } else {
                 //check if file uri was passed via Android Send
-                uri = intent.getData();
                 Bundle bundle = intent.getExtras();
                 if (null != bundle) {
                     if (bundle.containsKey(Intent.EXTRA_STREAM)) {
-                        uri = (Uri)bundle.get(Intent.EXTRA_STREAM);
-                    }
-                }
-                if (uri != null) {
-                    String scheme = uri.getScheme();
-
-                    if ("file".equalsIgnoreCase(scheme)) {
-                        //uri is direct path of file
-                        filePath = uri.getPath();
-                        attachment = new File(filePath);
-                    } else {
-                        //attachment passed as media content
-                        String fileName = getFileNameFromUri(uri);
-                        attachment = new File(getCacheDir(), fileName);
-                        // Ask for a stream of the desired type.
-                        AssetFileDescriptor descr = getContentResolver()
-                                .openTypedAssetFileDescriptor(uri, "*/*", null);
-                        inputStream = descr.createInputStream();
-
-                        BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(attachment));
-                        int read;
-                        byte bytes[] = new byte[1024];
-
-                        while ((read = inputStream.read(bytes)) != -1) {
-                            outputStream.write(bytes, 0, read);
+                        ArrayList<Uri> uris;
+                        Object payload = bundle.get(Intent.EXTRA_STREAM);
+                        if (payload instanceof Uri) {
+                            uris = new ArrayList<Uri>(1);
+                            uris.add((Uri)payload);
+                        } else {
+                            uris = (ArrayList<Uri>)payload;
                         }
-
-                        outputStream.flush();
-                        outputStream.close();
+                        for (Uri uri : uris) {
+                            attachments.add(getFileFromUri(uri));
+                        }
                     }
-
                 }
             }
 
-            //attachment was passed via intent
-            if (null != attachment) {
-                AttachmentProxy attProxy = new AttachmentProxy(attachment);
-                bulletin.addPublicAttachment(attProxy);
+            if (attachments.size() > 0) {
+                for (File attachment : attachments) {
+                    AttachmentProxy attProxy = new AttachmentProxy(attachment);
+                    bulletin.addPublicAttachment(attProxy);
+                }
             }
         } catch (Exception e) {
             Log.e(AppConfig.LOG_LABEL, "problem adding attachment to bulletin", e);
             MartusActivity.showMessage(this, "problem adding attachment to bulletin", "Error");
+        }
+    }
+
+    private File getFileFromUri(Uri uri) throws IOException {
+        String scheme = uri.getScheme();
+        if ("file".equalsIgnoreCase(scheme)) {
+            String filePath = uri.getPath();
+            return new File(filePath);
+        } else {
+            return  createFileFromContentUri(uri);
+        }
+    }
+
+    private File createFileFromContentUri(Uri uri) throws IOException {
+        FileInputStream inputStream = null;
+
+        String fileName = getFileNameFromUri(uri);
+        File file = new File(getCacheDir(), fileName);
+        // Ask for a stream of the desired type.
+        try {
+            AssetFileDescriptor descr = getContentResolver()
+                    .openTypedAssetFileDescriptor(uri, "*/*", null);
+            inputStream = descr.createInputStream();
+
+            BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
+            int read;
+            byte bytes[] = new byte[1024];
+
+            while ((read = inputStream.read(bytes)) != -1) {
+                outputStream.write(bytes, 0, read);
+            }
+
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException e) {
+
         } finally {
             if (inputStream != null) {
                 try {
@@ -189,6 +204,7 @@ public class BulletinActivity extends Activity implements BulletinSender{
                 }
             }
         }
+        return file;
     }
 
     @Override
