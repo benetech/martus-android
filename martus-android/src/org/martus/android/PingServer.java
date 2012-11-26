@@ -24,7 +24,7 @@ public class PingServer extends Activity {
 
 	//String serverIPNew = "http://50.112.118.184/RPC2";
 	//String serverIPNew = "http://66.201.46.82:988/RPC2";
-	private final static String pingPath = "/RPC2";
+	private final static String path = "/RPC2";
 	TextView textview;
     private String serverIP;
 
@@ -40,7 +40,7 @@ public class PingServer extends Activity {
     	textview=(TextView)findViewById(R.id.response);
 
         SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
-        serverIP = "http://" + mySettings.getString(SettingsActivity.KEY_SERVER_IP, MartusActivity.defaultServerIP + pingPath);
+        serverIP = "http://" + mySettings.getString(SettingsActivity.KEY_SERVER_IP, MartusActivity.defaultServerIP + path);
 	    
         final Button button = (Button) findViewById(R.id.buttonPing);
         button.setOnClickListener(new View.OnClickListener() {
