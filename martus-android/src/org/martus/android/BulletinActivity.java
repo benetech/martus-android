@@ -90,36 +90,26 @@ public class BulletinActivity extends Activity implements BulletinSender{
 
         titleText = (EditText)findViewById(R.id.createBulletinTitle);
         summaryText = (EditText)findViewById(R.id.bulletinSummary);
+    }
 
+    public void chooseAttachment(View view) {
+        try {
+            Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+            chooseFile.setType("file/*");
+            Intent intent = Intent.createChooser(chooseFile, "Choose an attachment");
+            startActivityForResult(intent, ACTIVITY_CHOOSE_ATTACHMENT);
+        } catch (Exception e) {
+            Log.e(AppConfig.LOG_LABEL, "Failed choosing file", e);
+            e.printStackTrace();
+        }
+    }
 
-        final Button buttonChooseAttachment = (Button) findViewById(R.id.addAttachment);
-        buttonChooseAttachment.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                try {
-                    Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-                    chooseFile.setType("file/*");
-                    Intent intent = Intent.createChooser(chooseFile, "Choose an attachment");
-                    startActivityForResult(intent, ACTIVITY_CHOOSE_ATTACHMENT);
-                } catch (Exception e) {
-                    Log.e(AppConfig.LOG_LABEL, "Failed choosing file", e);
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        final Button sendButton = (Button) findViewById(R.id.sendToMartus);
-        sendButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try {
-
-                    zipBulletin(bulletin);
-                } catch (Exception e) {
-                    Log.e(AppConfig.LOG_LABEL, "Failed sending bulletin", e);
-                    e.printStackTrace();
-                }
-            }
-        });
-
+    public void sendBulletin(View view) {
+        try {
+            zipBulletin(bulletin);
+        } catch (Exception e) {
+            Log.e(AppConfig.LOG_LABEL, "Failed sending bulletin", e);
+        }
     }
 
     private void addAttachmentFromIntent() {

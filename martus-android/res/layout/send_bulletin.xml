@@ -12,12 +12,14 @@
                 android:layout_height="wrap_content"
                 android:text="Send"
                 android:contentDescription="Send"
+                android:onClick="sendBulletin"
                 android:id="@+id/sendToMartus" android:layout_row="0" android:layout_column="2"
                 android:layout_gravity="right" />
         <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Add attachment"
+                android:onClick="chooseAttachment"
                 android:contentDescription="Add attachment"
                 android:id="@+id/addAttachment" android:layout_row="0" android:layout_column="3"
                 android:layout_gravity="right"/>
