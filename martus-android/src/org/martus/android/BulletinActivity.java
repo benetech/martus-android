@@ -236,23 +236,6 @@ public class BulletinActivity extends Activity implements BulletinSender{
         }
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-
-        String filePath = intent.getStringExtra(EXTRA_ATTACHMENT);
-        try {
-
-            File attachment = new File(filePath);
-            AttachmentProxy attProxy = new AttachmentProxy(attachment);
-            bulletin.addPublicAttachment(attProxy);
-
-
-        } catch (Exception e) {
-            Log.e(AppConfig.LOG_LABEL, "problem adding attachment to bulletin", e);
-        }
-
-    }
-
     private void zipBulletin(Bulletin bulletin)  {
 
         dialog = new ProgressDialog(this);
