@@ -39,7 +39,6 @@ public class MartusActivity extends Activity {
     public static final String defaultServerPublicCode = "8714.7632.8884.7614.8217";
     public static final String defaultMagicWord = "spam";
     private String serverPublicKey;
-    private String password;
 
     private MartusSecurity martusCrypto;
     private static Activity myActivity;
@@ -224,7 +223,7 @@ public class MartusActivity extends Activity {
         return keyPairString.length() > 1;
     }
 
-    private boolean confirmAccount(String password)  {
+    private boolean confirmAccount(char[] password)  {
 
         SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(MartusActivity.this);
         String keyPairString = mySettings.getString(SettingsActivity.KEY_KEY_PAIR, "");
@@ -233,7 +232,7 @@ public class MartusActivity extends Activity {
         byte[] decodedKeyPair = Base64.decode(keyPairString, Base64.NO_WRAP);
         InputStream is = new ByteArrayInputStream(decodedKeyPair);
         try {
-            martusCrypto.readKeyPair(is, password.toCharArray());
+            martusCrypto.readKeyPair(is, password);
         } catch (Exception e) {
             Log.e(AppConfig.LOG_LABEL, "Problem confirming password", e);
             return false;
@@ -241,14 +240,14 @@ public class MartusActivity extends Activity {
         return true;
     }
 
-    private void createAccount(String password)  {
+    private void createAccount(char[] password)  {
         SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(MartusActivity.this);
         // create new keypair and store in prefs
         martusCrypto.createKeyPair();
 
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            martusCrypto.writeKeyPair(out, password.toCharArray());
+            martusCrypto.writeKeyPair(out, password);
             out.close();
             byte[] keyPairData = out.toByteArray();
 
@@ -286,7 +285,7 @@ public class MartusActivity extends Activity {
     }
 
     public void doLoginPositiveClick(EditText passwordText) {
-        password = passwordText.getText().toString().trim();
+        char[] password = passwordText.getText().toString().trim().toCharArray();
         boolean confirmed = confirmAccount(password);
         if (!confirmed) {
             MartusActivity.this.finish();
@@ -343,7 +342,7 @@ public class MartusActivity extends Activity {
     }
 
     public void doCreateAccountPositiveClick(EditText passwordText) {
-        password = passwordText.getText().toString().trim();
+        char[] password = passwordText.getText().toString().trim().toCharArray();
         createAccount(password);
         checkDesktopKey();
         newAccountDialog.dismiss();
