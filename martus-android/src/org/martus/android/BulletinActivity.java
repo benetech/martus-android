@@ -45,6 +45,7 @@ public class BulletinActivity extends Activity implements BulletinSender{
 
     final int ACTIVITY_CHOOSE_ATTACHMENT = 2;
     public static final String EXTRA_ATTACHMENT = "org.martus.android.filePath";
+    public static final String EXTRA_ATTACHMENTS = "org.martus.android.filePaths";
     public static final String EXTRA_ACCOUNT_ID = "org.martus.android.accountId";
     public static final String EXTRA_LOCAL_ID = "org.martus.android.localId";
     public static final String EXTRA_BULLETIN_TITLE = "org.martus.android.title";
@@ -123,14 +124,20 @@ public class BulletinActivity extends Activity implements BulletinSender{
 
     private void addAttachmentFromIntent() {
         String filePath;
+        String[] filePaths;
         ArrayList<File> attachments = new ArrayList<File>(1);
 
         Intent intent = getIntent();
         filePath = intent.getStringExtra(EXTRA_ATTACHMENT);
+        filePaths = intent.getStringArrayExtra(EXTRA_ATTACHMENTS);
 
         try {
             if (null != filePath) {
                 attachments.add(new File(filePath));
+            } else if (null != filePaths) {
+                for (String path : filePaths) {
+                    attachments.add(new File(path));
+                }
             } else {
                 //check if file uri was passed via Android Send
                 Bundle bundle = intent.getExtras();
