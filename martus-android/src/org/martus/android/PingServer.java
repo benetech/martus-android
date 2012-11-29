@@ -2,6 +2,8 @@ package org.martus.android;
 
 import java.net.URL;
 
+import android.widget.CheckBox;
+import info.guardianproject.onionkit.ui.OrbotHelper;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
@@ -21,6 +23,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class PingServer extends Activity {
+
+    public final static String PROXY_HOST = "127.0.0.1"; //test the local device proxy provided by Orbot/Tor
+    public final static int PROXY_HTTP_PORT = 8118; //default for Orbot/Tor
+    public final static int PROXY_SOCKS_PORT = 9050; //default for Orbot/Tor
 
 	//String serverIPNew = "http://50.112.118.184/RPC2";
 	//String serverIPNew = "http://66.201.46.82:988/RPC2";
@@ -51,6 +57,8 @@ public class PingServer extends Activity {
             		XmlRpcClient client = new XmlRpcClient();
             		client.setConfig(config);
 
+
+
                     //Network calls must be made in background task
                     final AsyncTask<XmlRpcClient, Void, String> pingTask = new PingTask().execute(client);
                     String result = pingTask.get();
@@ -58,7 +66,6 @@ public class PingServer extends Activity {
                   	textview.setText("response: " +result);
 				} catch (Exception e) {
 					Log.e("martus-xmlrpc", "xmlrpc call failed", e);
-					e.printStackTrace();
 				}
             }
         });
@@ -87,6 +94,41 @@ public class PingServer extends Activity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void onTorChecked(View view) {
+        boolean checked = ((CheckBox) view).isChecked();
+
+        if  (checked) {
+            System.setProperty("proxyHost", PROXY_HOST);
+            System.setProperty("proxyPort", String.valueOf(PROXY_HTTP_PORT));
+
+            System.setProperty("socksProxyHost", PROXY_HOST);
+            System.setProperty("socksProxyPort", String.valueOf(PROXY_SOCKS_PORT));
+
+            try {
+
+                OrbotHelper oc = new OrbotHelper(this);
+
+                if (!oc.isOrbotInstalled())
+                {
+                    oc.promptToInstall(this);
+                }
+                else if (!oc.isOrbotRunning())
+                {
+                    oc.requestOrbotStart(this);
+                }
+            } catch (Exception e) {
+                Log.e(AppConfig.LOG_LABEL, "Tor check failed", e);
+            }
+
+        } else {
+            System.clearProperty("proxyHost");
+            System.clearProperty("proxyPort");
+
+            System.clearProperty("socksProxyHost");
+            System.clearProperty("socksProxyPort");
         }
     }
     

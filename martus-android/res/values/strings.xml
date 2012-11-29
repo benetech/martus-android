@@ -39,5 +39,14 @@
     <string name="password_dialog_cancel">Cancel</string>
     <string name="create_account_dialog_title">Create new password</string>
     <string name="quit_menu_title">Exit</string>
+    <string name="market_orbot">market orbot</string>
+    <string name="install_orbot_">install orbot</string>
+    <string name="you_must_have_orbot">you must have orbot</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="start_orbot_">start orbot</string>
+    <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot not
+        running. Like to start?
+    </string>
 
 </resources>
