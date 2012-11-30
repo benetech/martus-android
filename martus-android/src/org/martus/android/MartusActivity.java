@@ -48,7 +48,9 @@ public class MartusActivity extends Activity {
 
     DialogFragment newAccountDialog;
 
-    final int ACTIVITY_DESKTOP_KEY = 2;
+    static final int ACTIVITY_DESKTOP_KEY = 2;
+    public static final int ACTIVITY_BULLETIN = 3;
+    public static final String RETURN_TO = "return_to";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -294,6 +296,15 @@ public class MartusActivity extends Activity {
         SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(MartusActivity.this);
         serverPublicKey = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
         gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
+
+        Intent intent = getIntent();
+        int returnTo = intent.getIntExtra(RETURN_TO, 0);
+        if (returnTo == ACTIVITY_BULLETIN) {
+            Intent destination = new Intent(MartusActivity.this, BulletinActivity.class);
+            destination.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            destination.putExtras(intent);
+            startActivity(destination);
+        }
     }
 
     public void doLoginNegativeClick() {

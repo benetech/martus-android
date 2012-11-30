@@ -113,11 +113,27 @@ public class BulletinActivity extends Activity implements BulletinSender{
     }
 
     private void addAttachmentFromIntent() {
-        String filePath;
-        String[] filePaths;
-        ArrayList<File> attachments = new ArrayList<File>(1);
 
         Intent intent = getIntent();
+        ArrayList<File> attachments = getFilesFromIntent(intent);
+
+        try {
+            if (attachments.size() > 0) {
+                for (File attachment : attachments) {
+                    AttachmentProxy attProxy = new AttachmentProxy(attachment);
+                    bulletin.addPublicAttachment(attProxy);
+                }
+            }
+        } catch (Exception e) {
+            Log.e(AppConfig.LOG_LABEL, "problem adding attachment to bulletin", e);
+            MartusActivity.showMessage(this, "problem adding attachment to bulletin", "Error");
+        }
+    }
+
+    private ArrayList<File> getFilesFromIntent(Intent intent) {
+        ArrayList<File> attachments = new ArrayList<File>(1);
+        String filePath;
+        String[] filePaths;
         filePath = intent.getStringExtra(EXTRA_ATTACHMENT);
         filePaths = intent.getStringArrayExtra(EXTRA_ATTACHMENTS);
 
@@ -148,16 +164,13 @@ public class BulletinActivity extends Activity implements BulletinSender{
                 }
             }
 
-            if (attachments.size() > 0) {
-                for (File attachment : attachments) {
-                    AttachmentProxy attProxy = new AttachmentProxy(attachment);
-                    bulletin.addPublicAttachment(attProxy);
-                }
-            }
-        } catch (Exception e) {
-            Log.e(AppConfig.LOG_LABEL, "problem adding attachment to bulletin", e);
-            MartusActivity.showMessage(this, "problem adding attachment to bulletin", "Error");
+
+        } catch (IOException e) {
+            Log.e(AppConfig.LOG_LABEL, "problem getting files for attachments", e);
+            MartusActivity.showMessage(this, "problem getting files for attachments", "Error");
         }
+
+        return attachments;
     }
 
     private File getFileFromUri(Uri uri) throws IOException {
@@ -331,13 +344,13 @@ public class BulletinActivity extends Activity implements BulletinSender{
             return new AlertDialog.Builder(getActivity())
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("You must first login!")
-                .setMessage("And then send the file again.")
+                .setMessage("Before sending this bulletin")
                 .setPositiveButton(R.string.alert_dialog_ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                ((BulletinActivity) getActivity()).onLoginRequiredDialogClicked();
-                            }
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            ((BulletinActivity) getActivity()).onLoginRequiredDialogClicked();
                         }
+                    }
                 )
                 .create();
         }
@@ -346,6 +359,9 @@ public class BulletinActivity extends Activity implements BulletinSender{
     public void onLoginRequiredDialogClicked() {
         BulletinActivity.this.finish();
         Intent intent = new Intent(BulletinActivity.this, MartusActivity.class);
+        intent.putExtras(getIntent());
+        intent.putExtra(MartusActivity.RETURN_TO, MartusActivity.ACTIVITY_BULLETIN);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(intent);
     }
 
