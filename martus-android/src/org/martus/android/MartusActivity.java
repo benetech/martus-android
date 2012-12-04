@@ -32,6 +32,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MartusActivity extends Activity {
 
@@ -290,7 +291,8 @@ public class MartusActivity extends Activity {
         char[] password = passwordText.getText().toString().trim().toCharArray();
         boolean confirmed = confirmAccount(password);
         if (!confirmed) {
-            MartusActivity.this.finish();
+            Toast.makeText(this, "Incorrect Password", Toast.LENGTH_SHORT).show();
+            showLoginDialog();
         }
 
         SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(MartusActivity.this);
@@ -317,6 +319,7 @@ public class MartusActivity extends Activity {
             LoginDialogFragment frag = new LoginDialogFragment();
             Bundle args = new Bundle();
             frag.setArguments(args);
+            frag.setCancelable(false);
             return frag;
         }
 
@@ -369,6 +372,7 @@ public class MartusActivity extends Activity {
                 CreateAccountDialogFragment frag = new CreateAccountDialogFragment();
                 Bundle args = new Bundle();
                 frag.setArguments(args);
+                frag.setCancelable(false);
                 return frag;
             }
 
