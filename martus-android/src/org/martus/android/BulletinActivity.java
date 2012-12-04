@@ -204,14 +204,9 @@ public class BulletinActivity extends Activity implements BulletinSender{
 
             outputStream.flush();
             outputStream.close();
-        } catch (IOException e) {
-
         } finally {
             if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                }
+                inputStream.close();
             }
         }
         return file;
