@@ -118,11 +118,9 @@ public class BulletinActivity extends Activity implements BulletinSender{
         ArrayList<File> attachments = getFilesFromIntent(intent);
 
         try {
-            if (attachments.size() > 0) {
-                for (File attachment : attachments) {
-                    AttachmentProxy attProxy = new AttachmentProxy(attachment);
-                    bulletin.addPublicAttachment(attProxy);
-                }
+            for (File attachment : attachments) {
+                AttachmentProxy attProxy = new AttachmentProxy(attachment);
+                bulletin.addPublicAttachment(attProxy);
             }
         } catch (Exception e) {
             Log.e(AppConfig.LOG_LABEL, "problem adding attachment to bulletin", e);
