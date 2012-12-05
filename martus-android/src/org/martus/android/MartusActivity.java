@@ -39,6 +39,7 @@ public class MartusActivity extends Activity {
 	public static final String defaultServerIP = "54.245.101.104"; //public QA server
     public static final String defaultServerPublicCode = "8714.7632.8884.7614.8217";
     public static final String defaultMagicWord = "spam";
+    public static final int MAX_LOGIN_ATTEMPTS = 3;
     private String serverPublicKey;
 
     private MartusSecurity martusCrypto;
@@ -46,6 +47,7 @@ public class MartusActivity extends Activity {
     private ClientSideNetworkGateway gateway = null;
     private String serverIP;
     private String serverPublicCode;
+    private int invalidLogins;
 
     DialogFragment newAccountDialog;
 
@@ -64,6 +66,7 @@ public class MartusActivity extends Activity {
         martusCrypto = AppConfig.getInstance().getCrypto();
         if (!martusCrypto.hasKeyPair()) {
             if (isAccountCreated()) {
+                invalidLogins = 0;
                 showLoginDialog();
             } else {
                 showCreateAccountDialog();
@@ -291,6 +294,9 @@ public class MartusActivity extends Activity {
         char[] password = passwordText.getText().toString().trim().toCharArray();
         boolean confirmed = confirmAccount(password);
         if (!confirmed) {
+            if (++invalidLogins == MAX_LOGIN_ATTEMPTS) {
+                finish();
+            }
             Toast.makeText(this, "Incorrect Password", Toast.LENGTH_SHORT).show();
             showLoginDialog();
         }
