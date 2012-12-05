@@ -44,13 +44,13 @@ public class DesktopKeyActivity extends Activity {
                 String code = editText_code.getText().toString().trim();
                 if ("".equals(code)) {
                     editText_code.requestFocus();
-                    MartusActivity.showMessage(activity, "Public code can't be empty", "Error");
+                    MartusActivity.showMessage(activity, getString(R.string.public_code_validation_empty), getString(R.string.error_message));
                     return;
                 }
                 try {
                     Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
                     chooseFile.setType("file/*");
-                    Intent intent = Intent.createChooser(chooseFile, "Choose a file picker");
+                    Intent intent = Intent.createChooser(chooseFile, getString(R.string.select_file_picker));
                     startActivityForResult(intent, ACTIVITY_CHOOSE_FILE);
                 } catch (Exception e) {
                     Log.e("martus", "Failed choosing file", e);
@@ -71,6 +71,7 @@ public class DesktopKeyActivity extends Activity {
                     try {
                         setPublicKey(new File(filePath));
                     } catch (Exception e) {
+                        MartusActivity.showMessage(activity, getString(R.string.invalid_public_account_file), getString(R.string.error_message));
                         Log.e("martus", "problem getting HQ key", e);
                     }
                 }
@@ -86,7 +87,7 @@ public class DesktopKeyActivity extends Activity {
 
         String publicCode = MartusCrypto.computePublicCode(publicKeyString);
         if(!confirmPublicCode(publicCode, editText_code.getText().toString().trim())) {
-            MartusActivity.showMessage(activity, "Public code didn't match file", "Error");
+            MartusActivity.showMessage(activity, getString(R.string.invalid_public_code), getString(R.string.error_message));
             return;
         }
         SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);

@@ -5,11 +5,11 @@
     <string name="app_name">Martus</string>
     <string name="create_sample_bulletin">Create Bulletin</string>
     <string name="check_bulletins">Check Bulletins</string>
+    <string name="error_message">Error</string>
 
     <!-- ============================== -->
     <!--  settings screen  -->
     <!-- ============================== -->
-
     <string name="server_preferences">Server Settings</string>
     <string name="title_server_ip_preference">IP address</string>
     <string name="summary_server_ip_preference">Martus Server IP Address</string>
@@ -29,10 +29,7 @@
     <string name="summary_language_preference">Preferred language</string>
     <string name="dialog_title_language_preference">Preferred language</string>
     <string name="settings_title">Settings</string>
-    <string name="ping_menu_title">Ping server</string>
-    <string name="desktop_sync_public_code">First enter public code:</string>
-    <string name="desktop_sync_title">You must first import a desktop key</string>
-    <string name="desktop_sync_choose_file">Then choose desktop account file</string>
+
     <string name="alert_dialog_password">Password:</string>
     <string name="password_dialog_title">Login</string>
     <string name="alert_dialog_ok">OK</string>
@@ -48,5 +45,26 @@
     <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot not
         running. Like to start?
     </string>
+    <string name="send_bulletin">Send</string>
+    <string name="use_tor">Use Tor</string>
+    <string name="add_attachment">Add attachment</string>
+    <string name="enter_summary">Enter optional summary</string>
+    <string name="summary_label">Summary:</string>
+    <string name="title_label">Title:</string>
+    <string name="title_hint">Enter a title for this bulletin</string>
+    <string name="create_password_hint">New password</string>
+    <string name="enter_password_hint">Enter password</string>
+
+    <!-- ============================== -->
+    <!--  desktop key screen  -->
+    <!-- ============================== -->
+    <string name="desktop_sync_public_code">First enter public code:</string>
+    <string name="desktop_sync_title">Import Desktop Account</string>
+    <string name="desktop_sync_choose_file">Then choose desktop account file</string>
+    <string name="desktop_public_code_hint">Desktop public code</string>
+    <string name="invalid_public_account_file">Invalid public account file</string>
+    <string name="invalid_public_code">Public code doesn\'t match file</string>
+    <string name="public_code_validation_empty">Public code can\'t be empty</string>
+    <string name="select_file_picker">Select a file chooser</string>
 
 </resources>

@@ -23,7 +23,7 @@
             android:autoText="false"
             android:capitalize="none"
             android:gravity="fill_horizontal"
-            android:hint="Desktop public code"
+            android:hint="@string/desktop_public_code_hint"
             android:id="@+id/desktopCodeText"/>
 
     <Button

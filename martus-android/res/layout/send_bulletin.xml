@@ -10,37 +10,37 @@
         <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Send"
-                android:contentDescription="Send"
+                android:text="@string/send_bulletin"
+                android:contentDescription="@string/send_bulletin"
                 android:onClick="sendBulletin"
                 android:id="@+id/sendToMartus" android:layout_row="0" android:layout_column="2"
                 android:layout_gravity="right" />
         <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add attachment"
+                android:text="@string/add_attachment"
                 android:onClick="chooseAttachment"
-                android:contentDescription="Add attachment"
+                android:contentDescription="@string/add_attachment"
                 android:id="@+id/addAttachment" android:layout_row="0" android:layout_column="3"
                 android:layout_gravity="right"/>
     </GridLayout>
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Title: "
+            android:text="@string/title_label"
             android:id="@+id/createBulletinTitleLabel" android:layout_row="1" android:layout_column="0"
             android:layout_gravity="right"/>
     <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/createBulletinTitle" android:layout_row="1" android:layout_column="1"
-            android:hint="Enter a title for this bulletin"
+            android:hint="@string/title_hint"
             android:singleLine="false" android:layout_columnSpan="3" android:layout_gravity="left|right"
             android:focusable="true"/>
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Summary:"
+            android:text="@string/summary_label"
             android:id="@+id/createBulletinSummaryLabel" android:layout_row="2" android:layout_column="0"
             android:linksClickable="true"/>
     <EditText
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/bulletinSummary" android:layout_row="3" android:layout_column="0"
             android:inputType="textMultiLine"
-            android:hint="Enter optional summary"
+            android:hint="@string/enter_summary"
             android:textIsSelectable="false" android:layout_columnSpan="4" android:layout_gravity="left|right"
             android:gravity="left|top" />
 </GridLayout>
