@@ -30,10 +30,19 @@
     <string name="dialog_title_language_preference">Preferred language</string>
     <string name="settings_title">Settings</string>
 
+    <!-- ============================== -->
+    <!--  main screen  -->
+    <!-- ============================== -->
     <string name="alert_dialog_password">Password:</string>
     <string name="password_dialog_title">Login</string>
     <string name="alert_dialog_ok">OK</string>
     <string name="password_dialog_cancel">Cancel</string>
+    <string name="incorrect_password">Incorrect Password</string>
+    <string name="error_create_account">Problem creating account</string>
+    <string name="error_computing_public_code">Problem computing public code</string>
+    <string name="invalid_public_code">Invalid server public code! Please fix in Settings screen.</string>
+    <string name="error_getting_server_key">Problem getting server public key</string>
+    <string name="no_upload_rights">Don\'t have upload rights!</string>
     <string name="create_account_dialog_title">Create new password</string>
     <string name="quit_menu_title">Logout</string>
     <string name="market_orbot">market orbot</string>
@@ -45,8 +54,13 @@
     <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot not
         running. Like to start?
     </string>
-    <string name="send_bulletin">Send</string>
     <string name="use_tor">Use Tor</string>
+
+
+    <!-- ============================== -->
+    <!--  bulletin screen  -->
+    <!-- ============================== -->
+    <string name="send_bulletin">Send</string>
     <string name="add_attachment">Add attachment</string>
     <string name="enter_summary">Enter optional summary</string>
     <string name="summary_label">Summary:</string>

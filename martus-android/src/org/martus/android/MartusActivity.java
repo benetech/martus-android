@@ -94,7 +94,7 @@ public class MartusActivity extends Activity {
                  final AsyncTask<Object, Void, NetworkResponse> rightsTask = new UploadRightsTask().execute(gateway, martusCrypto, defaultMagicWord);
                  final NetworkResponse response = rightsTask.get();
                  if (!response.getResultCode().equals("ok")) {
-                     showMessage(myActivity, "Don't have upload rights!", "Error");
+                     showMessage(myActivity, getString(R.string.no_upload_rights), getString(R.string.error_message));
                  }
              } catch (Exception e) {
                  Log.e(AppConfig.LOG_LABEL, "Problem verifying upload rights");
@@ -186,7 +186,7 @@ public class MartusActivity extends Activity {
                 editor.commit();
             } catch (Exception e) {
                 Log.e(AppConfig.LOG_LABEL, "Problem getting server public key", e);
-                showMessage(this, "Problem getting server public key", "Error");
+                showMessage(this, getString(R.string.error_getting_server_key), getString(R.string.error_message));
                 return;
             }
         }
@@ -197,11 +197,11 @@ public class MartusActivity extends Activity {
         try {
             computedCode = MartusCrypto.computePublicCode(serverPublicKey);
             if (! normalizedPublicCode.equals(computedCode)) {
-                showMessage(myActivity, "Invalid server public code! Please fix in Settings screen.", "Error");
+                showMessage(myActivity, getString(R.string.invalid_public_code), getString(R.string.error_message));
             }
         } catch (StreamableBase64.InvalidBase64Exception e) {
             Log.e(AppConfig.LOG_LABEL,"problem computing public code", e);
-            showMessage(myActivity, "Problem computing public code", "Error");
+            showMessage(myActivity, getString(R.string.error_computing_public_code), getString(R.string.error_message));
             return;
         }
 
@@ -263,7 +263,7 @@ public class MartusActivity extends Activity {
             editor.commit();
         } catch (Exception e) {
             Log.e(AppConfig.LOG_LABEL, "Problem creating account", e);
-            showMessage(MartusActivity.this, "Problem creating account", "Error");
+            showMessage(MartusActivity.this, getString(R.string.error_create_account), getString(R.string.error_message));
         }
     }
 
@@ -293,7 +293,7 @@ public class MartusActivity extends Activity {
             if (++invalidLogins == MAX_LOGIN_ATTEMPTS) {
                 finish();
             }
-            Toast.makeText(this, "Incorrect Password", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.incorrect_password), Toast.LENGTH_SHORT).show();
             showLoginDialog();
         }
 
