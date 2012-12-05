@@ -3,13 +3,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/settings_menu_item"
+        android:showAsAction="ifRoom|withText"
         android:title="@string/settings_title" />
 
-    <item android:id="@+id/ping_menu_item"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/ping_menu_title" />
-
     <item android:id="@+id/quit_menu_item"
+        android:showAsAction="ifRoom|withText"
         android:title="@string/quit_menu_title" />
 
 </menu>

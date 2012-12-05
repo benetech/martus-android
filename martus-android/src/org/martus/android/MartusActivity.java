@@ -102,7 +102,7 @@ public class MartusActivity extends Activity {
          }
     }
 
-    public void verifyServer(View view) {
+    public void verifyServer() {
         try {
             //Network calls must be made in background task
             final AsyncTask<ClientSideNetworkGateway, Void, NetworkResponse> infoTask = new ServerInfoTask().execute(gateway);
@@ -149,10 +149,6 @@ public class MartusActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.settings_menu_item:
                 intent = new Intent(MartusActivity.this, SettingsActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.ping_menu_item:
-                intent = new Intent(MartusActivity.this, PingServer.class);
                 startActivity(intent);
                 return true;
             case R.id.quit_menu_item:

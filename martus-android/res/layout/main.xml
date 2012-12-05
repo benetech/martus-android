@@ -3,13 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-      
-    <Button
-    	android:id="@+id/serverInfo"
-       	android:layout_width="wrap_content"
-      	android:layout_height="wrap_content"
-        android:onClick="verifyServer"
-      	android:text="Server Info" />
+
     <TextView
         android:id="@+id/response_server"
         android:layout_width="fill_parent"
