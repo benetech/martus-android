@@ -197,7 +197,7 @@ public class MartusActivity extends Activity {
         try {
             computedCode = MartusCrypto.computePublicCode(serverPublicKey);
             if (! normalizedPublicCode.equals(computedCode)) {
-                showMessage(myActivity, getString(R.string.invalid_public_code), getString(R.string.error_message));
+                showMessage(myActivity, getString(R.string.invalid_server_public_code), getString(R.string.error_message));
             }
         } catch (StreamableBase64.InvalidBase64Exception e) {
             Log.e(AppConfig.LOG_LABEL,"problem computing public code", e);

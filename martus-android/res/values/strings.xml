@@ -40,7 +40,7 @@
     <string name="incorrect_password">Incorrect Password</string>
     <string name="error_create_account">Problem creating account</string>
     <string name="error_computing_public_code">Problem computing public code</string>
-    <string name="invalid_public_code">Invalid server public code! Please fix in Settings screen.</string>
+    <string name="invalid_server_public_code">Invalid server public code! Please fix in Settings screen.</string>
     <string name="error_getting_server_key">Problem getting server public key</string>
     <string name="no_upload_rights">Don\'t have upload rights!</string>
     <string name="create_account_dialog_title">Create new password</string>
@@ -79,6 +79,6 @@
     <string name="invalid_public_account_file">Invalid public account file</string>
     <string name="invalid_public_code">Public code doesn\'t match file</string>
     <string name="public_code_validation_empty">Public code can\'t be empty</string>
-    <string name="select_file_picker">Select a file chooser</string>
+    <string name="select_file_picker">Select a file chooser</string><string name="attachments_label">Attachments:</string>
 
 </resources>
