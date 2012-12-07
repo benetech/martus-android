@@ -29,4 +29,12 @@
         android:id="@+id/check_bulletins_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/use_tor"
+        android:id="@+id/checkBox_use_tor"
+        android:layout_gravity="left|center_vertical"
+        android:singleLine="true"
+        android:onClick="onTorChecked"/>
 </LinearLayout>

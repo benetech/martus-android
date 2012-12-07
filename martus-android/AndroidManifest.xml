@@ -26,7 +26,6 @@
             </intent-filter>-->
 
         </activity>
-       <activity android:name=".PingServer"></activity>
        <activity android:name=".SettingsActivity" android:label="@string/settings_title"></activity>
        <activity android:name=".DesktopKeyActivity" android:label="@string/desktop_sync_title"></activity>
        <activity
