@@ -14,6 +14,7 @@ import org.martus.common.HQKey;
 import org.martus.common.HQKeys;
 import org.martus.common.bulletin.AttachmentProxy;
 import org.martus.common.bulletin.Bulletin;
+import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.packet.UniversalId;
 
@@ -21,6 +22,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,6 +36,7 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -41,7 +44,7 @@ import android.widget.EditText;
  * @author roms
  *         Date: 10/25/12
  */
-public class BulletinActivity extends Activity implements BulletinSender{
+public class BulletinActivity extends ListActivity implements BulletinSender{
 
     final int ACTIVITY_CHOOSE_ATTACHMENT = 2;
     public static final String EXTRA_ATTACHMENT = "org.martus.android.filePath";
@@ -61,6 +64,7 @@ public class BulletinActivity extends Activity implements BulletinSender{
     private EditText titleText;
     private EditText summaryText;
     private ProgressDialog dialog;
+    private ArrayAdapter<String> attachmentAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,10 +90,15 @@ public class BulletinActivity extends Activity implements BulletinSender{
                 MartusActivity.showMessage(this, "couldn't create new bulletin", "Error");
             }
         }
-        addAttachmentFromIntent();
 
         titleText = (EditText)findViewById(R.id.createBulletinTitle);
         summaryText = (EditText)findViewById(R.id.bulletinSummary);
+
+        attachmentAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+        setListAdapter(attachmentAdapter);
+        getListView().setTextFilterEnabled(true);
+
+        addAttachmentFromIntent();
     }
 
     public void chooseAttachment(View view) {
@@ -119,13 +128,18 @@ public class BulletinActivity extends Activity implements BulletinSender{
 
         try {
             for (File attachment : attachments) {
-                AttachmentProxy attProxy = new AttachmentProxy(attachment);
-                bulletin.addPublicAttachment(attProxy);
+                addAttachmentToBulletin(attachment);
             }
         } catch (Exception e) {
             Log.e(AppConfig.LOG_LABEL, "problem adding attachment to bulletin", e);
             MartusActivity.showMessage(this, "problem adding attachment to bulletin", "Error");
         }
+    }
+
+    private void addAttachmentToBulletin(File attachment) throws IOException, MartusCrypto.EncryptionException {
+        AttachmentProxy attProxy = new AttachmentProxy(attachment);
+        bulletin.addPublicAttachment(attProxy);
+        attachmentAdapter.add(attachment.getName());
     }
 
     private ArrayList<File> getFilesFromIntent(Intent intent) {
@@ -218,10 +232,10 @@ public class BulletinActivity extends Activity implements BulletinSender{
                     if (null != data) {
                         Uri uri = data.getData();
                         String filePath = uri.getPath();
+                        File file = new File(filePath);
 
-                        AttachmentProxy attachment = new AttachmentProxy(new File(filePath));
                         try {
-                            bulletin.addPublicAttachment(attachment);
+                            addAttachmentToBulletin(file);
                         } catch (Exception e) {
                             Log.e(AppConfig.LOG_LABEL, "problem getting attachment", e);
                         }
