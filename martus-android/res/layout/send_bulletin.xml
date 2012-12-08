@@ -24,34 +24,30 @@
                 android:id="@+id/addAttachment" android:layout_row="0" android:layout_column="3"
                 android:layout_gravity="right"/>
     </GridLayout>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/title_label"
-            android:id="@+id/createBulletinTitleLabel"
-            android:layout_row="1"
-            android:layout_column="0"
-            android:layout_gravity="right"/>
-    <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/createBulletinTitle"
-            android:layout_row="1"
-            android:layout_column="1"
-            android:hint="@string/title_hint"
-            android:singleLine="false"
-            android:layout_columnSpan="3"
-            android:layout_gravity="left|right"
-            android:focusable="true"/>
 
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_row="2"
+            android:layout_row="1"
             android:layout_column="0"
             android:layout_columnSpan="4"
             android:layout_rowSpan="2">
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_label"
+                android:id="@+id/createBulletinTitleLabel"
+                />
+        <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/createBulletinTitle"
+                android:hint="@string/title_hint"
+                android:singleLine="false"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                />
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -60,7 +56,7 @@
                 />
         <EditText
                 android:layout_width="fill_parent"
-                android:layout_height="100dip"
+                android:layout_height="80dip"
                 android:id="@+id/bulletinSummary"
                 android:inputType="textMultiLine"
                 android:hint="@string/enter_summary"
@@ -76,13 +72,13 @@
             android:layout_height="wrap_content"
             android:text="@string/attachments_label"
             android:id="@+id/textView"
-            android:layout_row="4"
+            android:layout_row="3"
             android:layout_column="0"/>
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_row="5"
+            android:layout_row="4"
             android:layout_column="0"
             android:layout_columnSpan="4"
             android:layout_rowSpan="2"
