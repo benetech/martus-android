@@ -14,10 +14,9 @@ import android.preference.PreferenceActivity;
  */
 public class SettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    public static final String KEY_MAGIC_WORD = "server_magic_word_preference";
+    public static final String KEY_HAVE_UPLOAD_RIGHTS = "server_upload_rights";
     public static final String KEY_DEFAULT_LANGUAGE = "language_preference";
     public static final String KEY_SERVER_IP = "server_ip_preference";
-    public static final String KEY_SERVER_PUBLIC_CODE = "server_code_preference";
     public static final String KEY_AUTHOR = "author_preference";
     public static final String KEY_DESKTOP_PUBLIC_KEY = "desktop_public_keystring";
     public static final String KEY_SERVER_PUBLIC_KEY = "server_public_keystring";
@@ -53,10 +52,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     private void setPreferenceSummary(SharedPreferences sharedPreferences, String key) {
         Preference preference = findPreference(key);
         if (null != preference) {
-            if (key.equals(KEY_MAGIC_WORD)) {
-                //don't want to show the magic word - just indicate that its been set
-                preference.setSummary(R.string.magic_word_set);
-            } else if (key.equals(KEY_DEFAULT_LANGUAGE)) {
+            if (key.equals(KEY_DEFAULT_LANGUAGE)) {
                 //need to show description of language as the summary, not the language code
                 final String languageCode = sharedPreferences.getString(key, "?");
                 final int index = Arrays.asList(languageCodesArray).indexOf(languageCode);

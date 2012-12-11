@@ -313,8 +313,7 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
     }
 
     private void updateSettings() {
-        serverIP = mySettings.getString(SettingsActivity.KEY_SERVER_IP, MartusActivity.defaultServerIP);
-        //magicWord = mySettings.getString(SettingsActivity.KEY_MAGIC_WORD, MartusActivity.defaultMagicWord);
+        serverIP = mySettings.getString(SettingsActivity.KEY_SERVER_IP, "");
         serverPublicKey = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
     }
 

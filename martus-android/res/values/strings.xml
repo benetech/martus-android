@@ -34,7 +34,9 @@
     <!--  main screen  -->
     <!-- ============================== -->
     <string name="alert_dialog_password">Password:</string>
+    <string name="alert_dialog_magic_word">Magic Word:</string>
     <string name="password_dialog_title">Login</string>
+    <string name="magic_word_dialog_title">Enter Magic Word</string>
     <string name="alert_dialog_ok">OK</string>
     <string name="password_dialog_cancel">Cancel</string>
     <string name="incorrect_password">Incorrect Password</string>
@@ -42,9 +44,10 @@
     <string name="error_computing_public_code">Problem computing public code</string>
     <string name="invalid_server_public_code">Invalid server public code! Please fix in Settings screen.</string>
     <string name="error_getting_server_key">Problem getting server public key</string>
-    <string name="no_upload_rights">Don\'t have upload rights!</string>
+    <string name="no_upload_rights">Incorrect magic word</string>
     <string name="create_account_dialog_title">Create new password</string>
     <string name="quit_menu_title">Logout</string>
+    <string name="server_menu_title">Choose Server</string>
     <string name="market_orbot">market orbot</string>
     <string name="install_orbot_">install orbot</string>
     <string name="you_must_have_orbot">you must have orbot</string>
@@ -55,6 +58,9 @@
         running. Like to start?
     </string>
     <string name="use_tor">Use Tor</string>
+    <string name="create_password_hint">New password</string>
+    <string name="enter_password_hint">Enter password</string>
+    <string name="enter_magic_word_hint">enter magic word</string>
 
 
     <!-- ============================== -->
@@ -66,8 +72,7 @@
     <string name="summary_label">Summary:</string>
     <string name="title_label">Title:</string>
     <string name="title_hint">Enter a title for this bulletin</string>
-    <string name="create_password_hint">New password</string>
-    <string name="enter_password_hint">Enter password</string>
+
 
     <!-- ============================== -->
     <!--  desktop key screen  -->
@@ -80,5 +85,10 @@
     <string name="invalid_public_code">Public code doesn\'t match file</string>
     <string name="public_code_validation_empty">Public code can\'t be empty</string>
     <string name="select_file_picker">Select a file chooser</string><string name="attachments_label">Attachments:</string>
+    <string name="server_ip_label">Server IP Address:</string>
+    <string name="server_ip_hint">enter server ip address</string>
+    <string name="server_public_code_label">Server Public Identification Code:</string>
+    <string name="server_public_code_hint">enter server public code</string>
+    <string name="choose_server_title">Choose Server</string>
 
 </resources>

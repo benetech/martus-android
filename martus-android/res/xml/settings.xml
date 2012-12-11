@@ -5,18 +5,6 @@
 
     <PreferenceCategory
             android:title="@string/server_preferences">
-            
-        <EditTextPreference
-                android:key="server_ip_preference"
-                android:title="@string/title_server_ip_preference"
-                android:summary="@string/summary_server_ip_preference"
-                android:dialogTitle="@string/dialog_title_server_ip_preference" />
-
-        <EditTextPreference
-                android:key="server_code_preference"
-                android:title="@string/title_server_code_preference"
-                android:summary="@string/summary_server_code_preference"
-                android:dialogTitle="@string/dialog_title_server_code_preference" />
 
         <EditTextPreference
                 android:key="server_magic_word_preference"

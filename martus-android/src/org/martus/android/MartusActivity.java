@@ -5,12 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
 import org.martus.clientside.ClientSideNetworkGateway;
-import org.martus.clientside.ClientSideNetworkHandlerUsingXmlRpcForNonSSL;
-import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.NetworkResponse;
-import org.martus.common.network.NonSSLNetworkAPI;
-import org.martus.util.StreamableBase64;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -52,10 +48,10 @@ public class MartusActivity extends Activity {
     private static Activity myActivity;
     private ClientSideNetworkGateway gateway = null;
     private String serverIP;
-    private String serverPublicCode;
     private int invalidLogins;
 
     DialogFragment newAccountDialog;
+    DialogFragment magicWordDialog;
 
     static final int ACTIVITY_DESKTOP_KEY = 2;
     public static final int ACTIVITY_BULLETIN = 3;
@@ -86,42 +82,22 @@ public class MartusActivity extends Activity {
         super.onResume();
         if (martusCrypto.hasKeyPair()) {
             checkDesktopKey();
-            confirmServerPublicKey();
+            if (!confirmServerPublicKey()) {
+                Intent intent = new Intent(MartusActivity.this, ServerActivity.class);
+                startActivity(intent);
+                return;
+            }
+
+            SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
+            boolean canUpload = mySettings.getBoolean(SettingsActivity.KEY_HAVE_UPLOAD_RIGHTS, false);
+            if (!canUpload) {
+                showMagicWordDialog();
+            }
+
         }
         updateSettings();
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-         if (requestCode == ACTIVITY_DESKTOP_KEY) {
-            confirmServerPublicKey();
-
-             //todo: will need to happen whenever server ip changes (putting here for now)
-             try {
-                 final AsyncTask<Object, Void, NetworkResponse> rightsTask = new UploadRightsTask().execute(gateway, martusCrypto, defaultMagicWord);
-                 final NetworkResponse response = rightsTask.get();
-                 if (!response.getResultCode().equals("ok")) {
-                     showMessage(myActivity, getString(R.string.no_upload_rights), getString(R.string.error_message));
-                 }
-             } catch (Exception e) {
-                 Log.e(AppConfig.LOG_LABEL, "Problem verifying upload rights");
-             }
-         }
-    }
-
-    public void verifyServer() {
-        try {
-            //Network calls must be made in background task
-            final AsyncTask<ClientSideNetworkGateway, Void, NetworkResponse> infoTask = new ServerInfoTask().execute(gateway);
-            NetworkResponse response1 = infoTask.get();
-
-            Object[] resultArray = response1.getResultArray();
-            final TextView responseView = (TextView)findViewById(R.id.response_server);
-            responseView.setText("ServerInfo: " + response1.getResultCode() + ", " + resultArray[0]);
-        } catch (Exception e) {
-            Log.e(AppConfig.LOG_LABEL, "Failed getting server info", e);
-            e.printStackTrace();
-        }
-    }
 
     public void sendBulletin(View view) {
         Intent intent = new Intent(MartusActivity.this, BulletinActivity.class);
@@ -160,6 +136,10 @@ public class MartusActivity extends Activity {
             case R.id.quit_menu_item:
                 martusCrypto.clearKeyPair();
                 finish();
+                return true;
+            case R.id.server_menu_item:
+                intent = new Intent(MartusActivity.this, ServerActivity.class);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -212,41 +192,13 @@ public class MartusActivity extends Activity {
         }
     }
 
-    private void confirmServerPublicKey() {
-        //Not sure if this is the best place to get/set Server Public Key
-        SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
-        serverPublicKey = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
-        if (serverPublicKey.length() < 1) {
-            //Network calls must be made in background task
-            NonSSLNetworkAPI server = new ClientSideNetworkHandlerUsingXmlRpcForNonSSL(serverIP);
-            final AsyncTask<Object, Void, String> keyTask = new PublicKeyTask().execute(server, martusCrypto);
-            try {
-                serverPublicKey = keyTask.get();
-                SharedPreferences.Editor editor = mySettings.edit();
-                editor.putString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, serverPublicKey);
-                editor.commit();
-            } catch (Exception e) {
-                Log.e(AppConfig.LOG_LABEL, "Problem getting server public key", e);
-                showMessage(this, getString(R.string.error_getting_server_key), getString(R.string.error_message));
-                return;
-            }
+    private boolean confirmServerPublicKey() {
+        updateSettings();
+        if (serverPublicKey.isEmpty()) {
+            return false;
         }
-
-        //confirm serverPublicKey is correct
-        final String normalizedPublicCode = MartusCrypto.removeNonDigits(serverPublicCode);
-        final String computedCode;
-        try {
-            computedCode = MartusCrypto.computePublicCode(serverPublicKey);
-            if (! normalizedPublicCode.equals(computedCode)) {
-                showMessage(myActivity, getString(R.string.invalid_server_public_code), getString(R.string.error_message));
-            }
-        } catch (StreamableBase64.InvalidBase64Exception e) {
-            Log.e(AppConfig.LOG_LABEL,"problem computing public code", e);
-            showMessage(myActivity, getString(R.string.error_computing_public_code), getString(R.string.error_message));
-            return;
-        }
-
         gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
+        return true;
     }
 
     private void checkDesktopKey() {
@@ -310,8 +262,8 @@ public class MartusActivity extends Activity {
 
     private void updateSettings() {
         SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
-        serverIP = mySettings.getString(SettingsActivity.KEY_SERVER_IP, defaultServerIP);
-        serverPublicCode = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_CODE, defaultServerPublicCode);
+        serverPublicKey = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
+        serverIP = mySettings.getString(SettingsActivity.KEY_SERVER_IP, "");
     }
 
     public static void showMessage(Context context, String msg, String title){
@@ -350,6 +302,7 @@ public class MartusActivity extends Activity {
             destination.putExtras(intent);
             startActivity(destination);
         }
+        onResume();
     }
 
     public void doLoginNegativeClick() {
@@ -411,39 +364,100 @@ public class MartusActivity extends Activity {
 
     public static class CreateAccountDialogFragment extends DialogFragment {
 
-            public static CreateAccountDialogFragment newInstance() {
-                CreateAccountDialogFragment frag = new CreateAccountDialogFragment();
-                Bundle args = new Bundle();
-                frag.setArguments(args);
-                frag.setCancelable(false);
-                return frag;
-            }
-
-            @Override
-            public Dialog onCreateDialog(Bundle savedInstanceState) {
-                LayoutInflater factory = LayoutInflater.from(myActivity);
-                final View createAccountDialog = factory.inflate(R.layout.create_account, null);
-                final EditText newPasswordText = (EditText) createAccountDialog.findViewById(R.id.new_password_field);
-                return new AlertDialog.Builder(getActivity())
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle(R.string.create_account_dialog_title)
-                    .setView(createAccountDialog)
-                    .setPositiveButton(R.string.alert_dialog_ok,
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((MartusActivity) getActivity()).doCreateAccountPositiveClick(newPasswordText);
-                                }
-                            }
-                    )
-                    .setNegativeButton(R.string.password_dialog_cancel,
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((MartusActivity) getActivity()).doCreateAccountNegativeClick();
-                                }
-                            }
-                    )
-                    .create();
-            }
+        public static CreateAccountDialogFragment newInstance() {
+            CreateAccountDialogFragment frag = new CreateAccountDialogFragment();
+            Bundle args = new Bundle();
+            frag.setArguments(args);
+            frag.setCancelable(false);
+            return frag;
         }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            LayoutInflater factory = LayoutInflater.from(myActivity);
+            final View createAccountDialog = factory.inflate(R.layout.create_account, null);
+            final EditText newPasswordText = (EditText) createAccountDialog.findViewById(R.id.new_password_field);
+            return new AlertDialog.Builder(getActivity())
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle(R.string.create_account_dialog_title)
+                .setView(createAccountDialog)
+                .setPositiveButton(R.string.alert_dialog_ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                ((MartusActivity) getActivity()).doCreateAccountPositiveClick(newPasswordText);
+                            }
+                        }
+                )
+                .setNegativeButton(R.string.password_dialog_cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                ((MartusActivity) getActivity()).doCreateAccountNegativeClick();
+                            }
+                        }
+                )
+                .create();
+        }
+    }
+
+    private void showMagicWordDialog() {
+        magicWordDialog = MagicWordDialogFragment.newInstance();
+        magicWordDialog.show(getFragmentManager(), "magicWord");
+    }
+
+    public void doMagicWordPositiveClick(EditText magicWordText) {
+        String magicWord = magicWordText.getText().toString().trim();
+        if (magicWord.isEmpty()) {
+            Toast.makeText(this, "Invalid Magic Word!", Toast.LENGTH_SHORT).show();
+            showMagicWordDialog();
+            return;
+        }
+        try {
+             final AsyncTask<Object, Void, NetworkResponse> rightsTask = new UploadRightsTask().execute(gateway, martusCrypto, magicWord);
+             final NetworkResponse response = rightsTask.get();
+             if (!response.getResultCode().equals("ok")) {
+                 Toast.makeText(this, getString(R.string.no_upload_rights), Toast.LENGTH_SHORT).show();
+                 showMagicWordDialog();
+             } else {
+                 Toast.makeText(this, "Success - can now upload bulletins!", Toast.LENGTH_SHORT).show();
+                 SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
+                 SharedPreferences.Editor editor = mySettings.edit();
+                 editor.putBoolean(SettingsActivity.KEY_HAVE_UPLOAD_RIGHTS, true);
+                 editor.commit();
+             }
+        } catch (Exception e) {
+             Log.e(AppConfig.LOG_LABEL, "Problem verifying upload rights", e);
+             Toast.makeText(this, "Problem confirming magic word", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public static class MagicWordDialogFragment extends DialogFragment {
+
+        public static MagicWordDialogFragment newInstance() {
+            MagicWordDialogFragment frag = new MagicWordDialogFragment();
+            Bundle args = new Bundle();
+            frag.setArguments(args);
+            frag.setCancelable(false);
+            return frag;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            LayoutInflater factory = LayoutInflater.from(myActivity);
+            final View magicWordView = factory.inflate(R.layout.magic_word_dialog, null);
+            final EditText magicWordText = (EditText) magicWordView.findViewById(R.id.password_edit);
+            return new AlertDialog.Builder(getActivity())
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle(R.string.magic_word_dialog_title)
+                .setView(magicWordView)
+                .setPositiveButton(R.string.alert_dialog_ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                ((MartusActivity) getActivity()).doMagicWordPositiveClick(magicWordText);
+                            }
+                        }
+                )
+                .create();
+        }
+    }
     
 }
