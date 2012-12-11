@@ -4,31 +4,16 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/response_server"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        />
     <Button
     	android:id="@+id/createScreen"
        	android:layout_width="wrap_content"
       	android:layout_height="wrap_content"
         android:onClick="sendBulletin"
-      	android:text="@string/create_sample_bulletin"/>
-    <TextView
-        android:id="@+id/bulletinResponseText"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-    <Button
-        android:id="@+id/check_bulletins_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="getBulletinCount"
-        android:text="@string/check_bulletins" />
-    <TextView
-        android:id="@+id/check_bulletins_text"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+      	android:text="@string/create_sample_bulletin"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dip"
+        android:layout_marginBottom="10dip"/>
+
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

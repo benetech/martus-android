@@ -98,22 +98,9 @@ public class MartusActivity extends Activity {
         updateSettings();
     }
 
-
     public void sendBulletin(View view) {
         Intent intent = new Intent(MartusActivity.this, BulletinActivity.class);
         startActivity(intent);
-    }
-
-    public void getBulletinCount(View view) {
-        try {
-            final AsyncTask<Object, Void, String> getIdsTask = new GetDraftBulletinsTask().execute(gateway, martusCrypto, martusCrypto.getPublicKeyString());
-            String response = getIdsTask.get();
-
-            final TextView responseView = (TextView)findViewById(R.id.check_bulletins_text);
-            responseView.setText(response);
-        } catch (Exception e) {
-            Log.e(AppConfig.LOG_LABEL, "Failed getting bulletin count", e);
-        }
     }
 
     @Override
