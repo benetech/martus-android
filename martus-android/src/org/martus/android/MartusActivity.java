@@ -28,7 +28,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 
@@ -38,9 +37,6 @@ public class MartusActivity extends Activity {
     public final static int PROXY_HTTP_PORT = 8118; //default for Orbot/Tor
     public final static int PROXY_SOCKS_PORT = 9050; //default for Orbot/Tor
 
-	public static final String defaultServerIP = "54.245.101.104"; //public QA server
-    public static final String defaultServerPublicCode = "8714.7632.8884.7614.8217";
-    public static final String defaultMagicWord = "spam";
     public static final int MAX_LOGIN_ATTEMPTS = 3;
     private String serverPublicKey;
 
