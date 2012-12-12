@@ -35,6 +35,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -105,7 +107,7 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
         addAttachmentFromIntent();
     }
 
-    public void chooseAttachment(View view) {
+    public void chooseAttachment() {
         try {
             Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
             chooseFile.setType("file/*");
@@ -117,7 +119,7 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
         }
     }
 
-    public void sendBulletin(View view) {
+    public void sendBulletin() {
         try {
             zipBulletin(bulletin);
         } catch (Exception e) {
@@ -251,6 +253,13 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.send_bulletin, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -258,6 +267,15 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
                 Intent intent = new Intent(this, MartusActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                return true;
+            case R.id.send_bulletin_menu_item:
+                sendBulletin();
+                return true;
+            case R.id.cancel_bulletin_menu_item:
+                this.finish();
+                return true;
+            case R.id.add_attachment_menu_item:
+                chooseAttachment();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

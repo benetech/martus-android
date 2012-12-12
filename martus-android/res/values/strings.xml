@@ -68,10 +68,10 @@
     <!-- ============================== -->
     <string name="send_bulletin">Send</string>
     <string name="add_attachment">Add attachment</string>
-    <string name="enter_summary">Enter optional summary</string>
+    <string name="enter_summary">Optional Summary</string>
     <string name="summary_label">Summary:</string>
     <string name="title_label">Title:</string>
-    <string name="title_hint">Enter a title for this bulletin</string>
+    <string name="title_hint">Title</string>
 
 
     <!-- ============================== -->
@@ -89,6 +89,6 @@
     <string name="server_ip_hint">enter server ip address</string>
     <string name="server_public_code_label">Server Public Identification Code:</string>
     <string name="server_public_code_hint">enter server public code</string>
-    <string name="choose_server_title">Choose Server</string>
+    <string name="choose_server_title">Choose Server</string><string name="bulletin_cancel">Cancel</string>
 
 </resources>
