@@ -39,6 +39,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Toast;
 
 /**
  * @author roms
@@ -249,13 +250,6 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
         }
     }
 
-/*    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
-        return true;
-    }*/
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -320,6 +314,7 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
     @Override
     public void onSent() {
         dialog.dismiss();
+        Toast.makeText(this, "Bulletin Sent!", Toast.LENGTH_LONG).show();
         finish();
     }
 

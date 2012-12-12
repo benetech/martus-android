@@ -16,6 +16,7 @@ import org.martus.util.StreamableBase64;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.format.Time;
 import android.util.Log;
 
 /**
@@ -66,7 +67,10 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        mNotificationHelper.createNotification("Martus - " + bulletinTitle, "Starting send ...");
+        Time now = new Time();
+        now.setToNow();
+        String timeAsTitle = now.format("%T");
+        mNotificationHelper.createNotification("Martus - " + timeAsTitle, "Starting send ...");
     }
 
     @Override

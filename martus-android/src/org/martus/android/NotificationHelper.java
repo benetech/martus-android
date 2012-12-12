@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.support.v4.app.NotificationCompat;
+import android.text.format.Time;
 
 /**
  * @author roms
@@ -26,7 +27,6 @@ public class NotificationHelper {
      */
     public void createNotification(String title, String subject) {
         mTitle = title;
-        //get the notification manager
         mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
         //create the content which is shown in the notification pulldown
@@ -35,7 +35,7 @@ public class NotificationHelper {
                  .setContentText(subject)
                  .setSmallIcon(android.R.drawable.stat_notify_sync)
                  .setOngoing(true)
-                 .setProgress(10000, 0, false)
+                 .setProgress(100, 0, false)
                  .build();
 
         //show the notification
@@ -60,7 +60,7 @@ public class NotificationHelper {
      * called when the background task is complete, this removes the notification from the status bar.
      * We could also use this to add a new ‘task complete’ notification
      */
-    public void completed(String resultMsg)    {
+    public void  completed(String resultMsg)    {
         //update notification to indicate completion
         int icon;
         if (null != resultMsg) {
