@@ -33,7 +33,7 @@
            android:name=".BulletinActivity"
            android:screenOrientation="portrait"
            android:configChanges="orientation"
-           android:label="Create bulletin">
+           android:label="@string/bulletin_screen_name">
            <intent-filter>
              <action android:name="android.intent.action.SEND" />
              <category android:name="android.intent.category.DEFAULT" />
