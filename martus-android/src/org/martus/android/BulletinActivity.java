@@ -296,16 +296,10 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
         String summary = summaryText.getText().toString().trim();
         bulletin.set(Bulletin.TAGTITLE, title);
         bulletin.set(Bulletin.TAGSUMMARY, summary);
-        try {
-            store.saveBulletin(bulletin);
-        } catch (Exception e) {
-            Log.e(AppConfig.LOG_LABEL, "problem saving bulletin", e);
-            dialog.dismiss();
-            MartusActivity.showMessage(this, "problem saving bulletin, " + e.getMessage(), "Error");
-        }
+
 
         final AsyncTask<Object, Integer, File> zipTask = new ZipBulletinTask(bulletin, this);
-        zipTask.execute(getCacheDir(), AppConfig.getInstance().getCrypto(), store.getDatabase());
+        zipTask.execute(getCacheDir(), store);
 
     }
 

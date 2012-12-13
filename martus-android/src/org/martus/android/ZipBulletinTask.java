@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import org.martus.client.bulletinstore.ClientBulletinStore;
 import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.common.MartusUtilities;
 import org.martus.common.bulletin.Bulletin;
@@ -41,25 +42,25 @@ public class ZipBulletinTask extends AsyncTask<Object, Integer, File> {
     protected File doInBackground(Object... params) {
 
         final File cacheDir = (File)params[0];
-        final MartusSecurity signer = (MartusSecurity)params[1];
-        final ReadableDatabase db = (ReadableDatabase)params[2];
+        final ClientBulletinStore store = (ClientBulletinStore)params[1];
 
-        File tmpBulletin = null;
+        //File tmpBulletin = null;
 
         File file = null;
 
         try {
+            store.saveBulletin(bulletin);
             file = File.createTempFile("tmp_send_", ".zip", cacheDir);
             //tmpBulletin = File.createTempFile("tmp_", ".bull", cacheDir);
             //final BulletinStreamer bs = new BulletinStreamer(bulletin, tmpBulletin);
             //BulletinZipUtilities.exportBulletinPacketsFromDatabaseToZipFile(bs, bulletin.getDatabaseKey(), file, signer);
 
-            BulletinZipUtilities.exportBulletinPacketsFromDatabaseToZipFile(db, bulletin.getDatabaseKey(), file, signer);
+            BulletinZipUtilities.exportBulletinPacketsFromDatabaseToZipFile(store.getDatabase(), bulletin.getDatabaseKey(), file, bulletin.getSignatureGenerator());
         } catch (Exception e) {
             Log.e("martus", "problem serializing bulletin to zip", e);
         }
 
-        if (null != tmpBulletin) tmpBulletin.delete();
+        //if (null != tmpBulletin) tmpBulletin.delete();
         return file;
     }
 
