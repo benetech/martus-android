@@ -66,6 +66,7 @@
     <!-- ============================== -->
     <!--  bulletin screen  -->
     <!-- ============================== -->
+    <string name="bulletin_screen_name">Send to Martus</string>
     <string name="send_bulletin">Send</string>
     <string name="add_attachment">Add attachment</string>
     <string name="enter_summary">Optional Summary</string>
