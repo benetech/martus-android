@@ -349,12 +349,24 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
         String bulletinTitle = bulletin.get(Bulletin.TAGTITLE);
         UniversalId bulletinId = bulletin.getUniversalId();
         try {
+            removeCachedUriAttachments();
             store.destroyBulletin(bulletin);
         } catch (IOException e) {
             Log.e(AppConfig.LOG_LABEL, "problem destroying bulletin", e);
         }
         final AsyncTask<Object, Integer, String> uploadTask = new UploadBulletinTask(getApplicationContext(), bulletinTitle, this, bulletinId);
         uploadTask.execute(bulletin.getUniversalId(), zippedFile, gateway, AppConfig.getInstance().getCrypto());
+    }
+
+    private void removeCachedUriAttachments() {
+        AttachmentProxy[] attachmentProxies = bulletin.getPublicAttachments();
+        for (AttachmentProxy proxy : attachmentProxies) {
+            String label = proxy.getLabel();
+            File file = new File(getCacheDir(), label);
+            if (file.exists()) {
+                file.delete();
+            }
+        }
     }
 
     @Override
