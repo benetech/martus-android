@@ -2,6 +2,7 @@ package org.martus.android;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 
 import org.martus.clientside.ClientSideNetworkGateway;
@@ -118,6 +119,7 @@ public class MartusActivity extends Activity {
                 return true;
             case R.id.quit_menu_item:
                 martusCrypto.clearKeyPair();
+                deleteCache(this);
                 finish();
                 return true;
             case R.id.server_menu_item:
@@ -255,6 +257,26 @@ public class MartusActivity extends Activity {
              .setTitle(title)
              .setMessage(msg)
              .show();
+    }
+
+    public static void deleteCache(Context context) {
+        File dir = context.getCacheDir();
+        if (dir != null && dir.isDirectory()) {
+            deleteDir(dir);
+        }
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (String aChildren : children) {
+                boolean success = deleteDir(new File(dir, aChildren));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        return dir.delete();
     }
 
     void showLoginDialog() {
