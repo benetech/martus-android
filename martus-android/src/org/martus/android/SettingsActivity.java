@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.view.MenuItem;
+import com.bugsense.trace.BugSenseHandler;
 
 /**
  * @author roms
@@ -31,9 +32,10 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BugSenseHandler.initAndStartSession(SettingsActivity.this, ExternalKeys.BUGSENSE_KEY);
 
         ActionBar actionBar = getActionBar();
-                actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         languageNamesArray = getResources().getStringArray(R.array.entries_language_preference);
         languageCodesArray = getResources().getStringArray(R.array.values_language_preference);
@@ -96,6 +98,12 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BugSenseHandler.closeSession(SettingsActivity.this);
     }
 
 }

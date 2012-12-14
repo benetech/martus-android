@@ -42,6 +42,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Toast;
+import com.bugsense.trace.BugSenseHandler;
 
 /**
  * @author roms
@@ -72,6 +73,7 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BugSenseHandler.initAndStartSession(BulletinActivity.this, ExternalKeys.BUGSENSE_KEY);
         setContentView(R.layout.send_bulletin);
 
         ActionBar actionBar = getActionBar();
@@ -280,6 +282,12 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BugSenseHandler.closeSession(BulletinActivity.this);
     }
 
     private void zipBulletin(Bulletin bulletin)  {

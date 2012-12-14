@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+import com.bugsense.trace.BugSenseHandler;
 
 /**
  * @author roms
@@ -28,10 +29,17 @@ public class ServerActivity extends Activity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BugSenseHandler.initAndStartSession(ServerActivity.this, ExternalKeys.BUGSENSE_KEY);
         setContentView(R.layout.choose_server);
 
         textIp = (EditText)findViewById(R.id.serverIpText);
         textCode = (EditText)findViewById(R.id.serverCodeText);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BugSenseHandler.closeSession(ServerActivity.this);
     }
 
     public void confirmServer(View view) {

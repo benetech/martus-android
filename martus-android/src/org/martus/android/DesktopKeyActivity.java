@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import com.bugsense.trace.BugSenseHandler;
 
 /**
  * @author roms
@@ -33,6 +34,7 @@ public class DesktopKeyActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BugSenseHandler.initAndStartSession(DesktopKeyActivity.this, ExternalKeys.BUGSENSE_KEY);
         setContentView(R.layout.desktop_sync);
         activity = this;
 
@@ -58,6 +60,12 @@ public class DesktopKeyActivity extends Activity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BugSenseHandler.closeSession(DesktopKeyActivity.this);
     }
 
     @Override

@@ -30,6 +30,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
+import com.bugsense.trace.BugSenseHandler;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 
 public class MartusActivity extends Activity {
@@ -57,6 +58,7 @@ public class MartusActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BugSenseHandler.initAndStartSession(MartusActivity.this, ExternalKeys.BUGSENSE_KEY);
         setContentView(R.layout.main);
 
         myActivity = this;
@@ -93,6 +95,12 @@ public class MartusActivity extends Activity {
 
         }
         updateSettings();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BugSenseHandler.closeSession(MartusActivity.this);
     }
 
     public void sendBulletin(View view) {
