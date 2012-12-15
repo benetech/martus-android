@@ -301,15 +301,16 @@ public class MartusSecurity extends MartusCrypto
 			EncryptionException,
 			NoKeyPairException
 	{
-		encrypt(plainStream, cipherStream, sessionKey, getPublicKeyString());
+        String publicKeyString = authorDecryptable ? getPublicKeyString() : null;
+		encrypt(plainStream, cipherStream, sessionKey, publicKeyString);
 	}
 
 	public synchronized void encrypt(InputStream plainStream, OutputStream cipherStream, SessionKey sessionKey, String publicKeyString) throws
 			EncryptionException,
 			NoKeyPairException
 	{
-		if(publicKeyString == null)
-			throw new NoKeyPairException();
+/*		if(publicKeyString == null)
+			throw new NoKeyPairException();*/
 
 		CipherOutputStream cos = createCipherOutputStream(cipherStream, sessionKey, publicKeyString);
 		try
@@ -346,7 +347,10 @@ public class MartusSecurity extends MartusCrypto
 			byte[] ivBytes = new byte[IV_BYTE_COUNT];
 			rand.nextBytes(ivBytes);
 
-			byte[] encryptedKeyBytes = encryptSessionKey(sessionKey, publicKeyString).getBytes();
+			byte[] encryptedKeyBytes = null;
+            if (null != publicKeyString) {
+                encryptedKeyBytes = encryptSessionKey(sessionKey, publicKeyString).getBytes();
+            }
 
 			SecretKey secretSessionKey = new SecretKeySpec(sessionKey.getBytes(), SESSION_ALGORITHM_NAME);
 			IvParameterSpec spec = new IvParameterSpec(ivBytes);
@@ -354,8 +358,11 @@ public class MartusSecurity extends MartusCrypto
 
 			OutputStream bufferedCipherStream = new BufferedOutputStream(cipherStream);
 			DataOutputStream output = new DataOutputStream(bufferedCipherStream);
-			output.writeInt(encryptedKeyBytes.length);
-			output.write(encryptedKeyBytes);
+            if (null != encryptedKeyBytes) {
+			    output.writeInt(encryptedKeyBytes.length);
+			    output.write(encryptedKeyBytes);
+            }
+
 			output.writeInt(ivBytes.length);
 			output.write(ivBytes);
 
@@ -934,8 +941,16 @@ public class MartusSecurity extends MartusCrypto
 	{
 		return ENCRYPTED_FILE_VERSION_IDENTIFIER;
 	}
-	
-	private static final String SESSION_ALGORITHM_NAME = "AES";
+
+    public boolean isAuthorDecryptable() {
+        return authorDecryptable;
+    }
+
+    public void setAuthorDecryptable(boolean authorDecryptable) {
+        this.authorDecryptable = authorDecryptable;
+    }
+
+    private static final String SESSION_ALGORITHM_NAME = "AES";
 	private static final String SESSION_ALGORITHM = "AES/CBC/PKCS5Padding";
 	private static final String PBE_ALGORITHM = "PBEWithSHAAndTwofish-CBC";
 	private static final String DIGEST_ALGORITHM = "SHA1";
@@ -952,4 +967,6 @@ public class MartusSecurity extends MartusCrypto
 	private Cipher sessionCipherEngine;
 	private KeyGenerator sessionKeyGenerator;
 	private SecretKeyFactory keyFactory;
+
+    private boolean authorDecryptable = true;
 }

@@ -568,6 +568,35 @@ public class TestMartusSecurity extends TestCaseEnhanced
 		TRACE_END();
 	}
 
+    public void testEncryptAndUnableToDecrypt() throws Exception
+   	{
+   		TRACE_BEGIN("testEncryptAndUnableToDecrypt");
+        security.setAuthorDecryptable(false);
+   		byte[] data = createRandomBytes(1000);
+   		ByteArrayInputStream plainInputStream = new ByteArrayInputStream(data);
+   		ByteArrayOutputStream cipherOutputStream = new ByteArrayOutputStream();
+
+   		security.encrypt(plainInputStream, cipherOutputStream);
+   		byte[] encrypted = cipherOutputStream.toByteArray();
+   		assertTrue("unreasonably short", encrypted.length > (9 * data.length) / 10);
+   		assertTrue("unreasonably long", encrypted.length < 3 * data.length);
+   		assertEquals("not encrypted?", false, Arrays.equals(data, encrypted));
+
+   		ByteArrayInputStreamWithSeek cipherInputStream = new ByteArrayInputStreamWithSeek(encrypted);
+   		ByteArrayOutputStream plainOutputStream = new ByteArrayOutputStream();
+
+        try {
+            security.decrypt(cipherInputStream, plainOutputStream);
+            byte[] decrypted = plainOutputStream.toByteArray();
+            assertEquals("got bad data back", true, Arrays.equals(data, decrypted));
+            fail("Should have thrown exception for ability to decrypt undecryptable");
+        } catch(Exception expected) {
+
+        }
+        security.setAuthorDecryptable(true);
+   		TRACE_END();
+   	}
+
 	private byte[] createRandomBytes(int length)
 	{
 		byte[] data = new byte[length];
