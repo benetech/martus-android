@@ -309,8 +309,6 @@ public class MartusSecurity extends MartusCrypto
 			EncryptionException,
 			NoKeyPairException
 	{
-/*		if(publicKeyString == null)
-			throw new NoKeyPairException();*/
 
 		CipherOutputStream cos = createCipherOutputStream(cipherStream, sessionKey, publicKeyString);
 		try
