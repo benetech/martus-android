@@ -34,6 +34,7 @@
     <!--  main screen  -->
     <!-- ============================== -->
     <string name="alert_dialog_password">Password:</string>
+    <string name="alert_dialog_confirm_password">Confirm Password:</string>
     <string name="alert_dialog_magic_word">Magic Word:</string>
     <string name="password_dialog_title">Login</string>
     <string name="magic_word_dialog_title">Enter Magic Word</string>
@@ -59,8 +60,12 @@
     </string>
     <string name="use_tor">Use Tor</string>
     <string name="create_password_hint">New password</string>
+    <string name="confirm_password_hint">Repeat password</string>
     <string name="enter_password_hint">Enter password</string>
     <string name="enter_magic_word_hint">enter magic word</string>
+    <string name="settings_pwd_equal">Passwords match</string>
+    <string name="settings_pwd_not_equal">Password don\'t match!</string>
+    <string name="invalid_password">Must be at least 8 characters</string>
 
 
     <!-- ============================== -->
@@ -91,5 +96,6 @@
     <string name="server_public_code_label">Server Public Identification Code:</string>
     <string name="server_public_code_hint">enter server public code</string>
     <string name="choose_server_title">Choose Server</string><string name="bulletin_cancel">Cancel</string>
+
 
 </resources>
