@@ -74,7 +74,6 @@ import javax.net.ssl.KeyManagerFactory;
 
 import org.martus.android.AppConfig;
 import org.spongycastle.jce.X509Principal;
-import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.x509.X509V1CertificateGenerator;
 import org.martus.common.MartusConstants;
 import org.martus.common.MartusLogger;
@@ -301,7 +300,7 @@ public class MartusSecurity extends MartusCrypto
 			EncryptionException,
 			NoKeyPairException
 	{
-        String publicKeyString = authorDecryptable ? getPublicKeyString() : null;
+        String publicKeyString = shouldWriteAuthorDecryptableData ? getPublicKeyString() : null;
 		encrypt(plainStream, cipherStream, sessionKey, publicKeyString);
 	}
 
@@ -940,12 +939,12 @@ public class MartusSecurity extends MartusCrypto
 		return ENCRYPTED_FILE_VERSION_IDENTIFIER;
 	}
 
-    public boolean isAuthorDecryptable() {
-        return authorDecryptable;
+    public boolean isShouldWriteAuthorDecryptableData() {
+        return shouldWriteAuthorDecryptableData;
     }
 
-    public void setAuthorDecryptable(boolean authorDecryptable) {
-        this.authorDecryptable = authorDecryptable;
+    public void setShouldWriteAuthorDecryptableData(boolean shouldWriteAuthorDecryptableData) {
+        this.shouldWriteAuthorDecryptableData = shouldWriteAuthorDecryptableData;
     }
 
     private static final String SESSION_ALGORITHM_NAME = "AES";
@@ -966,5 +965,5 @@ public class MartusSecurity extends MartusCrypto
 	private KeyGenerator sessionKeyGenerator;
 	private SecretKeyFactory keyFactory;
 
-    private boolean authorDecryptable = true;
+    private boolean shouldWriteAuthorDecryptableData = true;
 }
