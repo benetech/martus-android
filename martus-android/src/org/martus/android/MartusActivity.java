@@ -225,6 +225,7 @@ public class MartusActivity extends Activity {
             Log.e(AppConfig.LOG_LABEL, "Problem confirming password", e);
             return false;
         }
+        martusCrypto.setShouldWriteAuthorDecryptableData(false);
         return true;
     }
 
