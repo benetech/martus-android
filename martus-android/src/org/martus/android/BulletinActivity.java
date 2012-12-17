@@ -146,7 +146,7 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
 
     private void addAttachmentToBulletin(File attachment) throws IOException, MartusCrypto.EncryptionException {
         AttachmentProxy attProxy = new AttachmentProxy(attachment);
-        bulletin.addPrivateAttachment(attProxy);
+        bulletin.addPublicAttachment(attProxy);
         attachmentAdapter.add(attachment.getName());
     }
 
