@@ -10,7 +10,6 @@
         android:title="@string/settings_title" />
 
     <item android:id="@+id/server_menu_item"
-        android:showAsAction="ifRoom|withText"
         android:title="@string/server_menu_title" />
 
 </menu>

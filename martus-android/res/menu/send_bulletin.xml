@@ -7,7 +7,9 @@
         android:title="@string/send_bulletin" />
 
     <item android:id="@+id/add_attachment_menu_item"
-            android:title="@string/add_attachment" />
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_menu_attachments"
+        android:title="@string/add_attachment" />
 
     <item android:id="@+id/cancel_bulletin_menu_item"
         android:title="@string/bulletin_cancel" />
