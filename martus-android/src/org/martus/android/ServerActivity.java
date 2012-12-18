@@ -12,8 +12,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.bugsense.trace.BugSenseHandler;
 
@@ -34,6 +38,16 @@ public class ServerActivity extends Activity {
 
         textIp = (EditText)findViewById(R.id.serverIpText);
         textCode = (EditText)findViewById(R.id.serverCodeText);
+
+        textCode.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    confirmServer(textCode);
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -83,6 +97,7 @@ public class ServerActivity extends Activity {
                 Toast.makeText(this, "Server choice success!", Toast.LENGTH_SHORT).show();
             } else {
                 MartusActivity.showMessage(this, getString(R.string.invalid_server_public_code), getString(R.string.error_message));
+                return;
             }
         } catch (StreamableBase64.InvalidBase64Exception e) {
             Log.e(AppConfig.LOG_LABEL,"problem computing public code", e);
