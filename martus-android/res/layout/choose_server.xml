@@ -20,7 +20,7 @@
             android:layout_marginLeft="20dip"
             android:layout_marginRight="20dip"
             android:scrollHorizontally="true"
-            android:inputType="text"
+            android:inputType="phone"
             android:capitalize="none"
             android:gravity="fill_horizontal"
             android:hint="@string/server_ip_hint"
