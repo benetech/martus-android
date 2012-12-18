@@ -38,7 +38,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -63,6 +62,7 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
     private String serverPublicKey;
     private ClientSideNetworkGateway gateway = null;
     private String serverIP;
+    private boolean autoLogout;
 
     private Bulletin bulletin;
     private EditText titleText;
@@ -329,12 +329,16 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
     private void updateSettings() {
         serverIP = mySettings.getString(SettingsActivity.KEY_SERVER_IP, "");
         serverPublicKey = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
+        autoLogout = mySettings.getBoolean(SettingsActivity.KEY_AUTO_LOGOUT, false);
     }
 
     @Override
     public void onSent() {
         dialog.dismiss();
         Toast.makeText(this, "Bulletin Sent!", Toast.LENGTH_LONG).show();
+        if (autoLogout) {
+            MartusActivity.logout(BulletinActivity.this);
+        }
         finish();
     }
 

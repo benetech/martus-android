@@ -70,14 +70,6 @@ public class MartusActivity extends Activity {
         updateSettings();
 
         martusCrypto = AppConfig.getInstance().getCrypto();
-        if (!martusCrypto.hasKeyPair()) {
-            if (isAccountCreated()) {
-                invalidLogins = 0;
-                showLoginDialog();
-            } else {
-                showCreateAccountDialog();
-            }
-        }
 
     }
 
@@ -98,6 +90,13 @@ public class MartusActivity extends Activity {
                 showMagicWordDialog();
             }
 
+        } else {
+            if (isAccountCreated()) {
+                invalidLogins = 0;
+                showLoginDialog();
+            } else {
+                showCreateAccountDialog();
+            }
         }
         updateSettings();
     }
@@ -131,8 +130,7 @@ public class MartusActivity extends Activity {
                 startActivity(intent);
                 return true;
             case R.id.quit_menu_item:
-                martusCrypto.clearKeyPair();
-                deleteCache(this);
+                logout(MartusActivity.this);
                 finish();
                 return true;
             case R.id.server_menu_item:
@@ -142,6 +140,11 @@ public class MartusActivity extends Activity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public static void logout(Context context) {
+        AppConfig.getInstance().getCrypto().clearKeyPair();
+        deleteCache(context);
     }
 
     @Override

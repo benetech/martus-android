@@ -20,6 +20,12 @@
                 android:entryValues="@array/values_language_preference"
                 android:dialogTitle="@string/dialog_title_language_preference" />
 
+        <CheckBoxPreference
+                android:key="logout_preference"
+                android:title="@string/title_logout_preference"
+                android:summary="@string/summary_logout_preference"
+                android:defaultValue="false" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

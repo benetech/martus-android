@@ -96,6 +96,8 @@
     <string name="server_public_code_label">Server Public Identification Code:</string>
     <string name="server_public_code_hint">enter server public code</string>
     <string name="choose_server_title">Choose Server</string><string name="bulletin_cancel">Cancel</string>
+    <string name="title_logout_preference">Auto logout</string>
+    <string name="summary_logout_preference">Logout after every send</string>
 
 
 </resources>
