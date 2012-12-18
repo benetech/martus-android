@@ -93,6 +93,7 @@ public class ServerActivity extends Activity {
                 SharedPreferences.Editor editor = mySettings.edit();
                 editor.putString(SettingsActivity.KEY_SERVER_IP, serverIP);
                 editor.putString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, serverPublicKey);
+                editor.putBoolean(SettingsActivity.KEY_HAVE_UPLOAD_RIGHTS, false);
                 editor.commit();
                 Toast.makeText(this, "Server choice success!", Toast.LENGTH_SHORT).show();
             } else {
