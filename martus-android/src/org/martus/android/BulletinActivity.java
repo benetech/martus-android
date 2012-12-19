@@ -1,10 +1,8 @@
 package org.martus.android;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -24,16 +22,14 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.AssetFileDescriptor;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,6 +38,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.bugsense.trace.BugSenseHandler;
+import com.ipaulpro.afilechooser.utils.FileUtils;
 
 /**
  * @author roms
@@ -111,11 +108,10 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
 
     public void chooseAttachment() {
         try {
-            Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-            chooseFile.setType("file/*");
+            Intent chooseFile = FileUtils.createGetContentIntent();
             Intent intent = Intent.createChooser(chooseFile, "Choose an attachment");
             startActivityForResult(intent, ACTIVITY_CHOOSE_ATTACHMENT);
-        } catch (Exception e) {
+        } catch (ActivityNotFoundException e) {
             Log.e(AppConfig.LOG_LABEL, "Failed choosing file", e);
             e.printStackTrace();
         }
@@ -185,7 +181,7 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
             }
 
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             Log.e(AppConfig.LOG_LABEL, "problem getting files for attachments", e);
             MartusActivity.showMessage(this, "problem getting files for attachments", "Error");
         }
@@ -193,44 +189,11 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
         return attachments;
     }
 
-    private File getFileFromUri(Uri uri) throws IOException {
-        String scheme = uri.getScheme();
-        if ("file".equalsIgnoreCase(scheme)) {
-            String filePath = uri.getPath();
-            return new File(filePath);
-        } else {
-            return  createFileFromContentUri(uri);
-        }
+    private File getFileFromUri(Uri uri) throws URISyntaxException {
+        String filePath = FileUtils.getPath(this, uri);
+        return new File(filePath);
     }
 
-    private File createFileFromContentUri(Uri uri) throws IOException {
-        FileInputStream inputStream = null;
-
-        String fileName = getFileNameFromUri(uri);
-        File file = new File(getCacheDir(), fileName);
-        // Ask for a stream of the desired type.
-        try {
-            AssetFileDescriptor descr = getContentResolver()
-                    .openTypedAssetFileDescriptor(uri, "*/*", null);
-            inputStream = descr.createInputStream();
-
-            BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
-            int read;
-            byte bytes[] = new byte[1024];
-
-            while ((read = inputStream.read(bytes)) != -1) {
-                outputStream.write(bytes, 0, read);
-            }
-
-            outputStream.flush();
-            outputStream.close();
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
-        }
-        return file;
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -239,13 +202,13 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
                 if (resultCode == RESULT_OK) {
                     if (null != data) {
                         Uri uri = data.getData();
-                        String filePath = uri.getPath();
-                        File file = new File(filePath);
-
                         try {
+                            String filePath = FileUtils.getPath(this, uri);
+                            File file = new File(filePath);
                             addAttachmentToBulletin(file);
                         } catch (Exception e) {
                             Log.e(AppConfig.LOG_LABEL, "problem getting attachment", e);
+                            Toast.makeText(this, "problem getting attachment", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -426,14 +389,4 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
         startActivity(intent);
     }
 
-    private String getFileNameFromUri(Uri uri) {
-        Cursor cursor = managedQuery(uri,
-                                   new String[] { MediaStore.Images.Media.DATA },
-                                   null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-
-        String path =  cursor.getString(column_index);
-        return new File(path).getName();
-    }
 }

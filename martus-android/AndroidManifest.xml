@@ -42,6 +42,20 @@
         <activity
                 android:name=".ServerActivity"
                 android:label="@string/choose_server_title"/>
+        <activity
+            android:name="com.ipaulpro.afilechooser.FileChooserActivity"
+            android:exported="false"
+            android:icon="@drawable/ic_chooser"
+            android:label="@string/choose_file" >
+                <intent-filter>
+                    <action android:name="android.intent.action.GET_CONTENT" />
+
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <category android:name="android.intent.category.OPENABLE" />
+
+                    <data android:mimeType="*/*" />
+                </intent-filter>
+            </activity>
 
         <service android:name=".UploadIntentService"/>
     </application>

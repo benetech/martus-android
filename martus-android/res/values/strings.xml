@@ -98,6 +98,7 @@
     <string name="choose_server_title">Choose Server</string><string name="bulletin_cancel">Cancel</string>
     <string name="title_logout_preference">Auto logout</string>
     <string name="summary_logout_preference">Logout after every send</string>
+    <string name="choose_file">Choose a file</string>
 
 
 </resources>
