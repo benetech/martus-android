@@ -24,7 +24,7 @@ import com.bugsense.trace.BugSenseHandler;
  * @author roms
  *         Date: 10/24/12
  */
-public class DesktopKeyActivity extends Activity {
+public class DesktopKeyActivity extends BaseActivity {
 
     final int ACTIVITY_CHOOSE_FILE = 1;
 
@@ -82,6 +82,8 @@ public class DesktopKeyActivity extends Activity {
                         MartusActivity.showMessage(activity, getString(R.string.invalid_public_account_file), getString(R.string.error_message));
                         Log.e("martus", "problem getting HQ key", e);
                     }
+                } else if (resultCode == RESULT_CANCELED) {
+                    showInstallExplorerDialog();
                 }
                 break;
             }

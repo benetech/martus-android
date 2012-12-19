@@ -61,13 +61,15 @@
             >
         <ListView
                 android:layout_width="0dip"
-                android:layout_height="100dip"
+                android:layout_height="128dip"
                 android:layout_weight="1"
                 android:id="@android:id/list"
                 android:transcriptMode="normal"
                 android:visibility="visible"
-                android:minHeight="20dip"
-                android:layout_marginTop="2dp"/>
+                android:minHeight="27dip"
+                android:layout_marginTop="2dp"
+                android:fastScrollAlwaysVisible="true"/>
     </LinearLayout>
+
 
 </GridLayout>

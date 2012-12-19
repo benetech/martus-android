@@ -17,13 +17,8 @@ import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.packet.UniversalId;
 
 import android.app.ActionBar;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -44,7 +39,7 @@ import com.ipaulpro.afilechooser.utils.FileUtils;
  * @author roms
  *         Date: 10/25/12
  */
-public class BulletinActivity extends ListActivity implements BulletinSender{
+public class BulletinActivity extends BaseActivity implements BulletinSender{
 
     final int ACTIVITY_CHOOSE_ATTACHMENT = 2;
     public static final String EXTRA_ATTACHMENT = "org.martus.android.filePath";
@@ -211,6 +206,8 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
                             Toast.makeText(this, "problem getting attachment", Toast.LENGTH_SHORT).show();
                         }
                     }
+                } else if (resultCode == RESULT_CANCELED) {
+                    showInstallExplorerDialog();
                 }
                 break;
             }
@@ -347,46 +344,6 @@ public class BulletinActivity extends ListActivity implements BulletinSender{
     @Override
     public void onProgressUpdate(int progress) {
         dialog.setProgress(progress);
-    }
-
-    void showLoginRequiredDialog() {
-        DialogFragment loginDialog = LoginRequiredDialog.newInstance();
-        loginDialog.show(getFragmentManager(), "login");
-    }
-
-    public static class LoginRequiredDialog extends DialogFragment {
-
-        public static LoginRequiredDialog newInstance() {
-            LoginRequiredDialog frag = new LoginRequiredDialog();
-            Bundle args = new Bundle();
-            frag.setArguments(args);
-            return frag;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            return new AlertDialog.Builder(getActivity())
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("You must first login!")
-                .setMessage("Before sending this bulletin")
-                .setPositiveButton(R.string.alert_dialog_ok,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            ((BulletinActivity) getActivity()).onLoginRequiredDialogClicked();
-                        }
-                    }
-                )
-                .create();
-        }
-    }
-
-    public void onLoginRequiredDialogClicked() {
-        BulletinActivity.this.finish();
-        Intent intent = new Intent(BulletinActivity.this, MartusActivity.class);
-        intent.putExtras(getIntent());
-        intent.putExtra(MartusActivity.RETURN_TO, MartusActivity.ACTIVITY_BULLETIN);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        startActivity(intent);
     }
 
 }
