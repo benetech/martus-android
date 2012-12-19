@@ -83,4 +83,49 @@ public class BaseActivity extends ListActivity {
                 .create();
         }
     }
+
+    void showConfirmationDialog() {
+        DialogFragment confirmationDialog = ConfirmationDialog.newInstance();
+        confirmationDialog.show(getFragmentManager(), "confirmation");
+    }
+
+    public static class ConfirmationDialog extends DialogFragment {
+
+        public static ConfirmationDialog newInstance() {
+            ConfirmationDialog frag = new ConfirmationDialog();
+            Bundle args = new Bundle();
+            frag.setArguments(args);
+            return frag;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return new AlertDialog.Builder(getActivity())
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Are you sure?")
+                    .setPositiveButton(R.string.yes,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                ((BaseActivity) getActivity()).onConfirmationClicked();
+                            }
+                        }
+                    )
+                    .setNegativeButton(R.string.no,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ((BaseActivity) getActivity()).onConfirmationDenied();
+                                }
+                            }
+                    )
+                    .create();
+        }
+    }
+
+    public void onConfirmationClicked() {
+        //do nothing
+    }
+
+    public void onConfirmationDenied() {
+        //do nothing
+    }
 }

@@ -66,6 +66,8 @@
     <string name="settings_pwd_equal">Passwords match</string>
     <string name="settings_pwd_not_equal">Password don\'t match!</string>
     <string name="invalid_password">Must be at least 8 characters</string>
+    <string name="tor_explanation">Tor is an open network that helps defend against a form of network surveillance known as traffic analysis.
+        Tor protects you by bouncing your communications around a distributed network all around the world. It will make sending bulletins much slower.</string>
 
 
     <!-- ============================== -->
@@ -78,6 +80,7 @@
     <string name="summary_label">Summary:</string>
     <string name="title_label">Title:</string>
     <string name="title_hint">Title</string>
+    <string name="bulletin_cancel">Cancel</string>
 
 
     <!-- ============================== -->
@@ -95,11 +98,12 @@
     <string name="server_ip_hint">enter server ip address</string>
     <string name="server_public_code_label">Server Public Identification Code:</string>
     <string name="server_public_code_hint">enter server public code</string>
-    <string name="choose_server_title">Choose Server</string><string name="bulletin_cancel">Cancel</string>
+    <string name="choose_server_title">Choose Server</string>
     <string name="title_logout_preference">Auto logout</string>
     <string name="summary_logout_preference">Logout after every send</string>
     <string name="choose_file">Choose a file</string>
     <string name="install_explorer_text">If you can\'t find the file you were thinking of, try installing a more advanced file explorer:</string>
+
 
 
 </resources>

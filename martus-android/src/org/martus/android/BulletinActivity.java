@@ -234,7 +234,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender{
                 sendBulletin();
                 return true;
             case R.id.cancel_bulletin_menu_item:
-                this.finish();
+                showConfirmationDialog();
                 return true;
             case R.id.add_attachment_menu_item:
                 chooseAttachment();
@@ -344,6 +344,11 @@ public class BulletinActivity extends BaseActivity implements BulletinSender{
     @Override
     public void onProgressUpdate(int progress) {
         dialog.setProgress(progress);
+    }
+
+    @Override
+    public void onConfirmationClicked() {
+        this.finish();
     }
 
 }
