@@ -17,6 +17,8 @@ import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.packet.UniversalId;
 
 import android.app.ActionBar;
+import android.app.DialogFragment;
+import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -39,7 +41,7 @@ import com.ipaulpro.afilechooser.utils.FileUtils;
  * @author roms
  *         Date: 10/25/12
  */
-public class BulletinActivity extends BaseActivity implements BulletinSender{
+public class BulletinActivity extends ListActivity implements BulletinSender, ConfirmationDialogHandler, LoginDialogHandler {
 
     final int ACTIVITY_CHOOSE_ATTACHMENT = 2;
     public static final String EXTRA_ATTACHMENT = "org.martus.android.filePath";
@@ -73,7 +75,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender{
 
         MartusSecurity martusCrypto = AppConfig.getInstance().getCrypto();
         if (!martusCrypto.hasKeyPair()) {
-            showLoginRequiredDialog();
+            BaseActivity.showLoginRequiredDialog(this);
         }
 
         mySettings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -207,7 +209,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender{
                         }
                     }
                 } else if (resultCode == RESULT_CANCELED) {
-                    showInstallExplorerDialog();
+                    BaseActivity.showInstallExplorerDialog(this);
                 }
                 break;
             }
@@ -234,7 +236,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender{
                 sendBulletin();
                 return true;
             case R.id.cancel_bulletin_menu_item:
-                showConfirmationDialog();
+                BaseActivity.showConfirmationDialog(this);
                 return true;
             case R.id.add_attachment_menu_item:
                 chooseAttachment();
@@ -349,6 +351,20 @@ public class BulletinActivity extends BaseActivity implements BulletinSender{
     @Override
     public void onConfirmationClicked() {
         this.finish();
+    }
+
+    @Override
+    public void onConfirmationDenied() {
+        //do nothing
+    }
+
+    public void onLoginRequiredDialogClicked() {
+        BulletinActivity.this.finish();
+        Intent intent = new Intent(BulletinActivity.this, MartusActivity.class);
+        intent.putExtras(getIntent());
+        intent.putExtra(MartusActivity.RETURN_TO, MartusActivity.ACTIVITY_BULLETIN);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivity(intent);
     }
 
 }

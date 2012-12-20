@@ -1,9 +1,9 @@
 package org.martus.android;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,15 +13,15 @@ import android.view.LayoutInflater;
  * @author roms
  *         Date: 12/19/12
  */
-public class BaseActivity extends ListActivity {
+public class BaseActivity extends Activity implements ConfirmationDialogHandler, LoginDialogHandler {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
-    void showLoginRequiredDialog() {
+    public static void showLoginRequiredDialog(Activity activity) {
         DialogFragment loginDialog = LoginRequiredDialog.newInstance();
-        loginDialog.show(getFragmentManager(), "login");
+        loginDialog.show(activity.getFragmentManager(), "login");
     }
 
     public static class LoginRequiredDialog extends DialogFragment {
@@ -40,11 +40,11 @@ public class BaseActivity extends ListActivity {
                 .setTitle("You must first login!")
                 .setMessage("Before sending this bulletin")
                 .setPositiveButton(R.string.alert_dialog_ok,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            ((BaseActivity) getActivity()).onLoginRequiredDialogClicked();
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                ((BaseActivity) getActivity()).onLoginRequiredDialogClicked();
+                            }
                         }
-                    }
                 )
                 .create();
         }
@@ -59,10 +59,10 @@ public class BaseActivity extends ListActivity {
         startActivity(intent);
     }
 
-    void showInstallExplorerDialog() {
-            DialogFragment explorerDialog = InstallExplorerDialog.newInstance();
-            explorerDialog.show(getFragmentManager(), "install");
-        }
+    public static void showInstallExplorerDialog(Activity activity) {
+        DialogFragment explorerDialog = InstallExplorerDialog.newInstance();
+        explorerDialog.show(activity.getFragmentManager(), "install");
+    }
 
     public static class InstallExplorerDialog extends DialogFragment {
 
@@ -84,9 +84,9 @@ public class BaseActivity extends ListActivity {
         }
     }
 
-    void showConfirmationDialog() {
+    public static void showConfirmationDialog(Activity activity) {
         DialogFragment confirmationDialog = ConfirmationDialog.newInstance();
-        confirmationDialog.show(getFragmentManager(), "confirmation");
+        confirmationDialog.show(activity.getFragmentManager(), "confirmation");
     }
 
     public static class ConfirmationDialog extends DialogFragment {
@@ -104,16 +104,16 @@ public class BaseActivity extends ListActivity {
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("Are you sure?")
                     .setPositiveButton(R.string.yes,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                ((BaseActivity) getActivity()).onConfirmationClicked();
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    ((ConfirmationDialogHandler) getActivity()).onConfirmationClicked();
+                                }
                             }
-                        }
                     )
                     .setNegativeButton(R.string.no,
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    ((BaseActivity) getActivity()).onConfirmationDenied();
+                                    ((ConfirmationDialogHandler) getActivity()).onConfirmationDenied();
                                 }
                             }
                     )
