@@ -103,7 +103,7 @@
     <string name="summary_logout_preference">Logout after every send</string>
     <string name="choose_file">Martus File Chooser</string>
     <string name="install_explorer_text">If you can\'t find the file you were thinking of, try installing a more advanced file explorer:</string>
-
+    <string formatted="false" name="file_explorer_store_link">play.google.com/store/search?q=%22open+source%22+file+manager+explorer</string>
 
 
 </resources>
