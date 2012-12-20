@@ -15,7 +15,7 @@
     <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="play.google.com/store/search?q=open+source+fileexplorer"
+            android:text="play.google.com/store/search?q=%22open+source%22+file+manager+explorer"
             android:id="@+id/textView1"
             android:autoLink="web"
             android:layout_gravity="right"/>
