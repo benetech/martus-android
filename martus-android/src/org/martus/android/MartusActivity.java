@@ -25,11 +25,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -233,7 +235,7 @@ public class MartusActivity extends Activity {
             Log.e(AppConfig.LOG_LABEL, "Problem confirming password", e);
             return false;
         }
-        martusCrypto.setShouldWriteAuthorDecryptableData(false);
+        //martusCrypto.setShouldWriteAuthorDecryptableData(false);
         return true;
     }
 
@@ -346,6 +348,15 @@ public class MartusActivity extends Activity {
             LayoutInflater factory = LayoutInflater.from(myActivity);
             final View passwordEntryView = factory.inflate(R.layout.password_dialog, null);
             final EditText passwordText = (EditText) passwordEntryView.findViewById(R.id.password_edit);
+            passwordText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    ((MartusActivity) getActivity()).doLoginPositiveClick(passwordText);
+                    return true;
+                }
+                return false;
+            }
+        });
             return new AlertDialog.Builder(getActivity())
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(R.string.password_dialog_title)
