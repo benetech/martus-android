@@ -42,7 +42,7 @@ public class BaseActivity extends Activity implements ConfirmationDialogHandler,
                 .setPositiveButton(R.string.alert_dialog_ok,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                ((BaseActivity) getActivity()).onLoginRequiredDialogClicked();
+                                ((LoginDialogHandler) getActivity()).onLoginRequiredDialogClicked();
                             }
                         }
                 )
