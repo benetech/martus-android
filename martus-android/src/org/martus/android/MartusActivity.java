@@ -21,17 +21,16 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -39,7 +38,7 @@ import android.widget.Toast;
 import com.bugsense.trace.BugSenseHandler;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 
-public class MartusActivity extends Activity {
+public class MartusActivity extends FragmentActivity implements LoginDialog.LoginDialogListener {
 
     public final static String PROXY_HOST = "127.0.0.1"; //test the local device proxy provided by Orbot/Tor
     public final static int PROXY_HTTP_PORT = 8118; //default for Orbot/Tor
@@ -299,11 +298,12 @@ public class MartusActivity extends Activity {
     }
 
     void showLoginDialog() {
-        DialogFragment loginDialog = LoginDialogFragment.newInstance();
-        loginDialog.show(getFragmentManager(), "login");
+        LoginDialog loginDialog = LoginDialog.newInstance();
+        loginDialog.show(getSupportFragmentManager(), "dlg_login");
     }
 
-    public void doLoginPositiveClick(EditText passwordText) {
+    @Override
+    public void onFinishPasswordDialog(TextView passwordText) {
         char[] password = passwordText.getText().toString().trim().toCharArray();
         boolean confirmed = confirmAccount(password);
         if (!confirmed) {
@@ -329,55 +329,10 @@ public class MartusActivity extends Activity {
         onResume();
     }
 
-    public void doLoginNegativeClick() {
+    public void onCancelPasswordDialog() {
         this.finish();
     }
 
-    public static class LoginDialogFragment extends DialogFragment {
-
-        public static LoginDialogFragment newInstance() {
-            LoginDialogFragment frag = new LoginDialogFragment();
-            Bundle args = new Bundle();
-            frag.setArguments(args);
-            frag.setCancelable(false);
-            return frag;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            LayoutInflater factory = LayoutInflater.from(myActivity);
-            final View passwordEntryView = factory.inflate(R.layout.password_dialog, null);
-            final EditText passwordText = (EditText) passwordEntryView.findViewById(R.id.password_edit);
-            passwordText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    ((MartusActivity) getActivity()).doLoginPositiveClick(passwordText);
-                    return true;
-                }
-                return false;
-            }
-        });
-            return new AlertDialog.Builder(getActivity())
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle(R.string.password_dialog_title)
-                .setView(passwordEntryView)
-                .setPositiveButton(R.string.alert_dialog_ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                ((MartusActivity) getActivity()).doLoginPositiveClick(passwordText);
-                            }
-                        }
-                )
-                .setNegativeButton(R.string.password_dialog_cancel,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                ((MartusActivity) getActivity()).doLoginNegativeClick();
-                            }
-                        }
-                )
-                .create();
-        }
-    }
 
     void showCreateAccountDialog() {
         newAccountDialog = CreateAccountDialogFragment.newInstance();
