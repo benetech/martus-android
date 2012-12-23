@@ -68,7 +68,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BugSenseHandler.initAndStartSession(BulletinActivity.this, ExternalKeys.BUGSENSE_KEY);
-        setContentView(R.layout.send_bulletin);
+        setContentView(R.layout.send_bulletin_linear);
 
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
