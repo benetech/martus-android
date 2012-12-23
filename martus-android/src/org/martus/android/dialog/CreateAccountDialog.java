@@ -1,6 +1,8 @@
-package org.martus.android;
+package org.martus.android.dialog;
 
 import java.util.Arrays;
+
+import org.martus.android.R;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

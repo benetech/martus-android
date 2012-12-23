@@ -1,4 +1,6 @@
-package org.martus.android;
+package org.martus.android.dialog;
+
+import org.martus.android.R;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -14,7 +16,7 @@ import android.widget.TextView;
  * @author roms
  *         Date: 12/22/12
  */
-public class LoginDialog  extends DialogFragment {
+public class LoginDialog extends DialogFragment {
 
     public interface LoginDialogListener {
         void onFinishPasswordDialog(TextView inputText);

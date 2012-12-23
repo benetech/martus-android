@@ -83,7 +83,7 @@ public class DesktopKeyActivity extends BaseActivity {
                         Log.e("martus", "problem getting HQ key", e);
                     }
                 } else if (resultCode == RESULT_CANCELED) {
-                    showInstallExplorerDialog(this);
+                    showInstallExplorerDialog();
                 }
                 break;
             }

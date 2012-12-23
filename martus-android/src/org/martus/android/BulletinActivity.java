@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import org.martus.android.dialog.ConfirmationDialog;
 import org.martus.client.bulletinstore.ClientBulletinStore;
 import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.common.HQKey;
@@ -17,8 +18,6 @@ import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.packet.UniversalId;
 
 import android.app.ActionBar;
-import android.app.DialogFragment;
-import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -33,6 +32,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 import com.bugsense.trace.BugSenseHandler;
 import com.ipaulpro.afilechooser.utils.FileUtils;
@@ -41,7 +41,7 @@ import com.ipaulpro.afilechooser.utils.FileUtils;
  * @author roms
  *         Date: 10/25/12
  */
-public class BulletinActivity extends ListActivity implements BulletinSender, ConfirmationDialogHandler, LoginDialogHandler {
+public class BulletinActivity extends BaseActivity implements BulletinSender, ConfirmationDialog.ConfirmationDialogListener {
 
     final int ACTIVITY_CHOOSE_ATTACHMENT = 2;
     public static final String EXTRA_ATTACHMENT = "org.martus.android.filePath";
@@ -75,7 +75,7 @@ public class BulletinActivity extends ListActivity implements BulletinSender, Co
 
         MartusSecurity martusCrypto = AppConfig.getInstance().getCrypto();
         if (!martusCrypto.hasKeyPair()) {
-            BaseActivity.showLoginRequiredDialog(this);
+            showLoginRequiredDialog();
         }
 
         mySettings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -97,8 +97,9 @@ public class BulletinActivity extends ListActivity implements BulletinSender, Co
         summaryText = (EditText)findViewById(R.id.bulletinSummary);
 
         attachmentAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
-        setListAdapter(attachmentAdapter);
-        getListView().setTextFilterEnabled(true);
+        ListView list = (ListView)findViewById(android.R.id.list);
+        list.setTextFilterEnabled(true);
+        list.setAdapter(attachmentAdapter);
 
         addAttachmentFromIntent();
     }
@@ -209,7 +210,7 @@ public class BulletinActivity extends ListActivity implements BulletinSender, Co
                         }
                     }
                 } else if (resultCode == RESULT_CANCELED) {
-                    BaseActivity.showInstallExplorerDialog(this);
+                    showInstallExplorerDialog();
                 }
                 break;
             }
@@ -236,7 +237,7 @@ public class BulletinActivity extends ListActivity implements BulletinSender, Co
                 sendBulletin();
                 return true;
             case R.id.cancel_bulletin_menu_item:
-                BaseActivity.showConfirmationDialog(this);
+                showConfirmationDialog();
                 return true;
             case R.id.add_attachment_menu_item:
                 chooseAttachment();
@@ -349,22 +350,8 @@ public class BulletinActivity extends ListActivity implements BulletinSender, Co
     }
 
     @Override
-    public void onConfirmationClicked() {
+    public void onConfirmationAccepted() {
         this.finish();
-    }
-
-    @Override
-    public void onConfirmationDenied() {
-        //do nothing
-    }
-
-    public void onLoginRequiredDialogClicked() {
-        BulletinActivity.this.finish();
-        Intent intent = new Intent(BulletinActivity.this, MartusActivity.class);
-        intent.putExtras(getIntent());
-        intent.putExtra(MartusActivity.RETURN_TO, MartusActivity.ACTIVITY_BULLETIN);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        startActivity(intent);
     }
 
 }

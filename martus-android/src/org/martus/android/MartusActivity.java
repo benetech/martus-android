@@ -6,16 +6,16 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Arrays;
 
+import org.martus.android.dialog.CreateAccountDialog;
+import org.martus.android.dialog.LoginDialog;
+import org.martus.android.dialog.MagicWordDialog;
 import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.NetworkResponse;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -24,19 +24,18 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.Base64;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bugsense.trace.BugSenseHandler;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 
-public class MartusActivity extends FragmentActivity implements LoginDialog.LoginDialogListener, CreateAccountDialog.CreateAccountDialogListener {
+public class MartusActivity extends FragmentActivity implements LoginDialog.LoginDialogListener,
+        CreateAccountDialog.CreateAccountDialogListener, MagicWordDialog.MagicWordDialogListener {
 
     public final static String PROXY_HOST = "127.0.0.1"; //test the local device proxy provided by Orbot/Tor
     public final static int PROXY_HTTP_PORT = 8118; //default for Orbot/Tor
@@ -51,9 +50,6 @@ public class MartusActivity extends FragmentActivity implements LoginDialog.Logi
     private ClientSideNetworkGateway gateway = null;
     private String serverIP;
     private int invalidLogins;
-
-    DialogFragment newAccountDialog;
-    DialogFragment magicWordDialog;
 
     static final int ACTIVITY_DESKTOP_KEY = 2;
     public static final int ACTIVITY_BULLETIN = 3;
@@ -367,11 +363,11 @@ public class MartusActivity extends FragmentActivity implements LoginDialog.Logi
     }
 
     private void showMagicWordDialog() {
-        magicWordDialog = MagicWordDialogFragment.newInstance();
-        magicWordDialog.show(getFragmentManager(), "magicWord");
+        MagicWordDialog magicWordDialog = MagicWordDialog.newInstance();
+        magicWordDialog.show(getSupportFragmentManager(), "dlg_magicWord");
     }
 
-    public void doMagicWordPositiveClick(EditText magicWordText) {
+    public void onFinishMagicWordDialog(TextView magicWordText) {
         String magicWord = magicWordText.getText().toString().trim();
         if (magicWord.isEmpty()) {
             Toast.makeText(this, "Invalid Magic Word!", Toast.LENGTH_SHORT).show();
@@ -397,34 +393,4 @@ public class MartusActivity extends FragmentActivity implements LoginDialog.Logi
         }
     }
 
-    public static class MagicWordDialogFragment extends DialogFragment {
-
-        public static MagicWordDialogFragment newInstance() {
-            MagicWordDialogFragment frag = new MagicWordDialogFragment();
-            Bundle args = new Bundle();
-            frag.setArguments(args);
-            frag.setCancelable(false);
-            return frag;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            LayoutInflater factory = LayoutInflater.from(myActivity);
-            final View magicWordView = factory.inflate(R.layout.magic_word_dialog, null);
-            final EditText magicWordText = (EditText) magicWordView.findViewById(R.id.password_edit);
-            return new AlertDialog.Builder(getActivity())
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle(R.string.magic_word_dialog_title)
-                .setView(magicWordView)
-                .setPositiveButton(R.string.alert_dialog_ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                ((MartusActivity) getActivity()).doMagicWordPositiveClick(magicWordText);
-                            }
-                        }
-                )
-                .create();
-        }
-    }
-    
 }
