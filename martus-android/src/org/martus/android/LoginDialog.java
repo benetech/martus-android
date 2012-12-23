@@ -41,18 +41,6 @@ public class LoginDialog  extends DialogFragment {
         View passwordEntryView = factory.inflate(R.layout.password_dialog, null);
         final EditText passwordText = (EditText) passwordEntryView.findViewById(R.id.password_edit);
 
-/*        final EditText passwordText = (EditText) passwordEntryView.findViewById(R.id.password_edit);
-                passwordText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        ((LoginDialogListener) getActivity()).onFinishPasswordDialog(passwordText);
-                        return true;
-                    }
-                    return false;
-                }
-            });*/
-
-
         return new AlertDialog.Builder(getActivity())
             .setIcon(android.R.drawable.ic_dialog_alert)
             .setTitle(R.string.password_dialog_title)

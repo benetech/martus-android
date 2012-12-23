@@ -22,8 +22,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,7 +36,7 @@ import android.widget.Toast;
 import com.bugsense.trace.BugSenseHandler;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 
-public class MartusActivity extends FragmentActivity implements LoginDialog.LoginDialogListener {
+public class MartusActivity extends FragmentActivity implements LoginDialog.LoginDialogListener, CreateAccountDialog.CreateAccountDialogListener {
 
     public final static String PROXY_HOST = "127.0.0.1"; //test the local device proxy provided by Orbot/Tor
     public final static int PROXY_HTTP_PORT = 8118; //default for Orbot/Tor
@@ -335,11 +333,11 @@ public class MartusActivity extends FragmentActivity implements LoginDialog.Logi
 
 
     void showCreateAccountDialog() {
-        newAccountDialog = CreateAccountDialogFragment.newInstance();
-        newAccountDialog.show(getFragmentManager(), "create");
+        CreateAccountDialog newAccountDialog = CreateAccountDialog.newInstance();
+        newAccountDialog.show(getSupportFragmentManager(), "dlg_new_account");
     }
 
-    public void doCreateAccountPositiveClick(EditText passwordText, EditText confirmPasswordText) {
+    public void onFinishNewAccountDialog(TextView passwordText, TextView confirmPasswordText) {
 
         boolean failed = false;
         char[] password = passwordText.getText().toString().trim().toCharArray();
@@ -360,70 +358,12 @@ public class MartusActivity extends FragmentActivity implements LoginDialog.Logi
         } else {
             createAccount(password);
             checkDesktopKey();
-            newAccountDialog.dismiss();
+            //newAccountDialog.dismiss();
         }
     }
 
-    public void doCreateAccountNegativeClick() {
+    public void onCancelNewAccountDialog() {
         this.finish();
-    }
-
-    public static class CreateAccountDialogFragment extends DialogFragment {
-
-        public static CreateAccountDialogFragment newInstance() {
-            CreateAccountDialogFragment frag = new CreateAccountDialogFragment();
-            Bundle args = new Bundle();
-            frag.setArguments(args);
-            frag.setCancelable(false);
-            return frag;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            LayoutInflater factory = LayoutInflater.from(myActivity);
-            final View createAccountDialog = factory.inflate(R.layout.create_account, null);
-            final EditText newPasswordText = (EditText) createAccountDialog.findViewById(R.id.new_password_field);
-            final EditText confirmPasswordText = (EditText) createAccountDialog.findViewById(R.id.confirm_password_field);
-            final TextView error = (TextView) createAccountDialog.findViewById(R.id.password_problem_text);
-
-            confirmPasswordText.addTextChangedListener(new TextWatcher() {
-               public void afterTextChanged(Editable s) {
-                  char[] password = newPasswordText.getText().toString().trim().toCharArray();
-                  char[] confirmPassword = confirmPasswordText.getText().toString().trim().toCharArray();
-                  if (password.length < MIN_PASSWORD_SIZE) {
-                      error.setText(R.string.invalid_password);
-                      return;
-                  }
-                  if (Arrays.equals(password, confirmPassword)) {
-                     error.setText(R.string.settings_pwd_equal);
-                  } else {
-                     error.setText(R.string.settings_pwd_not_equal);
-                  }
-               }
-               public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-               public void onTextChanged(CharSequence s, int start, int before, int count) {}
-             });
-
-            return new AlertDialog.Builder(getActivity())
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle(R.string.create_account_dialog_title)
-                .setView(createAccountDialog)
-                .setPositiveButton(R.string.alert_dialog_ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                ((MartusActivity) getActivity()).doCreateAccountPositiveClick(newPasswordText, confirmPasswordText);
-                            }
-                        }
-                )
-                .setNegativeButton(R.string.password_dialog_cancel,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                ((MartusActivity) getActivity()).doCreateAccountNegativeClick();
-                            }
-                        }
-                )
-                .create();
-        }
     }
 
     private void showMagicWordDialog() {
