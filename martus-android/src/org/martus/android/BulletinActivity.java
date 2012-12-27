@@ -250,6 +250,15 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
         }
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (shouldShowInstallExplorer) {
+            showInstallExplorerDialog();
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
