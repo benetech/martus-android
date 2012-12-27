@@ -49,6 +49,8 @@ import org.martus.common.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.common.network.SimpleHostnameVerifier;
 import org.martus.common.network.SimpleX509TrustManager;
 import org.martus.util.Stopwatch;
+import org.xmlrpc.android.XMLRPCClient;
+import org.xmlrpc.android.XMLRPCException;
 
 public class ClientSideNetworkHandlerUsingXmlRpc
 	implements NetworkInterfaceConstants, NetworkInterfaceXmlRpcConstants, NetworkInterface
@@ -341,8 +343,7 @@ public class ClientSideNetworkHandlerUsingXmlRpc
 	
 	public Object executeXmlRpc(String serverName, String method,
 									Vector params, int port)
-		throws MalformedURLException, XmlRpcException, IOException 
-	{
+            throws Exception {
 		final String serverUrl = "https://" + serverName + ":" + port + "/RPC2";
 		//System.out.println("ServerInterfaceXmlRpcHandler:callServer serverUrl=" + serverUrl);
 		
@@ -355,7 +356,20 @@ public class ClientSideNetworkHandlerUsingXmlRpc
 		XmlRpcClient client = new XmlRpcClient();
 		client.setConfig(config);
 		Stopwatch sw = new Stopwatch();
+
+        // following code is more Android Gingerbread friendly but doesn't yet work with SSL
+/*        XMLRPCClient newClient = new XMLRPCClient(new URL(serverUrl), "", "");
+        Object[] newParams;
+        int numParams = params.size();
+        if (numParams > 0) {
+            newParams = params.toArray(new Object[numParams]);
+        } else {
+            newParams = null;
+        }
+        Object result = newClient.callEx("MartusServer." + method, newParams);*/
+
 		Object result = client.execute("MartusServer." + method, params);
+
 		sw.stop();
 		final int MAX_EXPECTED_TIME_MILLIS = 60 * 1000;
 		if(sw.elapsed() > MAX_EXPECTED_TIME_MILLIS)

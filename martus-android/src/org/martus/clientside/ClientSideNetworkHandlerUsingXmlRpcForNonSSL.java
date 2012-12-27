@@ -42,6 +42,10 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.martus.common.network.NetworkInterfaceConstants;
 import org.martus.common.network.NonSSLNetworkAPI;
 import org.martus.common.network.NetworkInterfaceXmlRpcConstants;
+import org.xmlrpc.android.XMLRPCClient;
+import org.xmlrpc.android.XMLRPCException;
+
+import android.util.Log;
 
 public class ClientSideNetworkHandlerUsingXmlRpcForNonSSL extends NonSSLNetworkAPI implements NetworkInterfaceConstants, NetworkInterfaceXmlRpcConstants
 	
@@ -105,6 +109,7 @@ public class ClientSideNetworkHandlerUsingXmlRpcForNonSSL extends NonSSLNetworkA
 			{
 				logging("MartusServerProxyViaXmlRpc:callServer Exception=" + e);
 				e.printStackTrace();
+                Log.e("martus", "MartusServerProxyViaXmlRpc:callServer Exception=", e);
 				return null;
 			}
 		}
@@ -112,8 +117,7 @@ public class ClientSideNetworkHandlerUsingXmlRpcForNonSSL extends NonSSLNetworkA
 	}
 	
 	public Object callServerAtPort(String serverName, String method, Vector params, int port)
-		throws MalformedURLException, XmlRpcException, IOException
-	{
+            throws Exception {
 		final String serverUrl = "http://" + serverName + ":" + port + "/RPC2";
 		logging("MartusServerProxyViaXmlRpc:callServer serverUrl=" + serverUrl);
 
@@ -125,6 +129,11 @@ public class ClientSideNetworkHandlerUsingXmlRpcForNonSSL extends NonSSLNetworkA
 		config.setServerURL(new URL(serverUrl));
 		XmlRpcClient xmlRpc = new XmlRpcClient();
 		xmlRpc.setConfig(config);
+
+        //following code seems more Android Gingerbread friendly
+/*        XMLRPCClient client = new XMLRPCClient(new URL(serverUrl), "", "");
+        return client.call("MartusServer." + method);*/
+
 		return xmlRpc.execute("MartusServer." + method, params);
 	}
 
