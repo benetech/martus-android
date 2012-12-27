@@ -15,8 +15,11 @@ import android.support.v4.app.FragmentActivity;
 public class BaseActivity extends FragmentActivity implements ConfirmationDialog.ConfirmationDialogListener,
         LoginRequiredDialog.LoginRequiredDialogListener {
 
+    private MartusApplication parentApp;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        parentApp = (MartusApplication) this.getApplication();
     }
 
     public void showLoginRequiredDialog() {
@@ -50,5 +53,35 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
 
     public void onConfirmationCancelled() {
         //do nothing
+    }
+
+    public void setIgnoreInactivity(boolean ignore) {
+        parentApp.setIgnoreInactivity(ignore);
+    }
+
+    @Override
+    public void onUserInteraction(){
+        parentApp.resetInactivityTimer();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        parentApp.resetInactivityTimer();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        parentApp.stopInactivityTimer();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //No call for super(). Bug on API Level > 11.
+    }
+
+    public void stopInactivityTimer() {
+        parentApp.stopInactivityTimer();
     }
 }

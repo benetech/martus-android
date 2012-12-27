@@ -63,6 +63,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
     private EditText summaryText;
     private ProgressDialog dialog;
     private ArrayAdapter<String> attachmentAdapter;
+    private boolean shouldShowInstallExplorer = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -105,6 +106,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
     }
 
     public void chooseAttachment() {
+        shouldShowInstallExplorer = false;
         try {
             Intent chooseFile = FileUtils.createGetContentIntent();
             Intent intent = Intent.createChooser(chooseFile, "Choose an attachment");
@@ -210,7 +212,8 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
                         }
                     }
                 } else if (resultCode == RESULT_CANCELED) {
-                    showInstallExplorerDialog();
+
+                    shouldShowInstallExplorer = true;
                 }
                 break;
             }
@@ -267,7 +270,8 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
         String summary = summaryText.getText().toString().trim();
         bulletin.set(Bulletin.TAGTITLE, title);
         bulletin.set(Bulletin.TAGSUMMARY, summary);
-
+        stopInactivityTimer();
+        setIgnoreInactivity(true);
 
         final AsyncTask<Object, Integer, File> zipTask = new ZipBulletinTask(bulletin, this);
         zipTask.execute(getCacheDir(), store);
@@ -329,7 +333,8 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
         } catch (IOException e) {
             Log.e(AppConfig.LOG_LABEL, "problem destroying bulletin", e);
         }
-        final AsyncTask<Object, Integer, String> uploadTask = new UploadBulletinTask(getApplicationContext(), bulletinTitle, this, bulletinId);
+        final AsyncTask<Object, Integer, String> uploadTask = new UploadBulletinTask((MartusApplication)getApplication(),
+                bulletinTitle, this, bulletinId);
         uploadTask.execute(bulletin.getUniversalId(), zippedFile, gateway, AppConfig.getInstance().getCrypto());
     }
 

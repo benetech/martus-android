@@ -25,7 +25,7 @@ import com.bugsense.trace.BugSenseHandler;
  * @author roms
  *         Date: 12/10/12
  */
-public class ServerActivity extends Activity {
+public class ServerActivity extends BaseActivity {
 
     private EditText textIp;
     private EditText textCode;

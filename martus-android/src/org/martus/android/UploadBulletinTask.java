@@ -14,6 +14,7 @@ import org.martus.common.network.NetworkResponse;
 import org.martus.common.packet.UniversalId;
 import org.martus.util.StreamableBase64;
 
+import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.format.Time;
@@ -28,9 +29,11 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
     private NotificationHelper mNotificationHelper;
     private String bulletinTitle;
     private BulletinSender sender;
+    private MartusApplication myApplication;
 
-    public UploadBulletinTask(Context context, String bulletinTitle, BulletinSender sender, UniversalId bulletinId) {
-        mNotificationHelper = new NotificationHelper(context, bulletinId.hashCode());
+    public UploadBulletinTask(MartusApplication application, String bulletinTitle, BulletinSender sender, UniversalId bulletinId) {
+        myApplication = application;
+        mNotificationHelper = new NotificationHelper(myApplication.getApplicationContext(), bulletinId.hashCode());
         this.bulletinTitle = bulletinTitle;
         this.sender = sender;
     }
@@ -79,6 +82,8 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
         if (null != sender) {
             sender.onSent();
         }
+        myApplication.setIgnoreInactivity(false);
+        myApplication.resetInactivityTimer();
         super.onPostExecute(s);
     }
 

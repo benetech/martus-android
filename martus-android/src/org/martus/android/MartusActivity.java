@@ -21,7 +21,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -34,7 +33,7 @@ import android.widget.Toast;
 import com.bugsense.trace.BugSenseHandler;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 
-public class MartusActivity extends FragmentActivity implements LoginDialog.LoginDialogListener,
+public class MartusActivity extends BaseActivity implements LoginDialog.LoginDialogListener,
         CreateAccountDialog.CreateAccountDialogListener, MagicWordDialog.MagicWordDialogListener {
 
     public final static String PROXY_HOST = "127.0.0.1"; //test the local device proxy provided by Orbot/Tor
