@@ -227,6 +227,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
             Log.e(AppConfig.LOG_LABEL, "Problem confirming password", e);
             return false;
         }
+        //todo: need to re-implement this in a way that is backwards compatible with the desktop client
         //martusCrypto.setShouldWriteAuthorDecryptableData(false);
         return true;
     }
