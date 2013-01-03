@@ -30,6 +30,7 @@ public class DesktopKeyActivity extends BaseActivity {
 
     private EditText editText_code;
     private Activity activity;
+    private boolean shouldShowInstallExplorer = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,27 +40,25 @@ public class DesktopKeyActivity extends BaseActivity {
         activity = this;
 
         editText_code = (EditText)findViewById(R.id.desktopCodeText);
+    }
 
-        final Button buttonChoosePublicKeyFile = (Button) findViewById(R.id.desktopKeyChooseFile);
-        buttonChoosePublicKeyFile.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                String code = editText_code.getText().toString().trim();
-                if ("".equals(code)) {
-                    editText_code.requestFocus();
-                    MartusActivity.showMessage(activity, getString(R.string.public_code_validation_empty), getString(R.string.error_message));
-                    return;
-                }
-                try {
-                    Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-                    chooseFile.setType("file/*");
-                    Intent intent = Intent.createChooser(chooseFile, getString(R.string.select_file_picker));
-                    startActivityForResult(intent, ACTIVITY_CHOOSE_FILE);
-                } catch (Exception e) {
-                    Log.e("martus", "Failed choosing file", e);
-                    e.printStackTrace();
-                }
-            }
-        });
+    public void chooseKeyFile(View view) {
+        shouldShowInstallExplorer = false;
+        String code = editText_code.getText().toString().trim();
+        if ("".equals(code)) {
+            editText_code.requestFocus();
+            MartusActivity.showMessage(activity, getString(R.string.public_code_validation_empty), getString(R.string.error_message));
+            return;
+        }
+        try {
+            Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+            chooseFile.setType("file/*");
+            Intent intent = Intent.createChooser(chooseFile, getString(R.string.select_file_picker));
+            startActivityForResult(intent, ACTIVITY_CHOOSE_FILE);
+        } catch (Exception e) {
+            Log.e("martus", "Failed choosing file", e);
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -83,14 +82,21 @@ public class DesktopKeyActivity extends BaseActivity {
                         Log.e("martus", "problem getting HQ key", e);
                     }
                 } else if (resultCode == RESULT_CANCELED) {
-                    showInstallExplorerDialog();
+                    shouldShowInstallExplorer = true;
                 }
                 break;
             }
         }
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (shouldShowInstallExplorer) {
+            showInstallExplorerDialog();
+            shouldShowInstallExplorer = false;
+        }
+    }
 
     public void setPublicKey(File importFile) throws Exception {
         String publicKeyString = extractPublicInfo(importFile);
