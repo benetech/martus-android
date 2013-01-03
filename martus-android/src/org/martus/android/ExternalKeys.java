@@ -5,5 +5,5 @@ package org.martus.android;
  *         Date: 12/14/12
  */
 public class ExternalKeys {
-    public static final String BUGSENSE_KEY = "58e06cf7";
+    public static final String BUGSENSE_KEY = "";
 }
