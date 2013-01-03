@@ -212,7 +212,6 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
                         }
                     }
                 } else if (resultCode == RESULT_CANCELED) {
-
                     shouldShowInstallExplorer = true;
                 }
                 break;
@@ -256,6 +255,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
         super.onResume();
         if (shouldShowInstallExplorer) {
             showInstallExplorerDialog();
+            shouldShowInstallExplorer = false;
         }
     }
 

@@ -35,5 +35,6 @@
             android:layout_gravity="right"
             android:text="@string/desktop_sync_choose_file"
             android:contentDescription="@string/desktop_sync_choose_file"
+            android:onClick="chooseKeyFile"
             android:id="@+id/desktopKeyChooseFile"/>
 </LinearLayout>
