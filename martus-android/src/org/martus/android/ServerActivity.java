@@ -6,7 +6,6 @@ import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.NonSSLNetworkAPI;
 import org.martus.util.StreamableBase64;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,7 +23,7 @@ import com.bugsense.trace.BugSenseHandler;
  * @author roms
  *         Date: 12/10/12
  */
-public class ServerActivity extends BaseActivity {
+public class ServerActivity extends BaseActivity implements TextView.OnEditorActionListener {
 
     private EditText textIp;
     private EditText textCode;
@@ -38,16 +36,15 @@ public class ServerActivity extends BaseActivity {
 
         textIp = (EditText)findViewById(R.id.serverIpText);
         textCode = (EditText)findViewById(R.id.serverCodeText);
+        textCode.setOnEditorActionListener(this);
+    }
 
-        textCode.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    confirmServer(textCode);
-                    return true;
-                }
-                return false;
-            }
-        });
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
+            confirmServer(textCode);
+            return true;
+        }
+        return false;
     }
 
     @Override
