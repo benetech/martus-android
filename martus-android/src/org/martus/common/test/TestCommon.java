@@ -53,7 +53,6 @@ public class TestCommon
 		// common stuff
 		suite.addTest(new TestSuite(TestBulletin.class));
 		suite.addTest(new TestSuite(TestBulletinStore.class));
-		suite.addTest(new TestSuite(TestClientFileDatabase.class));
 		suite.addTest(new TestSuite(TestFileDatabase.class));
 		suite.addTest(new TestSuite(TestMartusKeyPair.class));
 		suite.addTest(new TestSuite(TestMartusSecurity.class));
