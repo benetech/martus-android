@@ -300,7 +300,21 @@ public class MartusSecurity extends MartusCrypto
 			EncryptionException,
 			NoKeyPairException
 	{
-        String publicKeyString = shouldWriteAuthorDecryptableData ? getPublicKeyString() : null;
+/*        String tempPublicKey =  null;
+       if (! shouldWriteAuthorDecryptableData) {
+            try {
+                MartusSecurity tempSecurity = new MartusSecurity();
+                tempSecurity.createKeyPair();
+                tempPublicKey = tempSecurity.getPublicKeyString();
+                Log.e("martus", "temp key is " + tempPublicKey);
+            } catch (CryptoInitializationException e) {
+                Log.e("martus", "unable to create temp security", e);
+                //todo : is this what we want?
+                throw new NoKeyPairException();
+            }
+        }
+        String publicKeyString = shouldWriteAuthorDecryptableData ? getPublicKeyString() : "";*/
+        String publicKeyString = getPublicKeyString();
 		encrypt(plainStream, cipherStream, sessionKey, publicKeyString);
 	}
 
@@ -308,6 +322,8 @@ public class MartusSecurity extends MartusCrypto
 			EncryptionException,
 			NoKeyPairException
 	{
+        if(publicKeyString == null)
+            throw new NoKeyPairException();
 
 		CipherOutputStream cos = createCipherOutputStream(cipherStream, sessionKey, publicKeyString);
 		try
@@ -344,9 +360,12 @@ public class MartusSecurity extends MartusCrypto
 			byte[] ivBytes = new byte[IV_BYTE_COUNT];
 			rand.nextBytes(ivBytes);
 
-			byte[] encryptedKeyBytes = null;
-            if (null != publicKeyString) {
+            byte[] encryptedKeyBytes;
+            if (shouldWriteAuthorDecryptableData) {
                 encryptedKeyBytes = encryptSessionKey(sessionKey, publicKeyString).getBytes();
+            } else {
+                Log.e("martus", "Using empty bytes .");
+                encryptedKeyBytes = new byte[0];
             }
 
 			SecretKey secretSessionKey = new SecretKeySpec(sessionKey.getBytes(), SESSION_ALGORITHM_NAME);
@@ -355,10 +374,8 @@ public class MartusSecurity extends MartusCrypto
 
 			OutputStream bufferedCipherStream = new BufferedOutputStream(cipherStream);
 			DataOutputStream output = new DataOutputStream(bufferedCipherStream);
-            if (null != encryptedKeyBytes) {
-			    output.writeInt(encryptedKeyBytes.length);
-			    output.write(encryptedKeyBytes);
-            }
+            output.writeInt(encryptedKeyBytes.length);
+            output.write(encryptedKeyBytes);
 
 			output.writeInt(ivBytes.length);
 			output.write(ivBytes);
@@ -520,6 +537,7 @@ public class MartusSecurity extends MartusCrypto
 		{
 			//e.printStackTrace();
 			//System.out.println("MartusSecurity.encryptSessionKey: " + e);
+            Log.e("martus", "problem in encryptSessionKey", e);
 			throw new EncryptionException();
 		}
 	}

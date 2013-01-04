@@ -52,6 +52,7 @@ import org.martus.util.StreamableBase64;
 import org.martus.util.TestCaseEnhanced;
 import org.martus.util.inputstreamwithseek.ByteArrayInputStreamWithSeek;
 
+import android.util.Log;
 
 
 public class TestMartusSecurity extends TestCaseEnhanced
@@ -578,17 +579,17 @@ public class TestMartusSecurity extends TestCaseEnhanced
 
    		security.encrypt(plainInputStream, cipherOutputStream);
    		byte[] encrypted = cipherOutputStream.toByteArray();
+        assertEquals("not encrypted?", false, Arrays.equals(data, encrypted));
 
    		ByteArrayInputStreamWithSeek cipherInputStream = new ByteArrayInputStreamWithSeek(encrypted);
    		ByteArrayOutputStream plainOutputStream = new ByteArrayOutputStream();
-
         try {
             security.decrypt(cipherInputStream, plainOutputStream);
             byte[] decrypted = plainOutputStream.toByteArray();
-            assertEquals("got bad data back", true, Arrays.equals(data, decrypted));
+            assertEquals("should have gotten bad data back", false, Arrays.equals(data, decrypted));
             fail("Should have thrown exception for attempt to decrypt with author decryptable set to false");
         } catch(Exception expected) {
-
+            Log.e("martus", "expected error", expected);
         }
         security.setShouldWriteAuthorDecryptableData(true);
    		TRACE_END();
