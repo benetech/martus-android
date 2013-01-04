@@ -29,11 +29,7 @@ package org.martus.common.test;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.martus.common.bulletin.TestAttachmentProxy;
 import org.martus.common.bulletin.TestBulletin;
-import org.martus.common.bulletin.TestBulletinLoader;
-import org.martus.common.bulletin.TestBulletinZipImporter;
-import org.martus.common.bulletin.TestBulletinZipUtilities;
 import org.martus.common.bulletinstore.TestBulletinStore;
 
 
@@ -55,34 +51,12 @@ public class TestCommon
 		TestSuite suite= new TestSuite("All Common Martus Tests");
 
 		// common stuff
-		suite.addTest(new TestSuite(TestAttachmentPacket.class));
-		suite.addTest(new TestSuite(TestAttachmentProxy.class));
-		suite.addTest(new TestSuite(TestAuthorizedSessionKeys.class));
 		suite.addTest(new TestSuite(TestBulletin.class));
-		suite.addTest(new TestSuite(TestBulletinHeaderPacket.class));
-		suite.addTest(new TestSuite(TestBulletinHistory.class));
-		suite.addTest(new TestSuite(TestBulletinLoader.class));
 		suite.addTest(new TestSuite(TestBulletinStore.class));
-		suite.addTest(new TestSuite(TestBulletinStoreSaveBulletin.class));
-		suite.addTest(new TestSuite(TestBulletinSummary.class));
-		suite.addTest(new TestSuite(TestBulletinZipImporter.class));
-		suite.addTest(new TestSuite(TestBulletinZipUtilities.class));
 		suite.addTest(new TestSuite(TestClientFileDatabase.class));
-		suite.addTest(new TestSuite(TestDatabaseKey.class));
 		suite.addTest(new TestSuite(TestFileDatabase.class));
-		suite.addTest(new TestSuite(TestFileInputStreamWithSeek.class));
-		suite.addTest(new TestSuite(TestFileOutputStreamViaTemp.class));
-		suite.addTest(new TestSuite(testHQKeys.class));
-		suite.addTest(new TestSuite(TestKeyShareSaveRestore.class));
 		suite.addTest(new TestSuite(TestMartusKeyPair.class));
 		suite.addTest(new TestSuite(TestMartusSecurity.class));
-		suite.addTest(new TestSuite(TestMartusUtilities.class));
-		suite.addTest(new TestSuite(TestMartusXml.class));
-		suite.addTest(new TestSuite(TestMessageFieldSpec.class));
-		suite.addTest(new TestSuite(TestPacket.class));
-		suite.addTest(new TestSuite(TestServerFileDatabase.class));
-		suite.addTest(new TestSuite(TestXmlWriterFilter.class));
-		suite.addTest(new TestSuite(TestZipEntryInputStream.class));
 
 		return suite;
 	}
