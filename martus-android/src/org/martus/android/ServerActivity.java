@@ -13,6 +13,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -37,6 +38,7 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
         textIp = (EditText)findViewById(R.id.serverIpText);
         textCode = (EditText)findViewById(R.id.serverCodeText);
         textCode.setOnEditorActionListener(this);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
