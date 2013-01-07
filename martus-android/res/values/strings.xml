@@ -4,7 +4,6 @@
     <string name="hello">Hello World, MartusActivity!</string>
     <string name="app_name">Martus</string>
     <string name="create_sample_bulletin">Create Bulletin</string>
-    <string name="check_bulletins">Check Bulletins</string>
     <string name="error_message">Error</string>
 
     <!-- ============================== -->
@@ -12,11 +11,9 @@
     <!-- ============================== -->
     <string name="server_preferences">Server Settings</string>
     <string name="title_server_ip_preference">IP address</string>
-    <string name="summary_server_ip_preference">Martus Server IP Address</string>
     <string name="dialog_title_server_ip_preference">Martus server IP Address</string>
     <string name="title_server_code_preference">Public code</string>
     <string name="summary_server_code_preference">Martus server public code</string>
-    <string name="dialog_title_server_code_preference">Martus server public code</string>
     <string name="title_server_magic_word_preference">Magic word</string>
     <string name="summary_server_magic_word_preference">Martus server magic word</string>
     <string name="magic_word_set">Already entered</string>
@@ -73,14 +70,23 @@
     <!-- ============================== -->
     <!--  bulletin screen  -->
     <!-- ============================== -->
-    <string name="bulletin_screen_name">Send to Martus</string>
     <string name="send_bulletin">Send</string>
     <string name="add_attachment">Add attachment</string>
     <string name="enter_summary">Optional Summary</string>
     <string name="summary_label">Summary:</string>
+    <string name="default_author">Unknown author</string>
     <string name="title_label">Title:</string>
     <string name="title_hint">Title</string>
     <string name="bulletin_cancel">Cancel</string>
+    <string name="problem_creating_bulletin">couldn\'t create new bulletin</string>
+    <string name="problem_adding_attachment">problem adding attachment to bulletin</string>
+    <string name="problem_getting_files_for_attachments">problem getting files for attachments</string>
+    <string name="problem_getting_attachment">problem getting attachment</string>
+    <string name="bulletin_send_success">Bulletin Sent!</string>
+    <string name="bulletin_sending_progress">Sending...</string>
+    <string name="bulletin_packaging_progress">Packaging...</string>
+    <string name="failure_zipping_bulletin">Failed zipping bulletin</string>
+    <string name="failure_choosing_file">Failed choosing file</string>
 
 
     <!-- ============================== -->

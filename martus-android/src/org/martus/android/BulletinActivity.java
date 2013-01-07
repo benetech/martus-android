@@ -90,7 +90,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
                 bulletin = createBulletin();
             } catch (Exception e) {
                 Log.e(AppConfig.LOG_LABEL, "problem creating bulletin", e);
-                MartusActivity.showMessage(this, "couldn't create new bulletin", "Error");
+                MartusActivity.showMessage(this, getString(R.string.problem_creating_bulletin), "Error");
             }
         }
 
@@ -105,7 +105,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
         addAttachmentFromIntent();
     }
 
-    public void chooseAttachment() {
+    private void chooseAttachment() {
         shouldShowInstallExplorer = false;
         try {
             Intent chooseFile = FileUtils.createGetContentIntent();
@@ -113,15 +113,16 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
             startActivityForResult(intent, ACTIVITY_CHOOSE_ATTACHMENT);
         } catch (ActivityNotFoundException e) {
             Log.e(AppConfig.LOG_LABEL, "Failed choosing file", e);
-            e.printStackTrace();
+            Toast.makeText(this, getString(R.string.failure_choosing_file), Toast.LENGTH_LONG).show();
         }
     }
 
-    public void sendBulletin() {
+    private void sendBulletin() {
         try {
             zipBulletin(bulletin);
         } catch (Exception e) {
-            Log.e(AppConfig.LOG_LABEL, "Failed sending bulletin", e);
+            Log.e(AppConfig.LOG_LABEL, "Failed zipping bulletin", e);
+            Toast.makeText(this, getString(R.string.failure_zipping_bulletin), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -136,7 +137,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
             }
         } catch (Exception e) {
             Log.e(AppConfig.LOG_LABEL, "problem adding attachment to bulletin", e);
-            MartusActivity.showMessage(this, "problem adding attachment to bulletin", "Error");
+            MartusActivity.showMessage(this, getString(R.string.problem_adding_attachment), "Error");
         }
     }
 
@@ -183,7 +184,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
 
         } catch (Exception e) {
             Log.e(AppConfig.LOG_LABEL, "problem getting files for attachments", e);
-            MartusActivity.showMessage(this, "problem getting files for attachments", "Error");
+            MartusActivity.showMessage(this, getString(R.string.problem_getting_files_for_attachments), "Error");
         }
 
         return attachments;
@@ -208,7 +209,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
                             addAttachmentToBulletin(file);
                         } catch (Exception e) {
                             Log.e(AppConfig.LOG_LABEL, "problem getting attachment", e);
-                            Toast.makeText(this, "problem getting attachment", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, getString(R.string.problem_getting_attachment), Toast.LENGTH_SHORT).show();
                         }
                     }
                 } else if (resultCode == RESULT_CANCELED) {
@@ -268,12 +269,12 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
     private void zipBulletin(Bulletin bulletin)  {
 
         dialog = new ProgressDialog(this);
-        dialog.setTitle("Packaging...");
+        dialog.setTitle(getString(R.string.bulletin_packaging_progress));
         dialog.setIndeterminate(true);
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
 
-        String author = mySettings.getString(SettingsActivity.KEY_AUTHOR, "Unknown author");
+        String author = mySettings.getString(SettingsActivity.KEY_AUTHOR, getString(R.string.default_author));
         bulletin.set(Bulletin.TAGAUTHOR, author);
         String title = titleText.getText().toString().trim();
         String summary = summaryText.getText().toString().trim();
@@ -311,7 +312,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
     @Override
     public void onSent() {
         dialog.dismiss();
-        Toast.makeText(this, "Bulletin Sent!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getString(R.string.bulletin_send_success), Toast.LENGTH_LONG).show();
         if (autoLogout) {
             MartusActivity.logout(BulletinActivity.this);
         }
@@ -326,7 +327,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
 
     private void sendZippedBulletin(File zippedFile) {
         dialog = new ProgressDialog(this);
-        dialog.setTitle("Sending...");
+        dialog.setTitle(getString(R.string.bulletin_sending_progress));
         dialog.setIndeterminate(false);
         dialog.setCanceledOnTouchOutside(false);
         dialog.setMax(100);
