@@ -86,8 +86,8 @@
     <string name="problem_getting_files_for_attachments">problem getting files for attachments</string>
     <string name="problem_getting_attachment">problem getting attachment</string>
     <string name="bulletin_send_success">Bulletin Sent!</string>
-    <string name="bulletin_sending_progress">Sending...</string>
-    <string name="bulletin_packaging_progress">Packaging...</string>
+    <string name="bulletin_sending_progress">Sending…</string>
+    <string name="bulletin_packaging_progress">Packaging…</string>
     <string name="failure_zipping_bulletin">Failed zipping bulletin</string>
     <string name="failure_choosing_file">Failed choosing file</string>
 
@@ -120,5 +120,12 @@
     <string name="install_explorer_text">If you can\'t find the file you were thinking of, try installing a more advanced file explorer:</string>
     <string formatted="false" name="file_explorer_store_link">play.google.com/store/search?q=%22open+source%22+file+manager+explorer</string>
 
+    <!-- ============================== -->
+    <!--  notification bar  -->
+    <!-- ============================== -->
+    <string name="successful_send_notification">Sent with result:&#160;</string>
+    <string name="failure_send_notification">failed - likely need to login to Martus</string>
+    <string name="starting_send_notification">Starting send …</string>
+    <string name="notification_title">Martus - %1$s</string>
 
 </resources>

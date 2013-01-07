@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.support.v4.app.NotificationCompat;
-import android.text.format.Time;
 
 /**
  * @author roms
@@ -69,12 +68,12 @@ public class NotificationHelper {
                 icon = android.R.drawable.stat_notify_error;
             }
         } else {
-            resultMsg = "failed - likely need to login to Martus";
+            resultMsg = mContext.getString(R.string.failure_send_notification);
             icon = android.R.drawable.stat_notify_error;
         }
         final Notification notification = new NotificationCompat.Builder(mContext)
                 .setContentTitle(mTitle)
-                .setContentText("Sent with result: " + resultMsg)
+                .setContentText(mContext.getString(R.string.successful_send_notification) + resultMsg)
                 .setSmallIcon(icon)
                 .setAutoCancel(true)
                 .build();

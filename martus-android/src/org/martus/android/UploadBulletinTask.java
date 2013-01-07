@@ -6,7 +6,6 @@ import java.io.IOException;
 
 import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.common.MartusUtilities;
-import org.martus.common.bulletin.Bulletin;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.NetworkInterfaceConstants;
@@ -14,8 +13,6 @@ import org.martus.common.network.NetworkResponse;
 import org.martus.common.packet.UniversalId;
 import org.martus.util.StreamableBase64;
 
-import android.app.Application;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.text.format.Time;
 import android.util.Log;
@@ -73,7 +70,8 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
         Time now = new Time();
         now.setToNow();
         String timeAsTitle = now.format("%T");
-        mNotificationHelper.createNotification("Martus - " + timeAsTitle, "Starting send ...");
+        mNotificationHelper.createNotification(myApplication.getString(R.string.notification_title, timeAsTitle),
+                myApplication.getString(R.string.starting_send_notification));
     }
 
     @Override
@@ -92,7 +90,7 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
         super.onProgressUpdate(progress);
         if (null != sender) {
             sender.onProgressUpdate(progress[0]);
-            mNotificationHelper.updateProgress("Sending ...",   progress[0]);
+            mNotificationHelper.updateProgress(myApplication.getString(R.string.bulletin_sending_progress),   progress[0]);
         }
     }
 
