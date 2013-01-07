@@ -370,7 +370,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     public void onFinishMagicWordDialog(TextView magicWordText) {
         String magicWord = magicWordText.getText().toString().trim();
         if (magicWord.isEmpty()) {
-            Toast.makeText(this, "Invalid Magic Word!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.invalid_magic_word), Toast.LENGTH_SHORT).show();
             showMagicWordDialog();
             return;
         }
@@ -381,7 +381,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
                  Toast.makeText(this, getString(R.string.no_upload_rights), Toast.LENGTH_SHORT).show();
                  showMagicWordDialog();
              } else {
-                 Toast.makeText(this, "Success - can now upload bulletins!", Toast.LENGTH_SHORT).show();
+                 Toast.makeText(this, getString(R.string.success_magic_word), Toast.LENGTH_SHORT).show();
                  SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
                  SharedPreferences.Editor editor = mySettings.edit();
                  editor.putBoolean(SettingsActivity.KEY_HAVE_UPLOAD_RIGHTS, true);
@@ -389,7 +389,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
              }
         } catch (Exception e) {
              Log.e(AppConfig.LOG_LABEL, "Problem verifying upload rights", e);
-             Toast.makeText(this, "Problem confirming magic word", Toast.LENGTH_SHORT).show();
+             Toast.makeText(this, getString(R.string.problem_confirming_magic_word), Toast.LENGTH_SHORT).show();
         }
     }
 

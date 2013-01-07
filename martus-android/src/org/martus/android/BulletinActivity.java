@@ -90,7 +90,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
                 bulletin = createBulletin();
             } catch (Exception e) {
                 Log.e(AppConfig.LOG_LABEL, "problem creating bulletin", e);
-                MartusActivity.showMessage(this, getString(R.string.problem_creating_bulletin), "Error");
+                MartusActivity.showMessage(this, getString(R.string.problem_creating_bulletin), getString(R.string.error_message));
             }
         }
 
@@ -137,7 +137,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
             }
         } catch (Exception e) {
             Log.e(AppConfig.LOG_LABEL, "problem adding attachment to bulletin", e);
-            MartusActivity.showMessage(this, getString(R.string.problem_adding_attachment), "Error");
+            MartusActivity.showMessage(this, getString(R.string.problem_adding_attachment), getString(R.string.error_message));
         }
     }
 
@@ -184,7 +184,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
 
         } catch (Exception e) {
             Log.e(AppConfig.LOG_LABEL, "problem getting files for attachments", e);
-            MartusActivity.showMessage(this, getString(R.string.problem_getting_files_for_attachments), "Error");
+            MartusActivity.showMessage(this, getString(R.string.problem_getting_files_for_attachments), getString(R.string.error_message));
         }
 
         return attachments;

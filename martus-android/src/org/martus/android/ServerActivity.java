@@ -58,13 +58,13 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
     public void confirmServer(View view) {
         String serverIP = textIp.getText().toString().trim();
         if (serverIP.length() < 6) {
-            MartusActivity.showMessage(this, "Invalid Server IP", getString(R.string.error_message));
+            MartusActivity.showMessage(this, getString(R.string.invalid_server_ip), getString(R.string.error_message));
             return;
         }
 
         String serverCode = textCode.getText().toString().trim();
         if (serverCode.length() < 8) {
-            MartusActivity.showMessage(this, "Invalid Server Code", getString(R.string.error_message));
+            MartusActivity.showMessage(this, getString(R.string.invalid_server_code), getString(R.string.error_message));
             return;
         }
 
@@ -78,7 +78,7 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
         try {
             serverPublicKey = keyTask.get();
             if (null == serverPublicKey) {
-                MartusActivity.showMessage(this, "Invalid Server IP", getString(R.string.error_message));
+                MartusActivity.showMessage(this, getString(R.string.invalid_server_ip), getString(R.string.error_message));
                 return;
             }
         } catch (Exception e) {
@@ -94,7 +94,7 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
                 editor.putString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, serverPublicKey);
                 editor.putBoolean(SettingsActivity.KEY_HAVE_UPLOAD_RIGHTS, false);
                 editor.commit();
-                Toast.makeText(this, "Server choice success!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.successful_server_choice), Toast.LENGTH_SHORT).show();
             } else {
                 MartusActivity.showMessage(this, getString(R.string.invalid_server_public_code), getString(R.string.error_message));
                 return;
