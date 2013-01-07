@@ -16,7 +16,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.view.WindowManager;
 import android.widget.EditText;
 import com.bugsense.trace.BugSenseHandler;
 
@@ -40,6 +40,7 @@ public class DesktopKeyActivity extends BaseActivity {
         activity = this;
 
         editText_code = (EditText)findViewById(R.id.desktopCodeText);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
     public void chooseKeyFile(View view) {
