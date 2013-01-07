@@ -20,9 +20,12 @@ import android.widget.TextView;
  * @author roms
  *         Date: 12/22/12
  */
-public class CreateAccountDialog extends DialogFragment {
+public class CreateAccountDialog extends DialogFragment implements DialogInterface.OnClickListener, TextWatcher {
 
     public static final int MIN_PASSWORD_SIZE = 8;
+    private EditText newPasswordText;
+    private EditText confirmPasswordText;
+    private TextView error;
 
     public interface CreateAccountDialogListener {
         void onFinishNewAccountDialog(TextView passwordText, TextView confirmPasswordText);
@@ -45,46 +48,45 @@ public class CreateAccountDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater factory = LayoutInflater.from(getActivity());
         final View createAccountDialog = factory.inflate(R.layout.create_account, null);
-        final EditText newPasswordText = (EditText) createAccountDialog.findViewById(R.id.new_password_field);
-        final EditText confirmPasswordText = (EditText) createAccountDialog.findViewById(R.id.confirm_password_field);
-        final TextView error = (TextView) createAccountDialog.findViewById(R.id.password_problem_text);
+        newPasswordText = (EditText) createAccountDialog.findViewById(R.id.new_password_field);
+        confirmPasswordText = (EditText) createAccountDialog.findViewById(R.id.confirm_password_field);
+        error = (TextView) createAccountDialog.findViewById(R.id.password_problem_text);
 
-        confirmPasswordText.addTextChangedListener(new TextWatcher() {
-           public void afterTextChanged(Editable s) {
-              char[] password = newPasswordText.getText().toString().trim().toCharArray();
-              char[] confirmPassword = confirmPasswordText.getText().toString().trim().toCharArray();
-              if (password.length < MIN_PASSWORD_SIZE) {
-                  error.setText(R.string.invalid_password);
-                  return;
-              }
-              if (Arrays.equals(password, confirmPassword)) {
-                 error.setText(R.string.settings_pwd_equal);
-              } else {
-                 error.setText(R.string.settings_pwd_not_equal);
-              }
-           }
-           public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-           public void onTextChanged(CharSequence s, int start, int before, int count) {}
-         });
+        confirmPasswordText.addTextChangedListener(this);
 
         return new AlertDialog.Builder(getActivity())
             .setIcon(android.R.drawable.ic_dialog_alert)
             .setTitle(R.string.create_account_dialog_title)
             .setView(createAccountDialog)
-            .setPositiveButton(R.string.alert_dialog_ok,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            ((CreateAccountDialogListener) getActivity()).onFinishNewAccountDialog(newPasswordText, confirmPasswordText);
-                        }
-                    }
-            )
-            .setNegativeButton(R.string.password_dialog_cancel,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            ((CreateAccountDialogListener) getActivity()).onCancelNewAccountDialog();
-                        }
-                    }
-            )
+            .setPositiveButton(R.string.alert_dialog_ok, this)
+            .setNegativeButton(R.string.password_dialog_cancel,this)
             .create();
     }
+
+    public void onClick(DialogInterface dialog, int whichButton) {
+        switch (whichButton) {
+            case -1:    ((CreateAccountDialogListener) getActivity()).onFinishNewAccountDialog(newPasswordText, confirmPasswordText);
+                        break;
+            case -2:    ((CreateAccountDialogListener) getActivity()).onCancelNewAccountDialog();
+                        break;
+        }
+    }
+
+    public void afterTextChanged(Editable s) {
+        char[] password = newPasswordText.getText().toString().trim().toCharArray();
+        char[] confirmPassword = confirmPasswordText.getText().toString().trim().toCharArray();
+        if (password.length < MIN_PASSWORD_SIZE) {
+            error.setText(R.string.invalid_password);
+            return;
+        }
+        if (Arrays.equals(password, confirmPassword)) {
+            error.setText(R.string.settings_pwd_equal);
+        } else {
+            error.setText(R.string.settings_pwd_not_equal);
+        }
+    }
+
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+    public void onTextChanged(CharSequence s, int start, int before, int count) {}
 }
