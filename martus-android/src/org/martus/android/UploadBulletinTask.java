@@ -24,14 +24,12 @@ import android.util.Log;
 public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
 
     private NotificationHelper mNotificationHelper;
-    private String bulletinTitle;
     private BulletinSender sender;
     private MartusApplication myApplication;
 
-    public UploadBulletinTask(MartusApplication application, String bulletinTitle, BulletinSender sender, UniversalId bulletinId) {
+    public UploadBulletinTask(MartusApplication application, BulletinSender sender, UniversalId bulletinId) {
         myApplication = application;
         mNotificationHelper = new NotificationHelper(myApplication.getApplicationContext(), bulletinId.hashCode());
-        this.bulletinTitle = bulletinTitle;
         this.sender = sender;
     }
 
@@ -48,16 +46,19 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
         try {
             result = uploadBulletinZipFile(uid, zippedFile, gateway, signer);
         } catch (MartusUtilities.FileTooLargeException e) {
-            Log.e("martus", "file too large to upload", e);
+            Log.e(AppConfig.LOG_LABEL, "file too large to upload", e);
             result = e.getMessage();
         } catch (IOException e) {
-            Log.e("martus", "io problem uploading file", e);
+            Log.e(AppConfig.LOG_LABEL, "io problem uploading file", e);
             result = e.getMessage();
         } catch (MartusCrypto.MartusSignatureException e) {
-            Log.e("martus", "crypto problem uploading file", e);
+            Log.e(AppConfig.LOG_LABEL, "crypto problem uploading file", e);
             result = e.getMessage();
         } finally {
-            if (null != zippedFile) zippedFile.delete();
+            if (null != zippedFile && (null != result) && (result.equals(NetworkInterfaceConstants.OK))) {
+                Log.i(AppConfig.LOG_LABEL, "deleting zipped bulletin on successful send");
+                zippedFile.delete();
+            }
         }
 
 

@@ -344,7 +344,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
             Log.e(AppConfig.LOG_LABEL, "problem destroying bulletin", e);
         }
         final AsyncTask<Object, Integer, String> uploadTask = new UploadBulletinTask((MartusApplication)getApplication(),
-                bulletinTitle, this, bulletinId);
+                this, bulletinId);
         uploadTask.execute(bulletin.getUniversalId(), zippedFile, gateway, AppConfig.getInstance().getCrypto());
     }
 
