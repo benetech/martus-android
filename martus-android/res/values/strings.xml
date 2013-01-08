@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, MartusActivity!</string>
     <string name="app_name">Martus</string>
     <string name="create_sample_bulletin">Create Bulletin</string>
     <string name="error_message">Error</string>
@@ -9,15 +8,6 @@
     <!-- ============================== -->
     <!--  settings screen  -->
     <!-- ============================== -->
-    <string name="server_preferences">Server Settings</string>
-    <string name="title_server_ip_preference">IP address</string>
-    <string name="dialog_title_server_ip_preference">Martus server IP Address</string>
-    <string name="title_server_code_preference">Public code</string>
-    <string name="summary_server_code_preference">Martus server public code</string>
-    <string name="title_server_magic_word_preference">Magic word</string>
-    <string name="summary_server_magic_word_preference">Martus server magic word</string>
-    <string name="magic_word_set">Already entered</string>
-    <string name="dialog_title_server_magic_word_preference">Martus server magic word</string>
     <string name="user_preferences">User Settings</string>
     <string name="title_author_preference">Author</string>
     <string name="summary_author_preference">Author</string>
@@ -76,9 +66,7 @@
     <string name="send_bulletin">Send</string>
     <string name="add_attachment">Add attachment</string>
     <string name="enter_summary">Optional Summary</string>
-    <string name="summary_label">Summary:</string>
     <string name="default_author">Unknown author</string>
-    <string name="title_label">Title:</string>
     <string name="title_hint">Title</string>
     <string name="bulletin_cancel">Cancel</string>
     <string name="problem_creating_bulletin">couldn\'t create new bulletin</string>
