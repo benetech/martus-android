@@ -364,7 +364,6 @@ public class MartusSecurity extends MartusCrypto
             if (shouldWriteAuthorDecryptableData) {
                 encryptedKeyBytes = encryptSessionKey(sessionKey, publicKeyString).getBytes();
             } else {
-                Log.e("martus", "Using empty bytes .");
                 encryptedKeyBytes = new byte[0];
             }
 
