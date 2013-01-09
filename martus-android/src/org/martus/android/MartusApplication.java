@@ -1,11 +1,8 @@
 package org.martus.android;
 
-import org.martus.common.crypto.MartusSecurity;
-
 import android.app.Application;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 /**
  * @author roms
@@ -21,16 +18,7 @@ public class MartusApplication extends Application {
         }
     };
 
-    private Runnable inactivityCallback = new Runnable() {
-        @Override
-        public void run() {
-
-            MartusSecurity martusCrypto = AppConfig.getInstance().getCrypto();
-            if (null != martusCrypto) {
-                martusCrypto.clearKeyPair();
-            }
-        }
-    };
+    private Runnable inactivityCallback = new LogOutProcess();
 
     public void resetInactivityTimer(){
         inactivityHandler.removeCallbacks(inactivityCallback);
