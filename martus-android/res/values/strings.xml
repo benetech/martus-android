@@ -4,6 +4,7 @@
     <string name="app_name">Martus</string>
     <string name="create_sample_bulletin">Create Bulletin</string>
     <string name="error_message">Error</string>
+    <string name="confirm_default">Are you sure?</string>
 
     <!-- ============================== -->
     <!--  settings screen  -->
@@ -78,6 +79,8 @@
     <string name="bulletin_packaging_progress">Packaging…</string>
     <string name="failure_zipping_bulletin">Failed zipping bulletin</string>
     <string name="failure_choosing_file">Failed choosing file</string>
+    <string name="confirm_cancel_bulletin">Cancel this Bulletin?</string>
+    <string name="confirm_remove_attachment">Remove %1$s ?</string>
 
     <!-- ============================== -->
     <!--  choose server screen  -->
@@ -96,7 +99,8 @@
     <string name="invalid_public_account_file">Invalid public account file</string>
     <string name="invalid_public_code">Public code doesn\'t match file</string>
     <string name="public_code_validation_empty">Public code can\'t be empty</string>
-    <string name="select_file_picker">Select a file chooser</string><string name="attachments_label">Attachments:</string>
+    <string name="select_file_picker">Select a file chooser</string>
+    <string name="attachments_label">Attachments (long press to remove) :</string>
     <string name="server_ip_label">Server IP Address:</string>
     <string name="server_ip_hint">enter server ip address</string>
     <string name="server_public_code_label">Server Public Identification Code:</string>

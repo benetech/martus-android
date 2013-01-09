@@ -16,10 +16,12 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         LoginRequiredDialog.LoginRequiredDialogListener {
 
     private MartusApplication parentApp;
+    private String confirmationDialogTitle;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         parentApp = (MartusApplication) this.getApplication();
+        confirmationDialogTitle = getString(R.string.confirm_default);
     }
 
     public void showLoginRequiredDialog() {
@@ -53,6 +55,11 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
 
     public void onConfirmationCancelled() {
         //do nothing
+    }
+
+    @Override
+    public String getConfirmationTitle() {
+        return confirmationDialogTitle;
     }
 
     public void setIgnoreInactivity(boolean ignore) {

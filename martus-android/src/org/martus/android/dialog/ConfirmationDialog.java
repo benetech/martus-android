@@ -1,6 +1,5 @@
 package org.martus.android.dialog;
 
-import org.martus.android.ConfirmationDialogHandler;
 import org.martus.android.R;
 
 import android.app.AlertDialog;
@@ -8,7 +7,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.widget.TextView;
 
 /**
  * @author roms
@@ -19,6 +17,7 @@ public class ConfirmationDialog extends DialogFragment {
     public interface ConfirmationDialogListener {
         void onConfirmationAccepted();
         void onConfirmationCancelled();
+        String getConfirmationTitle();
     }
 
     public ConfirmationDialog() {
@@ -36,7 +35,7 @@ public class ConfirmationDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         return new AlertDialog.Builder(getActivity())
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Are you sure?")
+                .setTitle(((ConfirmationDialogListener) getActivity()).getConfirmationTitle())
                 .setPositiveButton(R.string.yes,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {

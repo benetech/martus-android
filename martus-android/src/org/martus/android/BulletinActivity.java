@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.martus.android.dialog.ConfirmationDialog;
 import org.martus.client.bulletinstore.ClientBulletinStore;
@@ -30,6 +32,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -41,7 +45,8 @@ import com.ipaulpro.afilechooser.utils.FileUtils;
  * @author roms
  *         Date: 10/25/12
  */
-public class BulletinActivity extends BaseActivity implements BulletinSender, ConfirmationDialog.ConfirmationDialogListener {
+public class BulletinActivity extends BaseActivity implements BulletinSender,
+        ConfirmationDialog.ConfirmationDialogListener, AdapterView.OnItemLongClickListener {
 
     final int ACTIVITY_CHOOSE_ATTACHMENT = 2;
     public static final String EXTRA_ATTACHMENT = "org.martus.android.filePath";
@@ -49,6 +54,9 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
     public static final String EXTRA_ACCOUNT_ID = "org.martus.android.accountId";
     public static final String EXTRA_LOCAL_ID = "org.martus.android.localId";
     public static final String EXTRA_BULLETIN_TITLE = "org.martus.android.title";
+
+    private static final int CONFIRMATION_TYPE_CANCEL_BULLETIN = 0;
+    private static final int CONFIRMATION_TYPE_DELETE_ATTACHMENT = 1;
 
     private SharedPreferences mySettings;
     private ClientBulletinStore store;
@@ -59,6 +67,10 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
     private boolean autoLogout;
 
     private Bulletin bulletin;
+    private Map<String, File> bulletinAttachments;
+    private int confirmationType;
+    private int attachmentToRemoveIndex;
+    private String attachmentToRemoveName;
     private EditText titleText;
     private EditText summaryText;
     private ProgressDialog dialog;
@@ -88,6 +100,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
         if (null == bulletin) {
             try {
                 bulletin = createBulletin();
+                bulletinAttachments = new HashMap<String, File>(2);
             } catch (Exception e) {
                 Log.e(AppConfig.LOG_LABEL, "problem creating bulletin", e);
                 MartusActivity.showMessage(this, getString(R.string.problem_creating_bulletin), getString(R.string.error_message));
@@ -101,6 +114,8 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
         ListView list = (ListView)findViewById(android.R.id.list);
         list.setTextFilterEnabled(true);
         list.setAdapter(attachmentAdapter);
+        list.setLongClickable(true);
+        list.setOnItemLongClickListener(this);
 
         addAttachmentFromIntent();
     }
@@ -119,6 +134,9 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
 
     private void sendBulletin() {
         try {
+            for (File file : bulletinAttachments.values()) {
+                addAttachmentToBulletin(file);
+            }
             zipBulletin(bulletin);
         } catch (Exception e) {
             Log.e(AppConfig.LOG_LABEL, "Failed zipping bulletin", e);
@@ -133,7 +151,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
 
         try {
             for (File attachment : attachments) {
-                addAttachmentToBulletin(attachment);
+                addAttachmentToMap(attachment);
             }
         } catch (Exception e) {
             Log.e(AppConfig.LOG_LABEL, "problem adding attachment to bulletin", e);
@@ -144,7 +162,11 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
     private void addAttachmentToBulletin(File attachment) throws IOException, MartusCrypto.EncryptionException {
         AttachmentProxy attProxy = new AttachmentProxy(attachment);
         bulletin.addPublicAttachment(attProxy);
+    }
+
+    private void addAttachmentToMap(File attachment) {
         attachmentAdapter.add(attachment.getName());
+        bulletinAttachments.put(attachment.getName(), attachment);
     }
 
     private ArrayList<File> getFilesFromIntent(Intent intent) {
@@ -206,7 +228,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
                         try {
                             String filePath = FileUtils.getPath(this, uri);
                             File file = new File(filePath);
-                            addAttachmentToBulletin(file);
+                            addAttachmentToMap(file);
                         } catch (Exception e) {
                             Log.e(AppConfig.LOG_LABEL, "problem getting attachment", e);
                             Toast.makeText(this, getString(R.string.problem_getting_attachment), Toast.LENGTH_SHORT).show();
@@ -240,6 +262,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
                 sendBulletin();
                 return true;
             case R.id.cancel_bulletin_menu_item:
+                setConfirmationType(CONFIRMATION_TYPE_CANCEL_BULLETIN);
                 showConfirmationDialog();
                 return true;
             case R.id.add_attachment_menu_item:
@@ -366,7 +389,43 @@ public class BulletinActivity extends BaseActivity implements BulletinSender, Co
 
     @Override
     public void onConfirmationAccepted() {
-        this.finish();
+        switch (confirmationType) {
+            case CONFIRMATION_TYPE_CANCEL_BULLETIN :
+                this.finish();
+                break;
+            case CONFIRMATION_TYPE_DELETE_ATTACHMENT :
+                String fileName = attachmentAdapter.getItem(attachmentToRemoveIndex);
+                bulletinAttachments.remove(fileName);
+                attachmentAdapter.remove(fileName);
+                break;
+        }
     }
 
+    private void setConfirmationType(int type) {
+        confirmationType = type;
+    }
+
+    @Override
+    public String getConfirmationTitle() {
+        if (confirmationType == CONFIRMATION_TYPE_CANCEL_BULLETIN) {
+            return getString(R.string.confirm_cancel_bulletin);
+        } else {
+            return getString(R.string.confirm_remove_attachment, attachmentToRemoveName);
+        }
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+        Object item = adapterView.getItemAtPosition(i);
+        attachmentToRemoveIndex = i;
+        attachmentToRemoveName = item.toString();
+        showRemoveDialog();
+        return false;
+    }
+
+    public void showRemoveDialog() {
+        setConfirmationType(CONFIRMATION_TYPE_DELETE_ATTACHMENT);
+        ConfirmationDialog confirmationDialog = ConfirmationDialog.newInstance();
+        confirmationDialog.show(getSupportFragmentManager(), "dlg_delete_attachment");
+    }
 }
