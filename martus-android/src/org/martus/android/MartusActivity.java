@@ -67,6 +67,11 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
 
     }
 
+    protected void onStart() {
+        super.onStart();
+        invalidLogins = 0;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -86,7 +91,6 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
 
         } else {
             if (isAccountCreated()) {
-                invalidLogins = 0;
                 showLoginDialog();
             } else {
                 showCreateAccountDialog();
@@ -224,7 +228,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         try {
             martusCrypto.readKeyPair(is, password);
         } catch (Exception e) {
-            Log.e(AppConfig.LOG_LABEL, "Problem confirming password", e);
+            //Log.e(AppConfig.LOG_LABEL, "Problem confirming password", e);
             return false;
         }
 
@@ -299,7 +303,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     @Override
     public void onFinishPasswordDialog(TextView passwordText) {
         char[] password = passwordText.getText().toString().trim().toCharArray();
-        boolean confirmed = confirmAccount(password);
+        boolean confirmed = (password.length >= MIN_PASSWORD_SIZE) && confirmAccount(password);
         if (!confirmed) {
             if (++invalidLogins == MAX_LOGIN_ATTEMPTS) {
                 finish();
