@@ -36,20 +36,22 @@ public class ConfirmationDialog extends DialogFragment {
         return new AlertDialog.Builder(getActivity())
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(((ConfirmationDialogListener) getActivity()).getConfirmationTitle())
-                .setPositiveButton(R.string.yes,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                ((ConfirmationDialogListener) getActivity()).onConfirmationAccepted();
-                            }
-                        }
-                )
-                .setNegativeButton(R.string.no,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                ((ConfirmationDialogListener) getActivity()).onConfirmationCancelled();
-                            }
-                        }
-                )
+                .setPositiveButton(R.string.yes, new PositiveButtonHandler())
+                .setNegativeButton(R.string.no, new NegativeButtonHandler())
                 .create();
+    }
+
+    private class PositiveButtonHandler implements DialogInterface.OnClickListener {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int whichButton) {
+            ((ConfirmationDialogListener) getActivity()).onConfirmationAccepted();
+        }
+    }
+
+    private class NegativeButtonHandler implements DialogInterface.OnClickListener {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int whichButton) {
+            ((ConfirmationDialogListener) getActivity()).onConfirmationCancelled();
+        }
     }
 }
