@@ -17,11 +17,13 @@ import org.martus.common.bulletin.AttachmentProxy;
 import org.martus.common.bulletin.Bulletin;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
+import org.martus.common.network.NetworkInterfaceConstants;
 import org.martus.common.packet.UniversalId;
 
 import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -333,13 +335,24 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
     }
 
     @Override
-    public void onSent() {
+    public void onSent(String result) {
         dialog.dismiss();
-        Toast.makeText(this, getString(R.string.bulletin_send_success), Toast.LENGTH_LONG).show();
+        String message = getResultMessage(result, this);
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         if (autoLogout) {
             MartusActivity.logout(BulletinActivity.this);
         }
         finish();
+    }
+
+    public static String getResultMessage(String result, Context context) {
+        String message;
+        if (result.equals(NetworkInterfaceConstants.OK)) {
+            message = context.getString(R.string.successful_send_notification);
+        } else {
+            message = context.getString(R.string.failed_send_notification, result);
+        }
+        return message;
     }
 
     @Override
@@ -366,7 +379,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         } catch (IOException e) {
             Log.e(AppConfig.LOG_LABEL, "problem destroying bulletin", e);
         }
-        final AsyncTask<Object, Integer, String> uploadTask = new UploadBulletinTask((MartusApplication)getApplication(),
+        AsyncTask<Object, Integer, String> uploadTask = new UploadBulletinTask((MartusApplication)getApplication(),
                 this, bulletinId);
         uploadTask.execute(bulletin.getUniversalId(), zippedFile, gateway, AppConfig.getInstance().getCrypto());
     }

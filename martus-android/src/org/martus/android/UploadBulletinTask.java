@@ -79,7 +79,7 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
     protected void onPostExecute(String s) {
         mNotificationHelper.completed(s);
         if (null != sender) {
-            sender.onSent();
+            sender.onSent(s);
         }
         myApplication.setIgnoreInactivity(false);
         myApplication.resetInactivityTimer();

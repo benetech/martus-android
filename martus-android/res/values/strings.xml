@@ -74,7 +74,6 @@
     <string name="problem_adding_attachment">problem adding attachment to bulletin</string>
     <string name="problem_getting_files_for_attachments">problem getting files for attachments</string>
     <string name="problem_getting_attachment">problem getting attachment</string>
-    <string name="bulletin_send_success">Bulletin Sent!</string>
     <string name="bulletin_sending_progress">Sending…</string>
     <string name="bulletin_packaging_progress">Packaging…</string>
     <string name="failure_zipping_bulletin">Failed zipping bulletin</string>
@@ -115,7 +114,8 @@
     <!-- ============================== -->
     <!--  notification bar  -->
     <!-- ============================== -->
-    <string name="successful_send_notification">Sent with result:&#160;</string>
+    <string name="successful_send_notification">Bulletin sent!</string>
+    <string name="failed_send_notification">Send failed with result: %1$s</string>
     <string name="failure_send_notification">failed - likely need to login to Martus</string>
     <string name="starting_send_notification">Starting send …</string>
     <string name="notification_title">Martus - %1$s</string>

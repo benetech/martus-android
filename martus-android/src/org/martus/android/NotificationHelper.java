@@ -1,5 +1,7 @@
 package org.martus.android;
 
+import org.martus.common.network.NetworkInterfaceConstants;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -64,16 +66,17 @@ public class NotificationHelper {
         int icon;
         if (null != resultMsg) {
             icon = android.R.drawable.stat_sys_download_done;
-            if (!resultMsg.equals("ok")) {
+            if (!resultMsg.equals(NetworkInterfaceConstants.OK)) {
                 icon = android.R.drawable.stat_notify_error;
             }
         } else {
             resultMsg = mContext.getString(R.string.failure_send_notification);
             icon = android.R.drawable.stat_notify_error;
         }
+        String message = BulletinActivity.getResultMessage(resultMsg, mContext);
         final Notification notification = new NotificationCompat.Builder(mContext)
                 .setContentTitle(mTitle)
-                .setContentText(mContext.getString(R.string.successful_send_notification) + resultMsg)
+                .setContentText(message)
                 .setSmallIcon(icon)
                 .setAutoCancel(true)
                 .build();
