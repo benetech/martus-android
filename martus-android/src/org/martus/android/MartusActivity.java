@@ -13,7 +13,6 @@ import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.NetworkResponse;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -45,7 +44,6 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     private String serverPublicKey;
 
     private MartusSecurity martusCrypto;
-    private static Activity myActivity;
     private ClientSideNetworkGateway gateway = null;
     private String serverIP;
     private int invalidLogins;
@@ -60,7 +58,6 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         BugSenseHandler.initAndStartSession(MartusActivity.this, ExternalKeys.BUGSENSE_KEY);
         setContentView(R.layout.main);
 
-        myActivity = this;
         updateSettings();
 
         martusCrypto = AppConfig.getInstance().getCrypto();
@@ -315,6 +312,11 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(MartusActivity.this);
         serverPublicKey = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
         gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
+
+        Intent resendService = new Intent(MartusActivity.this, ResendService.class);
+        resendService.putExtra(SettingsActivity.KEY_SERVER_IP, serverIP);
+        resendService.putExtra(SettingsActivity.KEY_SERVER_PUBLIC_KEY, serverPublicKey);
+        startService(resendService);
 
         Intent intent = getIntent();
         int returnTo = intent.getIntExtra(RETURN_TO, 0);

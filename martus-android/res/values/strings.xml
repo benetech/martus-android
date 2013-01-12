@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">Martus</string>
+    <string name="version">1.0.20120115</string>
     <string name="create_sample_bulletin">Create Bulletin</string>
     <string name="error_message">Error</string>
     <string name="confirm_default">Are you sure?</string>
@@ -117,7 +118,7 @@
     <string name="successful_send_notification">Bulletin sent!</string>
     <string name="failed_send_notification">Send failed with result: %1$s</string>
     <string name="failure_send_notification">failed - likely need to login to Martus</string>
-    <string name="starting_send_notification">Starting send …</string>
+    <string name="starting_send_notification">Sending …</string>
     <string name="notification_title">Martus - %1$s</string>
 
 </resources>

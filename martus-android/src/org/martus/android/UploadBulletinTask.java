@@ -13,7 +13,10 @@ import org.martus.common.network.NetworkResponse;
 import org.martus.common.packet.UniversalId;
 import org.martus.util.StreamableBase64;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.util.Log;
 
@@ -21,16 +24,18 @@ import android.util.Log;
  * @author roms
  *         Date: 10/3/12
  */
-public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
+public class UploadBulletinTask extends AsyncTask<Object, Integer, String> implements ProgressUpdater {
 
     private NotificationHelper mNotificationHelper;
     private BulletinSender sender;
     private MartusApplication myApplication;
+    private SharedPreferences mySettings;
 
     public UploadBulletinTask(MartusApplication application, BulletinSender sender, UniversalId bulletinId) {
         myApplication = application;
         mNotificationHelper = new NotificationHelper(myApplication.getApplicationContext(), bulletinId.hashCode());
         this.sender = sender;
+        mySettings = PreferenceManager.getDefaultSharedPreferences(myApplication);
     }
 
     @Override
@@ -41,10 +46,16 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
         final ClientSideNetworkGateway gateway = (ClientSideNetworkGateway)params[2];
         final MartusSecurity signer = (MartusSecurity)params[3];
 
+
+        return doSend(uid, zippedFile, gateway, signer, this);
+    }
+
+    public static String doSend(UniversalId uid, File zippedFile, ClientSideNetworkGateway gateway,
+                                MartusSecurity signer, ProgressUpdater updater) {
         String result = null;
 
         try {
-            result = uploadBulletinZipFile(uid, zippedFile, gateway, signer);
+            result = uploadBulletinZipFile(uid, zippedFile, gateway, signer, updater);
         } catch (MartusUtilities.FileTooLargeException e) {
             Log.e(AppConfig.LOG_LABEL, "file too large to upload", e);
             result = e.getMessage();
@@ -56,23 +67,25 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
             result = e.getMessage();
         } finally {
             if (null != zippedFile && (null != result) && (result.equals(NetworkInterfaceConstants.OK))) {
-                Log.i(AppConfig.LOG_LABEL, "deleting zipped bulletin on successful send");
                 zippedFile.delete();
             }
         }
-
-
         return result;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        Time now = new Time();
+        createInitialNotification(mNotificationHelper, myApplication);
+
+    }
+
+    public static void createInitialNotification(NotificationHelper notificationHelper, Context context) {
+        final Time now = new Time();
         now.setToNow();
-        String timeAsTitle = now.format("%T");
-        mNotificationHelper.createNotification(myApplication.getString(R.string.notification_title, timeAsTitle),
-                myApplication.getString(R.string.starting_send_notification));
+        final String timeAsTitle = now.format("%T");
+        notificationHelper.createNotification(context.getString(R.string.notification_title, timeAsTitle),
+                context.getString(R.string.starting_send_notification));
     }
 
     @Override
@@ -95,11 +108,11 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
         }
     }
 
-    private String uploadBulletinZipFile(UniversalId uid, File tempFile, ClientSideNetworkGateway gateway, MartusCrypto crypto)
+     public static String uploadBulletinZipFile(UniversalId uid, File tempFile, ClientSideNetworkGateway gateway, MartusCrypto crypto, ProgressUpdater fileSender)
         		throws
                     MartusUtilities.FileTooLargeException, IOException, MartusCrypto.MartusSignatureException
     {
-        int totalSize = MartusUtilities.getCappedFileLength(tempFile);
+        final int totalSize = MartusUtilities.getCappedFileLength(tempFile);
         int offset = 0;
         byte[] rawBytes = new byte[NetworkInterfaceConstants.CLIENT_MAX_CHUNK_SIZE];
         FileInputStream inputStream = new FileInputStream(tempFile);
@@ -123,9 +136,14 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> {
                 break;
             offset += chunkSize;
 
-            publishProgress(offset * 100 / totalSize);
+            fileSender.showProgress(offset * 100 / totalSize);
         }
         inputStream.close();
         return result;
+    }
+
+    @Override
+    public void showProgress(int value) {
+        publishProgress(value);
     }
 }
