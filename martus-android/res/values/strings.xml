@@ -38,7 +38,7 @@
     <string name="create_account_dialog_title">Create new password</string>
     <string name="quit_menu_title">Logout</string>
     <string name="server_menu_title">Choose Server</string>
-    <string name="market_orbot">market orbot</string>
+    <string name="market_orbot">market://search?q=pname:org.torproject.android</string>
     <string name="install_orbot_">install orbot</string>
     <string name="you_must_have_orbot">you must have orbot</string>
     <string name="yes">Yes</string>
@@ -121,5 +121,6 @@
     <string name="failure_send_notification">failed - likely need to login to Martus</string>
     <string name="starting_send_notification">Sending …</string>
     <string name="notification_title">Martus - %1$s</string>
+    <string name="reset_to_install">Reset to install state</string>
 
 </resources>
