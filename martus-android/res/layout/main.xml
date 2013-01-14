@@ -27,6 +27,15 @@
         android:shadowDy="2"
         android:shadowColor="#7a7a7a"
         android:onClick="onTorChecked"/>
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tor_link"
+        android:id="@+id/textView1"
+        android:autoLink="web"
+        android:layout_gravity="left"
+        android:paddingLeft="8dip"
+            />
 
     <TextView
         android:layout_width="wrap_content"
