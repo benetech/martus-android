@@ -96,7 +96,7 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
                 editor.commit();
                 Toast.makeText(this, getString(R.string.successful_server_choice), Toast.LENGTH_SHORT).show();
             } else {
-                MartusActivity.showMessage(this, getString(R.string.invalid_server_public_code), getString(R.string.error_message));
+                MartusActivity.showMessage(this, getString(R.string.invalid_server_code), getString(R.string.error_message));
                 return;
             }
         } catch (StreamableBase64.InvalidBase64Exception e) {

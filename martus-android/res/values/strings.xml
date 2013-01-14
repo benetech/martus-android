@@ -31,8 +31,6 @@
     <string name="password_dialog_cancel">Cancel</string>
     <string name="incorrect_password">Incorrect Password</string>
     <string name="error_create_account">Problem creating account</string>
-    <string name="error_computing_public_code">Problem computing public code</string>
-    <string name="invalid_server_public_code">Invalid server public code! Please fix in Settings screen.</string>
     <string name="error_getting_server_key">Problem getting server public key</string>
     <string name="no_upload_rights">Incorrect magic word</string>
     <string name="create_account_dialog_title">Create new password</string>
@@ -89,6 +87,7 @@
     <string name="invalid_server_ip">Invalid Server IP</string>
     <string name="invalid_server_code">Invalid Server Code</string>
     <string name="successful_server_choice">Server choice success!</string>
+    <string name="error_computing_public_code">Problem computing public code</string>
 
     <!-- ============================== -->
     <!--  desktop key screen  -->
