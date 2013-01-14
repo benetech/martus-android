@@ -39,6 +39,9 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     public final static int PROXY_HTTP_PORT = 8118; //default for Orbot/Tor
     public final static int PROXY_SOCKS_PORT = 9050; //default for Orbot/Tor
 
+    private static final String PACKETS_DIR = "/packets";
+    private static final String PREFS_DIR = "/shared_prefs";
+
     public static final int MAX_LOGIN_ATTEMPTS = 3;
     public static final int MIN_PASSWORD_SIZE = 8;
     private String serverPublicKey;
@@ -145,13 +148,13 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     }
 
     private void clearPrefsDir() {
-        String prefsDir = getCacheDir().getParent() + "/shared_prefs";
+        String prefsDir = getCacheDir().getParent() + PREFS_DIR;
         File prefsDirFile = new File(prefsDir);
         clearDirectory(prefsDirFile);
     }
 
     private void removePacketsDir() {
-        String packetsDirectory = getCacheDir().getAbsolutePath() + "/packets";
+        String packetsDirectory = getCacheDir().getAbsolutePath() + PACKETS_DIR;
         File packetsDirFile = new File(packetsDirectory);
         clearDirectory(packetsDirFile);
         packetsDirFile.delete();
@@ -289,26 +292,6 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
              .setTitle(title)
              .setMessage(msg)
              .show();
-    }
-
-    public static void deleteCache(Context context) {
-        File dir = context.getCacheDir();
-        if (dir != null && dir.isDirectory()) {
-            deleteDir(dir);
-        }
-    }
-
-    public static boolean deleteDir(File dir) {
-        if (dir != null && dir.isDirectory()) {
-            String[] children = dir.list();
-            for (String aChildren : children) {
-                boolean success = deleteDir(new File(dir, aChildren));
-                if (!success) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     void showLoginDialog() {
