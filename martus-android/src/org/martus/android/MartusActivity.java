@@ -132,14 +132,33 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
                 intent = new Intent(MartusActivity.this, ServerActivity.class);
                 startActivity(intent);
                 return true;
+            case R.id.reset_install_menu_item:
+                removePacketsDir();
+                logout(MartusActivity.this);
+                clearPrefsDir();
+                //todo: need to delete any unsent zipped bulletins
+                finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    private void clearPrefsDir() {
+        String prefsDir = getCacheDir().getParent() + "/shared_prefs";
+        File prefsDirFile = new File(prefsDir);
+        clearDirectory(prefsDirFile);
+    }
+
+    private void removePacketsDir() {
+        String packetsDirectory = getCacheDir().getAbsolutePath() + "/packets";
+        File packetsDirFile = new File(packetsDirectory);
+        clearDirectory(packetsDirFile);
+        packetsDirFile.delete();
+    }
+
     public static void logout(Context context) {
         AppConfig.getInstance().getCrypto().clearKeyPair();
-        deleteCache(context);
     }
 
     @Override
@@ -289,7 +308,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
                 }
             }
         }
-        return dir.delete();
+        return true;
     }
 
     void showLoginDialog() {
@@ -396,6 +415,22 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         } catch (Exception e) {
              Log.e(AppConfig.LOG_LABEL, "Problem verifying upload rights", e);
              Toast.makeText(this, getString(R.string.problem_confirming_magic_word), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private static void clearDirectory(final File dir) {
+        if (dir!= null && dir.isDirectory()) {
+            try {
+                for (File child:dir.listFiles()) {
+                    if (child.isDirectory()) {
+                        clearDirectory(child);
+                    }
+                    child.delete();
+                }
+            }
+            catch(Exception e) {
+                Log.e(AppConfig.LOG_LABEL, String.format("Failed to clean the cache, error %s", e.getMessage()));
+            }
         }
     }
 
