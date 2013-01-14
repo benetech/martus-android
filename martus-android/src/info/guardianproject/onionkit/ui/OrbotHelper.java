@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+
+import org.martus.android.OrbotHandler;
 import org.martus.android.R;
 
 public class OrbotHelper {
@@ -71,13 +73,14 @@ public class OrbotHelper {
         });
         downloadDialog.setNegativeButton(stringButtonNo, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int i) {
+                ((OrbotHandler)(activity)).onOrbotInstallCanceled();
             }
         });
         return downloadDialog.show();
     }
 
 
-    public void requestOrbotStart(Activity activity) {
+    public void requestOrbotStart(final Activity activity) {
 
         AlertDialog.Builder downloadDialog = new AlertDialog.Builder(activity);
         downloadDialog.setTitle(R.string.start_orbot_);
@@ -91,6 +94,7 @@ public class OrbotHelper {
         });
         downloadDialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int i) {
+                ((OrbotHandler)(activity)).onOrbotInstallCanceled();
             }
         });
         downloadDialog.show();

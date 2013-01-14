@@ -33,7 +33,7 @@ import com.bugsense.trace.BugSenseHandler;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 
 public class MartusActivity extends BaseActivity implements LoginDialog.LoginDialogListener,
-        CreateAccountDialog.CreateAccountDialogListener, MagicWordDialog.MagicWordDialogListener {
+        CreateAccountDialog.CreateAccountDialogListener, MagicWordDialog.MagicWordDialogListener, OrbotHandler {
 
     public final static String PROXY_HOST = "127.0.0.1"; //test the local device proxy provided by Orbot/Tor
     public final static int PROXY_HTTP_PORT = 8118; //default for Orbot/Tor
@@ -50,6 +50,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     private ClientSideNetworkGateway gateway = null;
     private String serverIP;
     private int invalidLogins;
+    private CheckBox torCheckbox;
 
     static final int ACTIVITY_DESKTOP_KEY = 2;
     public static final int ACTIVITY_BULLETIN = 3;
@@ -61,6 +62,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         BugSenseHandler.initAndStartSession(MartusActivity.this, ExternalKeys.BUGSENSE_KEY);
         setContentView(R.layout.main);
 
+        torCheckbox = (CheckBox)findViewById(R.id.checkBox_use_tor);
         updateSettings();
 
         martusCrypto = AppConfig.getInstance().getCrypto();
@@ -87,6 +89,10 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
             boolean canUpload = mySettings.getBoolean(SettingsActivity.KEY_HAVE_UPLOAD_RIGHTS, false);
             if (!canUpload) {
                 showMagicWordDialog();
+            }
+            OrbotHelper oc = new OrbotHelper(this);
+            if (!oc.isOrbotInstalled() || !oc.isOrbotRunning()) {
+                torCheckbox.setChecked(false);
             }
 
         } else {
@@ -417,4 +423,13 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         }
     }
 
+    @Override
+    public void onOrbotInstallCanceled() {
+        torCheckbox.setChecked(false);
+    }
+
+    @Override
+    public void onOrbotStartCanceled() {
+        torCheckbox.setChecked(false);
+    }
 }
