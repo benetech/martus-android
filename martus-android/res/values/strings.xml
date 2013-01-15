@@ -14,9 +14,9 @@
     <string name="title_author_preference">Author</string>
     <string name="summary_author_preference">Author</string>
     <string name="dialog_title_author_preference">Author</string>
-    <string name="title_language_preference">Preferred language</string>
-    <string name="summary_language_preference">Preferred language</string>
-    <string name="dialog_title_language_preference">Preferred language</string>
+    <string name="title_language_preference">Bulletin language</string>
+    <string name="summary_language_preference">Bulletin language</string>
+    <string name="dialog_title_language_preference">Bulletin language</string>
     <string name="settings_title">Settings</string>
 
     <!-- ============================== -->
@@ -31,31 +31,31 @@
     <string name="password_dialog_cancel">Cancel</string>
     <string name="incorrect_password">Incorrect Password</string>
     <string name="error_create_account">Problem creating account</string>
-    <string name="error_getting_server_key">Problem getting server public key</string>
+    <string name="error_getting_server_key">Problem connecting to server</string>
     <string name="no_upload_rights">Incorrect magic word</string>
     <string name="create_account_dialog_title">Create new password</string>
     <string name="quit_menu_title">Logout</string>
     <string name="server_menu_title">Choose Server</string>
     <string name="market_orbot">market://search?q=pname:org.torproject.android</string>
-    <string name="install_orbot_">install orbot</string>
-    <string name="you_must_have_orbot">you must have orbot</string>
+    <string name="install_orbot_">Install Orbot</string>
+    <string name="you_must_have_orbot">You must have Orbot installed</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="start_orbot_">start orbot</string>
+    <string name="start_orbot_">Start Orbot</string>
     <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot not
-        running. Like to start?
+        running. Would you like to start?
     </string>
     <string name="use_tor">Use Tor</string>
     <string name="create_password_hint">New password</string>
     <string name="confirm_password_hint">Repeat password</string>
     <string name="enter_password_hint">Enter password</string>
-    <string name="enter_magic_word_hint">enter magic word</string>
+    <string name="enter_magic_word_hint">Enter Magic Word</string>
     <string name="settings_pwd_equal">Passwords match</string>
-    <string name="settings_pwd_not_equal">Password don\'t match!</string>
+    <string name="settings_pwd_not_equal">Passwords don\'t match!</string>
     <string name="invalid_password">Must be at least 8 characters</string>
-    <string name="invalid_magic_word">Invalid Magic Word!</string>
-    <string name="success_magic_word">Success - can now upload bulletins!</string>
-    <string name="problem_confirming_magic_word">Problem confirming magic word</string>
+    <string name="invalid_magic_word">Invalid Magic Word</string>
+    <string name="success_magic_word">Success - you can now upload bulletins!</string>
+    <string name="problem_confirming_magic_word">Problem confirming Magic Word</string>
     <string name="tor_explanation">Tor is an open network that helps defend against a form of network surveillance known as traffic analysis.
         Tor protects you by bouncing your communications around a distributed network all around the world. It will make sending bulletins much slower.</string>
     <string formatted="false" name="tor_link">https://www.torproject.org</string>
@@ -67,15 +67,15 @@
     <string name="send_bulletin">Send</string>
     <string name="add_attachment">Add attachment</string>
     <string name="enter_summary">Optional Summary</string>
-    <string name="default_author">Unknown author</string>
+    <string name="default_author">Unknown Author</string>
     <string name="title_hint">Title</string>
     <string name="bulletin_cancel">Cancel</string>
-    <string name="problem_creating_bulletin">couldn\'t create new bulletin</string>
-    <string name="problem_adding_attachment">problem adding attachment to bulletin</string>
-    <string name="problem_getting_files_for_attachments">problem getting files for attachments</string>
-    <string name="problem_getting_attachment">problem getting attachment</string>
+    <string name="problem_creating_bulletin">Couldn\'t create new bulletin</string>
+    <string name="problem_adding_attachment">Problem adding attachment to bulletin</string>
+    <string name="problem_getting_files_for_attachments">Problem adding attachment to bulletin</string>
+    <string name="problem_getting_attachment">Problem adding attachment to bulletin</string>
     <string name="bulletin_sending_progress">Sending…</string>
-    <string name="bulletin_packaging_progress">Packaging…</string>
+    <string name="bulletin_packaging_progress">Encrypting and zipping…</string>
     <string name="failure_zipping_bulletin">Failed zipping bulletin</string>
     <string name="failure_choosing_file">Failed choosing file</string>
     <string name="confirm_cancel_bulletin">Cancel this Bulletin?</string>
@@ -85,29 +85,29 @@
     <!--  choose server screen  -->
     <!-- ============================== -->
     <string name="invalid_server_ip">Invalid Server IP</string>
-    <string name="invalid_server_code">Invalid Server Code</string>
-    <string name="successful_server_choice">Server choice success!</string>
-    <string name="error_computing_public_code">Problem computing public code</string>
+    <string name="invalid_server_code">Invalid Server Public Code</string>
+    <string name="successful_server_choice">Successfully connected to server!</string>
+    <string name="error_computing_public_code">Problem computing Public Code</string>
 
     <!-- ============================== -->
     <!--  desktop key screen  -->
     <!-- ============================== -->
-    <string name="desktop_sync_public_code">First enter public code:</string>
+    <string name="desktop_sync_public_code">First enter server Public Code:</string>
     <string name="desktop_sync_title">Import Desktop Account</string>
-    <string name="desktop_sync_choose_file">Then choose desktop account file</string>
-    <string name="desktop_public_code_hint">Desktop public code</string>
-    <string name="invalid_public_account_file">Invalid public account file</string>
-    <string name="invalid_public_code">Public code doesn\'t match file</string>
-    <string name="public_code_validation_empty">Public code can\'t be empty</string>
+    <string name="desktop_sync_choose_file">Then choose Desktop Account file</string>
+    <string name="desktop_public_code_hint">Desktop Account Public Code</string>
+    <string name="invalid_public_account_file">Invalid Desktop Account public information file</string>
+    <string name="invalid_public_code">Public Code doesn\'t match file</string>
+    <string name="public_code_validation_empty">Public Code can\'t be empty</string>
     <string name="select_file_picker">Select a file chooser</string>
-    <string name="attachments_label">Attachments (long press to remove) :</string>
+    <string name="attachments_label">Attachments (press and hold to remove) :</string>
     <string name="server_ip_label">Server IP Address:</string>
-    <string name="server_ip_hint">enter server ip address</string>
-    <string name="server_public_code_label">Server Public Identification Code:</string>
-    <string name="server_public_code_hint">enter server public code</string>
+    <string name="server_ip_hint">Enter server IP address</string>
+    <string name="server_public_code_label">Server Public Code:</string>
+    <string name="server_public_code_hint">Enter server Public Code</string>
     <string name="choose_server_title">Choose Server</string>
     <string name="title_logout_preference">Auto logout</string>
-    <string name="summary_logout_preference">Logout after every send</string>
+    <string name="summary_logout_preference">Logout after sending each bulletin</string>
     <string name="choose_file">Martus File Chooser</string>
     <string name="install_explorer_text">If you can\'t find the file you were thinking of, try installing a more advanced file explorer:</string>
     <string formatted="false" name="file_explorer_store_link">play.google.com/store/search?q=%22open+source%22+file+manager+explorer</string>
@@ -117,9 +117,9 @@
     <!-- ============================== -->
     <string name="successful_send_notification">Bulletin sent!</string>
     <string name="failed_send_notification">Send failed with result: %1$s</string>
-    <string name="failure_send_notification">failed - likely need to login to Martus</string>
+    <string name="failure_send_notification">Sending bulletin failed</string>
     <string name="starting_send_notification">Sending …</string>
     <string name="notification_title">Martus - %1$s</string>
-    <string name="reset_to_install">Reset to install state</string>
+    <string name="reset_to_install">Reset to freshly installed state</string>
 
 </resources>
