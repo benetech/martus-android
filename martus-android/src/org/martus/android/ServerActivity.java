@@ -1,6 +1,8 @@
 package org.martus.android;
 
 import org.martus.clientside.ClientSideNetworkHandlerUsingXmlRpcForNonSSL;
+import org.martus.common.Exceptions;
+import org.martus.common.MartusUtilities;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.NonSSLNetworkAPI;
@@ -8,7 +10,7 @@ import org.martus.util.StreamableBase64;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -34,6 +36,9 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
     private EditText textCode;
     private SharedPreferences mySettings;
     private Activity myActivity;
+    private ProgressDialog dialog;
+    private String serverIP;
+    private String serverCode;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,34 +68,41 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
     }
 
     public void confirmServer(View view) {
-        String serverIP = textIp.getText().toString().trim();
+        serverIP = textIp.getText().toString().trim();
         if (serverIP.length() < 6) {
-            MartusActivity.showMessage(this, getString(R.string.invalid_server_ip), getString(R.string.error_message));
+            showErrorMessage(getString(R.string.invalid_server_ip), getString(R.string.error_message));
             return;
         }
 
-        String serverCode = textCode.getText().toString().trim();
+        serverCode = textCode.getText().toString().trim();
         if (serverCode.length() < 8) {
             showErrorMessage(getString(R.string.invalid_server_code), getString(R.string.error_message));
             return;
         }
 
-        SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
-        String serverPublicKey;
+        dialog = new ProgressDialog(this);
+        dialog.setTitle(getString(R.string.progress_connecting_to_server));
+        dialog.setIndeterminate(true);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+
         NonSSLNetworkAPI server = new ClientSideNetworkHandlerUsingXmlRpcForNonSSL(serverIP);
         MartusSecurity martusCrypto = AppConfig.getInstance().getCrypto();
 
+        final AsyncTask <Object, Void, String> keyTask = new PublicKeyTask();
+        keyTask.execute(server, martusCrypto);
+    }
 
-        final AsyncTask<Object, Void, String> keyTask = new PublicKeyTask().execute(server, martusCrypto);
+    private void processResult(String serverPublicKey) {
+        dialog.dismiss();
         try {
-            serverPublicKey = keyTask.get();
             if (null == serverPublicKey) {
-                MartusActivity.showMessage(this, getString(R.string.invalid_server_ip), getString(R.string.error_message));
+                showErrorMessage(getString(R.string.invalid_server_ip), getString(R.string.error_message));
                 return;
             }
         } catch (Exception e) {
             Log.e(AppConfig.LOG_LABEL, "Problem getting server public key", e);
-            MartusActivity.showMessage(this, getString(R.string.error_getting_server_key), getString(R.string.error_message));
+            showErrorMessage(getString(R.string.error_getting_server_key), getString(R.string.error_message));
             return;
         }
 
@@ -108,7 +120,7 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
             }
         } catch (StreamableBase64.InvalidBase64Exception e) {
             Log.e(AppConfig.LOG_LABEL,"problem computing public code", e);
-            MartusActivity.showMessage(this, getString(R.string.error_computing_public_code), getString(R.string.error_message));
+            showErrorMessage(getString(R.string.error_computing_public_code), getString(R.string.error_message));
             return;
         }
 
@@ -147,6 +159,31 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
                 myActivity.setResult(EXIT_RESULT_CODE);
             }
             myActivity.finish();
+        }
+    }
+
+    private class PublicKeyTask extends AsyncTask<Object, Void, String> {
+        @Override
+        protected String doInBackground(Object... params) {
+
+            final NonSSLNetworkAPI server = (NonSSLNetworkAPI)params[0];
+            final MartusSecurity security = (MartusSecurity)params[1];
+            String result = null;
+
+            try {
+                result = server.getServerPublicKey(security);
+            } catch (Exceptions.ServerNotAvailableException e) {
+                Log.e(AppConfig.LOG_LABEL, "server not available", e);
+            } catch (MartusUtilities.PublicInformationInvalidException e) {
+                Log.e(AppConfig.LOG_LABEL, "invalid public info", e);
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            processResult(result);
         }
     }
 }

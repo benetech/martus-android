@@ -90,6 +90,7 @@
     <string name="invalid_server_code">Invalid Server Public Code</string>
     <string name="successful_server_choice">Successfully connected to server!</string>
     <string name="error_computing_public_code">Problem computing Public Code</string>
+    <string name="progress_connecting_to_server">Connecting to server</string>
 
     <!-- ============================== -->
     <!--  desktop key screen  -->
