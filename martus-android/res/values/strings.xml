@@ -18,6 +18,8 @@
     <string name="summary_language_preference">Bulletin language</string>
     <string name="dialog_title_language_preference">Bulletin language</string>
     <string name="settings_title">Settings</string>
+    <string name="retry_server">Re-enter</string>
+    <string name="cancel_server">Cancel</string>
 
     <!-- ============================== -->
     <!--  main screen  -->

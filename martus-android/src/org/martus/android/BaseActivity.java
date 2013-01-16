@@ -19,8 +19,8 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
 
     public static final long INACTIVITY_TIMEOUT = 600000; // 10 min = 10 * 60 * 1000 ms
 
-    public static final int EXIT_RESULT_CODE = 0;
-    public static final int EXIT_REQUEST_CODE = 0;
+    public static final int EXIT_RESULT_CODE = 10;
+    public static final int EXIT_REQUEST_CODE = 10;
 
     protected MartusApplication parentApp;
     private String confirmationDialogTitle;

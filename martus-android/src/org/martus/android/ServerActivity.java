@@ -6,6 +6,10 @@ import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.NonSSLNetworkAPI;
 import org.martus.util.StreamableBase64;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -28,13 +32,16 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
 
     private EditText textIp;
     private EditText textCode;
-
+    private SharedPreferences mySettings;
+    private Activity myActivity;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BugSenseHandler.initAndStartSession(ServerActivity.this, ExternalKeys.BUGSENSE_KEY);
         setContentView(R.layout.choose_server);
 
+        myActivity = this;
+        mySettings = PreferenceManager.getDefaultSharedPreferences(this);
         textIp = (EditText)findViewById(R.id.serverIpText);
         textCode = (EditText)findViewById(R.id.serverCodeText);
         textCode.setOnEditorActionListener(this);
@@ -64,7 +71,7 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
 
         String serverCode = textCode.getText().toString().trim();
         if (serverCode.length() < 8) {
-            MartusActivity.showMessage(this, getString(R.string.invalid_server_code), getString(R.string.error_message));
+            showErrorMessage(getString(R.string.invalid_server_code), getString(R.string.error_message));
             return;
         }
 
@@ -96,7 +103,7 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
                 editor.commit();
                 Toast.makeText(this, getString(R.string.successful_server_choice), Toast.LENGTH_SHORT).show();
             } else {
-                MartusActivity.showMessage(this, getString(R.string.invalid_server_code), getString(R.string.error_message));
+                showErrorMessage(getString(R.string.invalid_server_code), getString(R.string.error_message));
                 return;
             }
         } catch (StreamableBase64.InvalidBase64Exception e) {
@@ -113,5 +120,33 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
         final String computedCode;
         computedCode = MartusCrypto.computePublicCode(serverPublicKey);
         return normalizedPublicCode.equals(computedCode);
+    }
+
+    private void showErrorMessage(String msg, String title){
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle(title)
+                .setMessage(msg)
+                .setPositiveButton(R.string.retry_server, new RetryButtonHandler())
+                .setNegativeButton(R.string.cancel_server, new CancelButtonHandler())
+                .show();
+    }
+
+    private class RetryButtonHandler implements DialogInterface.OnClickListener {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int whichButton) {
+            /* Do nothing */
+        }
+    }
+
+    private class CancelButtonHandler implements DialogInterface.OnClickListener {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int whichButton) {
+
+            if (mySettings.getString(SettingsActivity.KEY_SERVER_IP, "").length() == 0) {
+                myActivity.setResult(EXIT_RESULT_CODE);
+            }
+            myActivity.finish();
+        }
     }
 }
