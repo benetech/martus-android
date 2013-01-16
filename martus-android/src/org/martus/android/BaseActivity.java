@@ -17,7 +17,7 @@ import android.support.v4.app.FragmentActivity;
 public class BaseActivity extends FragmentActivity implements ConfirmationDialog.ConfirmationDialogListener,
         LoginRequiredDialog.LoginRequiredDialogListener {
 
-    public static final long INACTIVITY_TIMEOUT = 30000; // 1 min = 1 * 60 * 1000 ms
+    public static final long INACTIVITY_TIMEOUT = 600000; // 10 min = 10 * 60 * 1000 ms
 
     public static final int EXIT_RESULT_CODE = 0;
     public static final int EXIT_REQUEST_CODE = 0;
