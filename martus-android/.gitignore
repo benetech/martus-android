@@ -3,4 +3,5 @@ build.properties
 local.properties
 gen/
 src/org/martus/android/ExternalKeys.java
+bin/
 
