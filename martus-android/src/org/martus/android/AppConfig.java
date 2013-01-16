@@ -1,21 +1,12 @@
 package org.martus.android;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
 
-import android.util.Base64;
 import org.martus.client.bulletinstore.ClientBulletinStore;
-import org.martus.client.bulletinstore.MobileBulletinStore;
-import org.martus.common.bulletinstore.BulletinStore;
-import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.fieldspec.StandardFieldSpecs;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 /**
@@ -30,17 +21,13 @@ public class AppConfig {
     private ClientBulletinStore store;
     private MartusSecurity martusCrypto;
 
-    public String customVar;
-
     public static void initInstance(File cacheDir, Context context ) {
         if (instance == null) {
-            // Create the instance
             instance = new AppConfig(cacheDir, context);
         }
     }
 
     public static AppConfig getInstance() {
-        // Return the instance
         return instance;
     }
 

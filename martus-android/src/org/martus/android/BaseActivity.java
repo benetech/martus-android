@@ -6,6 +6,8 @@ import org.martus.android.dialog.LoginRequiredDialog;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 
 /**
@@ -15,13 +17,36 @@ import android.support.v4.app.FragmentActivity;
 public class BaseActivity extends FragmentActivity implements ConfirmationDialog.ConfirmationDialogListener,
         LoginRequiredDialog.LoginRequiredDialogListener {
 
-    private MartusApplication parentApp;
+    public static final long INACTIVITY_TIMEOUT = 30000; // 1 min = 1 * 60 * 1000 ms
+
+    public static final int EXIT_RESULT_CODE = 0;
+    public static final int EXIT_REQUEST_CODE = 0;
+
+    protected MartusApplication parentApp;
     private String confirmationDialogTitle;
+
+    private Handler inactivityHandler = new Handler(){
+        public void handleMessage(Message msg) {
+        }
+    };
+
+    private Runnable inactivityCallback = new LogOutProcess(this);
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         parentApp = (MartusApplication) this.getApplication();
         confirmationDialogTitle = getString(R.string.confirm_default);
+    }
+
+    public void resetInactivityTimer(){
+        inactivityHandler.removeCallbacks(inactivityCallback);
+        if (!MartusApplication.isIgnoreInactivity()) {
+            inactivityHandler.postDelayed(inactivityCallback, INACTIVITY_TIMEOUT);
+        }
+    }
+
+    public void stopInactivityTimer(){
+        inactivityHandler.removeCallbacks(inactivityCallback);
     }
 
     public void showLoginRequiredDialog() {
@@ -62,25 +87,21 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         return confirmationDialogTitle;
     }
 
-    public void setIgnoreInactivity(boolean ignore) {
-        parentApp.setIgnoreInactivity(ignore);
-    }
-
     @Override
     public void onUserInteraction(){
-        parentApp.resetInactivityTimer();
+        resetInactivityTimer();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        parentApp.resetInactivityTimer();
+        resetInactivityTimer();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        parentApp.stopInactivityTimer();
+        stopInactivityTimer();
     }
 
     @Override
@@ -88,7 +109,8 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         //No call for super(). Bug on API Level > 11.
     }
 
-    public void stopInactivityTimer() {
-        parentApp.stopInactivityTimer();
+    public void close() {
+        setResult(EXIT_RESULT_CODE);
+        finish();
     }
 }

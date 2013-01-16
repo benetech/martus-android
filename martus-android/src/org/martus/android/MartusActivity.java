@@ -81,7 +81,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
             checkDesktopKey();
             if (!confirmServerPublicKey()) {
                 Intent intent = new Intent(MartusActivity.this, ServerActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, EXIT_REQUEST_CODE);
                 return;
             }
 
@@ -111,9 +111,16 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         BugSenseHandler.closeSession(MartusActivity.this);
     }
 
+    @Override
+        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == EXIT_REQUEST_CODE && resultCode == EXIT_RESULT_CODE) {
+            finish();
+        }
+    }
+
     public void sendBulletin(View view) {
         Intent intent = new Intent(MartusActivity.this, BulletinActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, EXIT_REQUEST_CODE) ;
     }
 
     @Override
@@ -139,7 +146,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
                 return true;
             case R.id.server_menu_item:
                 intent = new Intent(MartusActivity.this, ServerActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, EXIT_REQUEST_CODE);
                 return true;
             case R.id.reset_install_menu_item:
                 removePacketsDir();

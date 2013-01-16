@@ -14,9 +14,7 @@ import org.martus.common.packet.UniversalId;
 import org.martus.util.StreamableBase64;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.util.Log;
 
@@ -29,13 +27,11 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> imple
     private NotificationHelper mNotificationHelper;
     private BulletinSender sender;
     private MartusApplication myApplication;
-    private SharedPreferences mySettings;
 
     public UploadBulletinTask(MartusApplication application, BulletinSender sender, UniversalId bulletinId) {
         myApplication = application;
         mNotificationHelper = new NotificationHelper(myApplication.getApplicationContext(), bulletinId.hashCode());
         this.sender = sender;
-        mySettings = PreferenceManager.getDefaultSharedPreferences(myApplication);
     }
 
     @Override
@@ -95,7 +91,6 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> imple
             sender.onSent(s);
         }
         myApplication.setIgnoreInactivity(false);
-        myApplication.resetInactivityTimer();
         super.onPostExecute(s);
     }
 

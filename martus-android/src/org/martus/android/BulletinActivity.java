@@ -306,7 +306,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         bulletin.set(Bulletin.TAGTITLE, title);
         bulletin.set(Bulletin.TAGSUMMARY, summary);
         stopInactivityTimer();
-        setIgnoreInactivity(true);
+        parentApp.setIgnoreInactivity(true);
 
         final AsyncTask<Object, Integer, File> zipTask = new ZipBulletinTask(bulletin, this);
         zipTask.execute(getCacheDir(), store);
@@ -371,7 +371,6 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         dialog.setProgress(0);
         dialog.show();
 
-        String bulletinTitle = bulletin.get(Bulletin.TAGTITLE);
         UniversalId bulletinId = bulletin.getUniversalId();
         try {
             removeCachedUriAttachments();
