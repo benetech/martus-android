@@ -150,11 +150,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
                 startActivityForResult(intent, EXIT_REQUEST_CODE);
                 return true;
             case R.id.reset_install_menu_item:
-                removePacketsDir();
-                logout();
-                clearPrefsDir();
-                //todo: need to delete any unsent zipped bulletins
-                finish();
+                showConfirmationDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -445,6 +441,20 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     @Override
     public void onOrbotStartCanceled() {
         torCheckbox.setChecked(false);
+    }
+
+    @Override
+    public String getConfirmationTitle() {
+        return getString(R.string.confirm_reset_install_bulletin);
+    }
+
+    @Override
+    public void onConfirmationAccepted() {
+        removePacketsDir();
+        logout();
+        clearPrefsDir();
+        //todo: need to delete any unsent zipped bulletins
+        finish();
     }
 
     private class UploadRightsTask extends AsyncTask<Object, Void, NetworkResponse> {

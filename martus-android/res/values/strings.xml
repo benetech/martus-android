@@ -62,6 +62,7 @@
         Tor protects you by bouncing your communications around a distributed network all around the world. It will make sending bulletins much slower.</string>
     <string formatted="false" name="tor_link">https://www.torproject.org</string>
     <string name="progress_confirming_magic_word">Confirming Magic Word</string>
+    <string name="confirm_reset_install_bulletin">Reset to freshly installed state?</string>
 
 
     <!-- ============================== -->
