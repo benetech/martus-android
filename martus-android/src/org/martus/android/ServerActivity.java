@@ -8,14 +8,17 @@ import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.NonSSLNetworkAPI;
 import org.martus.util.StreamableBase64;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -41,6 +44,11 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
         BugSenseHandler.initAndStartSession(ServerActivity.this, ExternalKeys.BUGSENSE_KEY);
         setContentView(R.layout.choose_server);
 
+        if (haveVerifiedServerInfo()) {
+            ActionBar actionBar = getActionBar();
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         myActivity = this;
         textIp = (EditText)findViewById(R.id.serverIpText);
         textCode = (EditText)findViewById(R.id.serverCodeText);
@@ -61,6 +69,17 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
         super.onDestroy();
         BugSenseHandler.closeSession(ServerActivity.this);
     }
+
+    @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            switch (item.getItemId()) {
+                case android.R.id.home:
+                    finish();
+                    return true;
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
+        }
 
     public void confirmServer(View view) {
         serverIP = textIp.getText().toString().trim();
@@ -142,11 +161,15 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
         }
     }
 
+    private boolean haveVerifiedServerInfo() {
+        return mySettings.getString(SettingsActivity.KEY_SERVER_IP, "").length() > 1;
+    }
+
     private class CancelButtonHandler implements DialogInterface.OnClickListener {
         @Override
         public void onClick(DialogInterface dialogInterface, int whichButton) {
 
-            if (mySettings.getString(SettingsActivity.KEY_SERVER_IP, "").length() == 0) {
+            if (!haveVerifiedServerInfo()) {
                 myActivity.setResult(EXIT_RESULT_CODE);
             }
             myActivity.finish();
