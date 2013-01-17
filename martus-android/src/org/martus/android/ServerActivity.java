@@ -10,7 +10,6 @@ import org.martus.util.StreamableBase64;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -36,7 +35,6 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
     private EditText textCode;
     private SharedPreferences mySettings;
     private Activity myActivity;
-    private ProgressDialog dialog;
     private String serverIP;
     private String serverCode;
 
@@ -80,11 +78,7 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
             return;
         }
 
-        dialog = new ProgressDialog(this);
-        dialog.setTitle(getString(R.string.progress_connecting_to_server));
-        dialog.setIndeterminate(true);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
+        showProgressDialog(getString(R.string.progress_connecting_to_server));
 
         NonSSLNetworkAPI server = new ClientSideNetworkHandlerUsingXmlRpcForNonSSL(serverIP);
         MartusSecurity martusCrypto = AppConfig.getInstance().getCrypto();

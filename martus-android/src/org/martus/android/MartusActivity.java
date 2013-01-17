@@ -10,6 +10,7 @@ import org.martus.android.dialog.CreateAccountDialog;
 import org.martus.android.dialog.LoginDialog;
 import org.martus.android.dialog.MagicWordDialog;
 import org.martus.clientside.ClientSideNetworkGateway;
+import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.NetworkResponse;
 
@@ -141,7 +142,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
                 startActivity(intent);
                 return true;
             case R.id.quit_menu_item:
-                logout(MartusActivity.this);
+                logout();
                 finish();
                 return true;
             case R.id.server_menu_item:
@@ -150,7 +151,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
                 return true;
             case R.id.reset_install_menu_item:
                 removePacketsDir();
-                logout(MartusActivity.this);
+                logout();
                 clearPrefsDir();
                 //todo: need to delete any unsent zipped bulletins
                 finish();
@@ -173,7 +174,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         packetsDirFile.delete();
     }
 
-    public static void logout(Context context) {
+    public static void logout() {
         AppConfig.getInstance().getCrypto().clearKeyPair();
     }
 
@@ -395,9 +396,15 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
             showMagicWordDialog();
             return;
         }
+        showProgressDialog(getString(R.string.progress_confirming_magic_word));
+
+        final AsyncTask<Object, Void, NetworkResponse> rightsTask = new UploadRightsTask();
+        rightsTask.execute(gateway, martusCrypto, magicWord);
+    }
+
+    private void processMagicWordResponse(NetworkResponse response) {
+        dialog.dismiss();
         try {
-             final AsyncTask<Object, Void, NetworkResponse> rightsTask = new UploadRightsTask().execute(gateway, martusCrypto, magicWord);
-             final NetworkResponse response = rightsTask.get();
              if (!response.getResultCode().equals("ok")) {
                  Toast.makeText(this, getString(R.string.no_upload_rights), Toast.LENGTH_SHORT).show();
                  showMagicWordDialog();
@@ -438,5 +445,31 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     @Override
     public void onOrbotStartCanceled() {
         torCheckbox.setChecked(false);
+    }
+
+    private class UploadRightsTask extends AsyncTask<Object, Void, NetworkResponse> {
+        @Override
+        protected NetworkResponse doInBackground(Object... params) {
+
+            final ClientSideNetworkGateway gateway = (ClientSideNetworkGateway)params[0];
+            final MartusSecurity signer = (MartusSecurity)params[1];
+            final String magicWord = (String)params[2];
+
+            NetworkResponse result = null;
+
+            try {
+                result = gateway.getUploadRights(signer, magicWord);
+            } catch (MartusCrypto.MartusSignatureException e) {
+                Log.e(AppConfig.LOG_LABEL, "problem getting upload rights", e);
+            }
+
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(NetworkResponse result) {
+            super.onPostExecute(result);
+            processMagicWordResponse(result);
+        }
     }
 }

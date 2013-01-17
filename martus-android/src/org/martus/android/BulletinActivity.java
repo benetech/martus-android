@@ -75,7 +75,6 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
     private String attachmentToRemoveName;
     private EditText titleText;
     private EditText summaryText;
-    private ProgressDialog dialog;
     private ArrayAdapter<String> attachmentAdapter;
     private boolean shouldShowInstallExplorer = false;
 
@@ -292,12 +291,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
     }
 
     private void zipBulletin(Bulletin bulletin)  {
-
-        dialog = new ProgressDialog(this);
-        dialog.setTitle(getString(R.string.bulletin_packaging_progress));
-        dialog.setIndeterminate(true);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
+        showProgressDialog(getString(R.string.bulletin_packaging_progress));
 
         String author = mySettings.getString(SettingsActivity.KEY_AUTHOR, getString(R.string.default_author));
         bulletin.set(Bulletin.TAGAUTHOR, author);
@@ -340,7 +334,8 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         String message = getResultMessage(result, this);
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         if (autoLogout) {
-            MartusActivity.logout(BulletinActivity.this);
+            MartusActivity.logout();
+            setResult(EXIT_RESULT_CODE);
         }
         finish();
     }

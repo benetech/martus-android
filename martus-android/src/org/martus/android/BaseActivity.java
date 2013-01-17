@@ -4,6 +4,7 @@ import org.martus.android.dialog.ConfirmationDialog;
 import org.martus.android.dialog.InstallExplorerDialog;
 import org.martus.android.dialog.LoginRequiredDialog;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +25,7 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
 
     protected MartusApplication parentApp;
     private String confirmationDialogTitle;
+    protected ProgressDialog dialog;
 
     private Handler inactivityHandler = new Handler(){
         public void handleMessage(Message msg) {
@@ -112,5 +114,13 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
     public void close() {
         setResult(EXIT_RESULT_CODE);
         finish();
+    }
+
+    protected void showProgressDialog(String title) {
+        dialog = new ProgressDialog(this);
+        dialog.setTitle(title);
+        dialog.setIndeterminate(true);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
     }
 }
