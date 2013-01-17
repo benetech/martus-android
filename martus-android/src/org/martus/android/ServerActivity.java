@@ -14,7 +14,6 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -33,7 +32,6 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
 
     private EditText textIp;
     private EditText textCode;
-    private SharedPreferences mySettings;
     private Activity myActivity;
     private String serverIP;
     private String serverCode;
@@ -44,7 +42,6 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
         setContentView(R.layout.choose_server);
 
         myActivity = this;
-        mySettings = PreferenceManager.getDefaultSharedPreferences(this);
         textIp = (EditText)findViewById(R.id.serverIpText);
         textCode = (EditText)findViewById(R.id.serverCodeText);
         textCode.setOnEditorActionListener(this);

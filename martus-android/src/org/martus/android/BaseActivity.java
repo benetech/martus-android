@@ -6,9 +6,11 @@ import org.martus.android.dialog.LoginRequiredDialog;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 
 /**
@@ -26,6 +28,7 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
     protected MartusApplication parentApp;
     private String confirmationDialogTitle;
     protected ProgressDialog dialog;
+    SharedPreferences mySettings;
 
     private Handler inactivityHandler = new Handler(){
         public void handleMessage(Message msg) {
@@ -38,6 +41,7 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         super.onCreate(savedInstanceState);
         parentApp = (MartusApplication) this.getApplication();
         confirmationDialogTitle = getString(R.string.confirm_default);
+        mySettings = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     public void resetInactivityTimer(){

@@ -25,11 +25,9 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -60,7 +58,6 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
     private static final int CONFIRMATION_TYPE_CANCEL_BULLETIN = 0;
     private static final int CONFIRMATION_TYPE_DELETE_ATTACHMENT = 1;
 
-    private SharedPreferences mySettings;
     private ClientBulletinStore store;
     private HQKey hqKey;
     private String serverPublicKey;
@@ -92,7 +89,6 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
             showLoginRequiredDialog();
         }
 
-        mySettings = PreferenceManager.getDefaultSharedPreferences(this);
         hqKey = new HQKey(mySettings.getString(SettingsActivity.KEY_DESKTOP_PUBLIC_KEY, ""));
         store = AppConfig.getInstance().getStore();
         updateSettings();

@@ -45,7 +45,7 @@
     <string name="no">No</string>
     <string name="start_orbot_">Start Orbot</string>
     <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot not
-        running. Would you like to start?
+        running. Would you like to start it?
     </string>
     <string name="use_tor">Use Tor</string>
     <string name="create_password_hint">New password</string>
@@ -63,7 +63,10 @@
     <string formatted="false" name="tor_link">https://www.torproject.org</string>
     <string name="progress_confirming_magic_word">Confirming Magic Word</string>
     <string name="confirm_reset_install_bulletin">Reset to freshly installed state?</string>
-
+    <string name="reset_to_install">Reset to freshly installed state</string>
+    <string name="ping_server_menu_item">Ping Server</string>
+    <string name="pinging_server">Attempting to reach server</string>
+    <string name="default_ping_result">Server is unavailable</string>
 
     <!-- ============================== -->
     <!--  bulletin screen  -->
@@ -125,6 +128,6 @@
     <string name="failure_send_notification">Sending bulletin failed</string>
     <string name="starting_send_notification">Sending …</string>
     <string name="notification_title">Martus - %1$s</string>
-    <string name="reset_to_install">Reset to freshly installed state</string>
+
 
 </resources>

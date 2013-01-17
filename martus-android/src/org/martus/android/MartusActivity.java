@@ -4,8 +4,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
+import java.util.Vector;
 
+import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.client.XmlRpcClient;
+import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.martus.android.dialog.CreateAccountDialog;
 import org.martus.android.dialog.LoginDialog;
 import org.martus.android.dialog.MagicWordDialog;
@@ -20,7 +26,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -52,11 +57,11 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     private String serverIP;
     private int invalidLogins;
     private CheckBox torCheckbox;
-    private SharedPreferences mySettings;
 
     static final int ACTIVITY_DESKTOP_KEY = 2;
     public static final int ACTIVITY_BULLETIN = 3;
     public static final String RETURN_TO = "return_to";
+    private final static String pingPath = "/RPC2";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,7 +69,6 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         BugSenseHandler.initAndStartSession(MartusActivity.this, ExternalKeys.BUGSENSE_KEY);
         setContentView(R.layout.main);
 
-        mySettings = PreferenceManager.getDefaultSharedPreferences(this);
         torCheckbox = (CheckBox)findViewById(R.id.checkBox_use_tor);
         updateSettings();
 
@@ -150,11 +154,30 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
                 intent = new Intent(MartusActivity.this, ServerActivity.class);
                 startActivityForResult(intent, EXIT_REQUEST_CODE);
                 return true;
+            case R.id.ping_server_menu_item:
+                pingServer();
+                return true;
             case R.id.reset_install_menu_item:
                 showConfirmationDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void pingServer() {
+        showProgressDialog(getString(R.string.progress_connecting_to_server));
+        try {
+            String pingUrl = "http://" + serverIP + pingPath;
+            XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
+            config.setServerURL(new URL(pingUrl));
+            XmlRpcClient client = new XmlRpcClient();
+            client.setConfig(config);
+
+            final AsyncTask<XmlRpcClient, Void, String> pingTask = new PingTask();
+            pingTask.execute(client);
+        } catch (MalformedURLException e) {
+
         }
     }
 
@@ -456,6 +479,11 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         finish();
     }
 
+    private void processPingResult(String result) {
+        dialog.dismiss();
+        Toast.makeText(this, result, Toast.LENGTH_LONG).show();
+    }
+
     private class UploadRightsTask extends AsyncTask<Object, Void, NetworkResponse> {
         @Override
         protected NetworkResponse doInBackground(Object... params) {
@@ -479,6 +507,28 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         protected void onPostExecute(NetworkResponse result) {
             super.onPostExecute(result);
             processMagicWordResponse(result);
+        }
+    }
+
+    private class PingTask extends AsyncTask<XmlRpcClient, Void, String> {
+        @Override
+        protected String doInBackground(XmlRpcClient... clients) {
+
+            final Vector params = new Vector();
+            final XmlRpcClient client = clients[0];
+            String result = getString(R.string.default_ping_result);
+            try {
+                result = (String) client.execute("MartusServer.ping", params);
+            } catch (XmlRpcException e) {
+                Log.e(AppConfig.LOG_LABEL, "Ping failed", e);
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            processPingResult(result);
         }
     }
 }

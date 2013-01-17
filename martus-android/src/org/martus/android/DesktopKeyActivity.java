@@ -13,7 +13,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -107,7 +106,6 @@ public class DesktopKeyActivity extends BaseActivity {
             MartusActivity.showMessage(activity, getString(R.string.invalid_public_code), getString(R.string.error_message));
             return;
         }
-        SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = mySettings.edit();
         editor.putString(SettingsActivity.KEY_DESKTOP_PUBLIC_KEY, publicKeyString);
         editor.commit();
