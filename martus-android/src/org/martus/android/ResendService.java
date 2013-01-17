@@ -63,11 +63,4 @@ public class ResendService extends IntentService implements ProgressUpdater {
         mNH.updateProgress(getApplicationContext().getString(R.string.starting_send_notification), value);
     }
 
-    private class ZipFileFilter implements FilenameFilter {
-
-        @Override
-        public boolean accept(File file, String name) {
-            return name.endsWith(".zip");
-        }
-    }
 }

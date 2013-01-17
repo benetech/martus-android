@@ -453,7 +453,12 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         removePacketsDir();
         logout();
         clearPrefsDir();
-        //todo: need to delete any unsent zipped bulletins
+        final File cacheDir = getCacheDir();
+        final String[] names = cacheDir.list(new ZipFileFilter());
+        for (String name : names) {
+            File zipFile = new File(cacheDir, name);
+            zipFile.delete();
+        }
         finish();
     }
 
