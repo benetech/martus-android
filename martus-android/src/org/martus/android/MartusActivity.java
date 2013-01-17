@@ -52,6 +52,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     private String serverIP;
     private int invalidLogins;
     private CheckBox torCheckbox;
+    private SharedPreferences mySettings;
 
     static final int ACTIVITY_DESKTOP_KEY = 2;
     public static final int ACTIVITY_BULLETIN = 3;
@@ -63,6 +64,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         BugSenseHandler.initAndStartSession(MartusActivity.this, ExternalKeys.BUGSENSE_KEY);
         setContentView(R.layout.main);
 
+        mySettings = PreferenceManager.getDefaultSharedPreferences(this);
         torCheckbox = (CheckBox)findViewById(R.id.checkBox_use_tor);
         updateSettings();
 
@@ -86,7 +88,6 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
                 return;
             }
 
-            SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
             boolean canUpload = mySettings.getBoolean(SettingsActivity.KEY_HAVE_UPLOAD_RIGHTS, false);
             if (!canUpload) {
                 showMagicWordDialog();
@@ -230,7 +231,6 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     }
 
     private void checkDesktopKey() {
-        SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
         String desktopPublicKeyString = mySettings.getString(SettingsActivity.KEY_DESKTOP_PUBLIC_KEY, "");
         if (desktopPublicKeyString.length() < 1) {
             Intent intent = new Intent(MartusActivity.this, DesktopKeyActivity.class);
@@ -239,16 +239,12 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     }
 
     private boolean isAccountCreated() {
-        SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(MartusActivity.this);
-
-        // attempt to read keypair from prefs
         String keyPairString = mySettings.getString(SettingsActivity.KEY_KEY_PAIR, "");
         return keyPairString.length() > 1;
     }
 
     private boolean confirmAccount(char[] password)  {
 
-        SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(MartusActivity.this);
         String keyPairString = mySettings.getString(SettingsActivity.KEY_KEY_PAIR, "");
 
         // construct keypair from value read from prefs
@@ -266,8 +262,6 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     }
 
     private void createAccount(char[] password)  {
-        SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(MartusActivity.this);
-        // create new keypair and store in prefs
         martusCrypto.createKeyPair();
 
         try {
@@ -291,7 +285,6 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     }
 
     private void updateSettings() {
-        SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
         serverPublicKey = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
         serverIP = mySettings.getString(SettingsActivity.KEY_SERVER_IP, "");
     }
@@ -321,7 +314,6 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
             showLoginDialog();
         }
 
-        SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(MartusActivity.this);
         serverPublicKey = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
         gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
 
@@ -406,7 +398,6 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
                  showMagicWordDialog();
              } else {
                  Toast.makeText(this, getString(R.string.success_magic_word), Toast.LENGTH_SHORT).show();
-                 SharedPreferences mySettings = PreferenceManager.getDefaultSharedPreferences(this);
                  SharedPreferences.Editor editor = mySettings.edit();
                  editor.putBoolean(SettingsActivity.KEY_HAVE_UPLOAD_RIGHTS, true);
                  editor.commit();
@@ -451,6 +442,9 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     @Override
     public void onConfirmationAccepted() {
         removePacketsDir();
+        SharedPreferences.Editor editor = mySettings.edit();
+        editor.clear();
+        editor.commit();
         logout();
         clearPrefsDir();
         final File cacheDir = getCacheDir();
