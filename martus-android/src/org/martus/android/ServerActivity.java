@@ -12,7 +12,6 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,6 +31,9 @@ import com.bugsense.trace.BugSenseHandler;
  *         Date: 12/10/12
  */
 public class ServerActivity extends BaseActivity implements TextView.OnEditorActionListener {
+
+    private static final int MIN_SERVER_CODE = 20;
+    private static final int MIN_SERVER_IP = 7;
 
     private EditText textIp;
     private EditText textCode;
@@ -83,13 +85,13 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
 
     public void confirmServer(View view) {
         serverIP = textIp.getText().toString().trim();
-        if (serverIP.length() < 6) {
+        if (serverIP.length() < MIN_SERVER_IP) {
             showErrorMessage(getString(R.string.invalid_server_ip), getString(R.string.error_message));
             return;
         }
 
         serverCode = textCode.getText().toString().trim();
-        if (serverCode.length() < 8) {
+        if (serverCode.length() < MIN_SERVER_CODE) {
             showErrorMessage(getString(R.string.invalid_server_code), getString(R.string.error_message));
             return;
         }

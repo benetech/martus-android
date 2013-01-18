@@ -18,6 +18,7 @@ import org.martus.android.dialog.MagicWordDialog;
 import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
+import org.martus.common.network.NetworkInterfaceConstants;
 import org.martus.common.network.NetworkResponse;
 
 import android.app.AlertDialog;
@@ -45,8 +46,8 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     public final static int PROXY_HTTP_PORT = 8118; //default for Orbot/Tor
     public final static int PROXY_SOCKS_PORT = 9050; //default for Orbot/Tor
 
-    private static final String PACKETS_DIR = "/packets";
-    private static final String PREFS_DIR = "/shared_prefs";
+    private static final String PACKETS_DIR = "packets";
+    private static final String PREFS_DIR = "shared_prefs";
 
     public static final int MAX_LOGIN_ATTEMPTS = 3;
     public static final int MIN_PASSWORD_SIZE = 8;
@@ -182,14 +183,12 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     }
 
     private void clearPrefsDir() {
-        String prefsDir = getCacheDir().getParent() + PREFS_DIR;
-        File prefsDirFile = new File(prefsDir);
+        File prefsDirFile = new File(getCacheDir().getParent(), PREFS_DIR);
         clearDirectory(prefsDirFile);
     }
 
     private void removePacketsDir() {
-        String packetsDirectory = getCacheDir().getAbsolutePath() + PACKETS_DIR;
-        File packetsDirFile = new File(packetsDirectory);
+        File packetsDirFile = new File(getCacheDir(), PACKETS_DIR);
         clearDirectory(packetsDirFile);
         packetsDirFile.delete();
     }
@@ -416,7 +415,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     private void processMagicWordResponse(NetworkResponse response) {
         dialog.dismiss();
         try {
-             if (!response.getResultCode().equals("ok")) {
+             if (!response.getResultCode().equals(NetworkInterfaceConstants.OK)) {
                  Toast.makeText(this, getString(R.string.no_upload_rights), Toast.LENGTH_SHORT).show();
                  showMagicWordDialog();
              } else {
