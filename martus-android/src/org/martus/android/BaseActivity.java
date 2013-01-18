@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 
@@ -20,7 +19,8 @@ import android.support.v4.app.FragmentActivity;
 public class BaseActivity extends FragmentActivity implements ConfirmationDialog.ConfirmationDialogListener,
         LoginRequiredDialog.LoginRequiredDialogListener {
 
-    public static final long INACTIVITY_TIMEOUT = 600000; // 10 min = 10 * 60 * 1000 ms
+    private static final long MINUTE_MILLIS = 60000;
+    public static final long INACTIVITY_TIMEOUT = 10 * MINUTE_MILLIS;
 
     public static final int EXIT_RESULT_CODE = 10;
     public static final int EXIT_REQUEST_CODE = 10;
@@ -30,18 +30,17 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
     protected ProgressDialog dialog;
     SharedPreferences mySettings;
 
-    private Handler inactivityHandler = new Handler(){
-        public void handleMessage(Message msg) {
-        }
-    };
+    private Handler inactivityHandler;
 
-    private Runnable inactivityCallback = new LogOutProcess(this);
+    private Runnable inactivityCallback;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         parentApp = (MartusApplication) this.getApplication();
         confirmationDialogTitle = getString(R.string.confirm_default);
         mySettings = PreferenceManager.getDefaultSharedPreferences(this);
+        inactivityHandler = new EmptyHandler();
+        inactivityCallback = new LogOutProcess(this);
     }
 
     public void resetInactivityTimer(){
