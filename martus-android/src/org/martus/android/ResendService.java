@@ -50,7 +50,8 @@ public class ResendService extends IntentService implements ProgressUpdater {
                 BulletinZipImporter.loadFromFile(tempBulletin, zipFile, mCrypto);
                 mNH = new NotificationHelper(getApplicationContext(), tempBulletin.getUniversalId().hashCode());
                 UploadBulletinTask.createInitialNotification(mNH, getApplicationContext());
-                UploadBulletinTask.doSend(tempBulletin.getUniversalId(), zipFile, mGateway, mCrypto, this);
+                String result = UploadBulletinTask.doSend(tempBulletin.getUniversalId(), zipFile, mGateway, mCrypto, this);
+                mNH.completed(result);
             } catch (Exception e) {
                 Log.e(AppConfig.LOG_LABEL, "problem reading zipped bulletin", e);
             }

@@ -9,6 +9,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.martus.android.dialog.ConfirmationDialog;
+import org.martus.android.dialog.DeterminateProgressDialog;
+import org.martus.android.dialog.IndeterminateProgressDialog;
 import org.martus.client.bulletinstore.ClientBulletinStore;
 import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.common.HQKey;
@@ -46,7 +48,8 @@ import com.ipaulpro.afilechooser.utils.FileUtils;
  *         Date: 10/25/12
  */
 public class BulletinActivity extends BaseActivity implements BulletinSender,
-        ConfirmationDialog.ConfirmationDialogListener, AdapterView.OnItemLongClickListener {
+        ConfirmationDialog.ConfirmationDialogListener, IndeterminateProgressDialog.IndeterminateProgressDialogListener,
+        DeterminateProgressDialog.DeterminateProgressDialogListener, AdapterView.OnItemLongClickListener {
 
     final int ACTIVITY_CHOOSE_ATTACHMENT = 2;
     public static final String EXTRA_ATTACHMENT = "org.martus.android.filePath";
@@ -74,6 +77,8 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
     private EditText summaryText;
     private ArrayAdapter<String> attachmentAdapter;
     private boolean shouldShowInstallExplorer = false;
+    private IndeterminateProgressDialog indeterminateDialog;
+    private DeterminateProgressDialog determinateDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -286,8 +291,19 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         BugSenseHandler.closeSession(BulletinActivity.this);
     }
 
+    @Override
+    public String getIndeterminateDialogMessage() {
+        return getString(R.string.bulletin_packaging_progress);
+    }
+
+    @Override
+    public String getDeterminateDialogMessage() {
+        return getString(R.string.bulletin_sending_progress);
+    }
+
     private void zipBulletin(Bulletin bulletin)  {
-        showProgressDialog(getString(R.string.bulletin_packaging_progress));
+        indeterminateDialog = IndeterminateProgressDialog.newInstance();
+        indeterminateDialog.show(getSupportFragmentManager(), "dlg_zipping");
 
         String author = mySettings.getString(SettingsActivity.KEY_AUTHOR, getString(R.string.default_author));
         bulletin.set(Bulletin.TAGAUTHOR, author);
@@ -326,7 +342,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
 
     @Override
     public void onSent(String result) {
-        dialog.dismiss();
+        determinateDialog.dismissAllowingStateLoss();
         String message = getResultMessage(result, this);
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         if (autoLogout) {
@@ -348,19 +364,17 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
 
     @Override
     public void onZipped(File zippedFile) {
-        dialog.dismiss();
+        indeterminateDialog.dismissAllowingStateLoss();
         sendZippedBulletin(zippedFile);
     }
 
     private void sendZippedBulletin(File zippedFile) {
-        dialog = new ProgressDialog(this);
-        dialog.setTitle(getString(R.string.bulletin_sending_progress));
-        dialog.setIndeterminate(false);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setMax(100);
-        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        dialog.setProgress(0);
-        dialog.show();
+        determinateDialog = DeterminateProgressDialog.newInstance();
+        try {
+            determinateDialog.show(getSupportFragmentManager(), "dlg_sending");
+        } catch (IllegalStateException e) {
+            // just means user has left app - do nothing
+        }
 
         UniversalId bulletinId = bulletin.getUniversalId();
         try {
@@ -387,7 +401,9 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
 
     @Override
     public void onProgressUpdate(int progress) {
-        dialog.setProgress(progress);
+        if (null != determinateDialog.getProgressDialog()) {
+            determinateDialog.getProgressDialog().setProgress(progress);
+        }
     }
 
     @Override
