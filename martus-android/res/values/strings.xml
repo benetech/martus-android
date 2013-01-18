@@ -64,7 +64,7 @@
     <string name="progress_confirming_magic_word">Confirming Magic Word</string>
     <string name="confirm_reset_install_bulletin">Reset to freshly installed state?</string>
     <string name="reset_to_install">Reset to freshly installed state</string>
-    <string name="ping_server_menu_item">Ping Server</string>
+    <string name="ping_server_menu_item">Check Server</string>
     <string name="pinging_server">Attempting to reach server</string>
     <string name="default_ping_result">Server is unavailable</string>
 
