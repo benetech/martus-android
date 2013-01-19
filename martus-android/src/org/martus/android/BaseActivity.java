@@ -5,12 +5,17 @@ import org.martus.android.dialog.InstallExplorerDialog;
 import org.martus.android.dialog.LoginRequiredDialog;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 /**
  * @author roms
@@ -31,8 +36,8 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
     SharedPreferences mySettings;
 
     private Handler inactivityHandler;
-
     private Runnable inactivityCallback;
+    private SendCompleteReceiver doneSendingReceiver;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +46,7 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         mySettings = PreferenceManager.getDefaultSharedPreferences(this);
         inactivityHandler = new EmptyHandler();
         inactivityCallback = new LogOutProcess(this);
+        doneSendingReceiver = new SendCompleteReceiver();
     }
 
     public void resetInactivityTimer(){
@@ -101,12 +107,21 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
     public void onResume() {
         super.onResume();
         resetInactivityTimer();
+
+        IntentFilter iff= new IntentFilter(UploadBulletinTask.BULLETIN_SEND_COMPLETED_BROADCAST);
+        LocalBroadcastManager.getInstance(this).registerReceiver(doneSendingReceiver, iff);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         stopInactivityTimer();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(doneSendingReceiver);
     }
 
     @Override
@@ -125,5 +140,12 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         dialog.setIndeterminate(true);
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
+    }
+
+    private class SendCompleteReceiver extends BroadcastReceiver {
+        public void onReceive(Context context, Intent intent) {
+            Log.i(AppConfig.LOG_LABEL, "SendCompleteReceiver onReceive !!!");
+            resetInactivityTimer();
+        }
     }
 }

@@ -20,11 +20,13 @@ public class LogOutProcess implements Runnable {
     public void run() {
         Log.i(AppConfig.LOG_LABEL, "!!!! About to clear keypair !!!!!");
         MartusSecurity martusCrypto = AppConfig.getInstance().getCrypto();
-        if (null != martusCrypto) {
-            martusCrypto.clearKeyPair();
-        }
-        if (null != myActivity) {
-            myActivity.close();
+        if (!MartusApplication.isIgnoreInactivity()) {
+            if (null != martusCrypto) {
+                martusCrypto.clearKeyPair();
+            }
+            if (null != myActivity) {
+                myActivity.close();
+            }
         }
     }
 }

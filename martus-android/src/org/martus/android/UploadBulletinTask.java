@@ -14,7 +14,9 @@ import org.martus.common.packet.UniversalId;
 import org.martus.util.StreamableBase64;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.Time;
 import android.util.Log;
 
@@ -23,6 +25,8 @@ import android.util.Log;
  *         Date: 10/3/12
  */
 public class UploadBulletinTask extends AsyncTask<Object, Integer, String> implements ProgressUpdater {
+
+    public static final String BULLETIN_SEND_COMPLETED_BROADCAST = "send_completed";
 
     private NotificationHelper mNotificationHelper;
     private BulletinSender sender;
@@ -72,6 +76,7 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> imple
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        myApplication.setIgnoreInactivity(true);
         createInitialNotification(mNotificationHelper, myApplication);
 
     }
@@ -91,6 +96,8 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> imple
             sender.onSent(s);
         }
         myApplication.setIgnoreInactivity(false);
+        Intent in=new Intent(BULLETIN_SEND_COMPLETED_BROADCAST);
+        LocalBroadcastManager.getInstance(myApplication.getApplicationContext()).sendBroadcast(in);
         super.onPostExecute(s);
     }
 
