@@ -11,11 +11,9 @@
         android:title="@string/settings_title" />
 
     <item android:id="@+id/server_menu_item"
-          android:showAsAction="ifRoom"
         android:title="@string/server_menu_title" />
 
     <item android:id="@+id/ping_server_menu_item"
-          android:showAsAction="ifRoom"
         android:title="@string/ping_server_menu_item" />
 
     <item android:id="@+id/reset_install_menu_item"
