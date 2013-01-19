@@ -515,11 +515,12 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
 
             final Vector params = new Vector();
             final XmlRpcClient client = clients[0];
-            String result = getString(R.string.default_ping_result);
+            String result = getString(R.string.ping_result_ok);
             try {
-                result = (String) client.execute("MartusServer.ping", params);
+                client.execute("MartusServer.ping", params);
             } catch (XmlRpcException e) {
                 Log.e(AppConfig.LOG_LABEL, "Ping failed", e);
+                result = getString(R.string.ping_result_ok);
             }
             return result;
         }

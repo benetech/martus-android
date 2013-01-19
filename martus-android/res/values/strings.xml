@@ -66,7 +66,8 @@
     <string name="reset_to_install">Reset to freshly installed state</string>
     <string name="ping_server_menu_item">Check Server</string>
     <string name="pinging_server">Attempting to reach server</string>
-    <string name="default_ping_result">Server is unavailable</string>
+    <string name="ping_result_ok">Server is up</string>
+    <string name="ping_result_down">Server is down</string>
 
     <!-- ============================== -->
     <!--  bulletin screen  -->
