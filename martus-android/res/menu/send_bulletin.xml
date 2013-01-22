@@ -4,7 +4,6 @@
 
     <item android:id="@+id/send_bulletin_menu_item"
         android:showAsAction="ifRoom|withText"
-        android:icon="@drawable/ic_menu_send_now"
         android:title="@string/send_bulletin" />
 
     <item android:id="@+id/cancel_bulletin_menu_item"
