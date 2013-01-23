@@ -19,6 +19,7 @@ import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.NetworkInterfaceConstants;
+import org.martus.common.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.common.network.NetworkResponse;
 
 import android.app.AlertDialog;
@@ -48,6 +49,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
 
     private static final String PACKETS_DIR = "packets";
     private static final String PREFS_DIR = "shared_prefs";
+    private static final String SERVER_COMMAND_PREFIX = "MartusServer.";
 
     public static final int MAX_LOGIN_ATTEMPTS = 3;
     public static final int MIN_PASSWORD_SIZE = 8;
@@ -517,7 +519,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
             final XmlRpcClient client = clients[0];
             String result = getString(R.string.ping_result_ok);
             try {
-                client.execute("MartusServer.ping", params);
+                client.execute(SERVER_COMMAND_PREFIX + NetworkInterfaceXmlRpcConstants.CMD_PING, params);
             } catch (XmlRpcException e) {
                 Log.e(AppConfig.LOG_LABEL, "Ping failed", e);
                 result = getString(R.string.ping_result_ok);
