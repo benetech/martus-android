@@ -43,6 +43,7 @@
        </activity>
         <activity
                 android:name=".ServerActivity"
+                android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
                 android:label="@string/choose_server_title"/>
         <activity
             android:name="com.ipaulpro.afilechooser.FileChooserActivity"
