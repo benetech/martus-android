@@ -7,6 +7,7 @@ import java.util.Set;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -35,8 +36,10 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         super.onCreate(savedInstanceState);
         BugSenseHandler.initAndStartSession(SettingsActivity.this, ExternalKeys.BUGSENSE_KEY);
 
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
+            ActionBar actionBar = getActionBar();
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         languageNamesArray = getResources().getStringArray(R.array.entries_language_preference);
         languageCodesArray = getResources().getStringArray(R.array.values_language_preference);
@@ -45,6 +48,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         SharedPreferences mySettings = getPreferenceScreen().getSharedPreferences();
 
         Map<String, ?> allPrefs = mySettings.getAll();
+
 
         //Initialize summaries of previously set settings
         Set<String> prefKeys = allPrefs.keySet();

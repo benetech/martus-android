@@ -27,20 +27,18 @@ Boston, MA 02111-1307, USA.
 package org.martus.clientside;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import java.util.Vector;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
-//import org.apache.xmlrpc.XmlRpcClient;
-//import org.apache.xmlrpc.XmlRpcException;
-//import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+import org.apache.xmlrpc.util.SAXParsers;
 import org.martus.common.MartusLogger;
 import org.martus.common.MartusUtilities;
 import org.martus.common.network.NetworkInterface;
@@ -49,8 +47,7 @@ import org.martus.common.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.common.network.SimpleHostnameVerifier;
 import org.martus.common.network.SimpleX509TrustManager;
 import org.martus.util.Stopwatch;
-import org.xmlrpc.android.XMLRPCClient;
-import org.xmlrpc.android.XMLRPCException;
+
 
 public class ClientSideNetworkHandlerUsingXmlRpc
 	implements NetworkInterfaceConstants, NetworkInterfaceXmlRpcConstants, NetworkInterface
@@ -354,19 +351,9 @@ public class ClientSideNetworkHandlerUsingXmlRpc
 		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
 		config.setServerURL(new URL(serverUrl));
 		XmlRpcClient client = new XmlRpcClient();
-		client.setConfig(config);
+        SAXParsers.setSAXParserFactory(SAXParserFactory.newInstance());
+        client.setConfig(config);
 		Stopwatch sw = new Stopwatch();
-
-        // following code is more Android Gingerbread friendly but doesn't yet work with SSL
-/*        XMLRPCClient newClient = new XMLRPCClient(new URL(serverUrl), "", "");
-        Object[] newParams;
-        int numParams = params.size();
-        if (numParams > 0) {
-            newParams = params.toArray(new Object[numParams]);
-        } else {
-            newParams = null;
-        }
-        Object result = newClient.callEx("MartusServer." + method, newParams);*/
 
 		Object result = client.execute("MartusServer." + method, params);
 

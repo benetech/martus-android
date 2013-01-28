@@ -14,6 +14,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -46,7 +47,7 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
         BugSenseHandler.initAndStartSession(ServerActivity.this, ExternalKeys.BUGSENSE_KEY);
         setContentView(R.layout.choose_server);
 
-        if (haveVerifiedServerInfo()) {
+        if ((Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) && haveVerifiedServerInfo()) {
             ActionBar actionBar = getActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
         }

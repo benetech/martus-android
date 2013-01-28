@@ -29,6 +29,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -86,8 +87,10 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         BugSenseHandler.initAndStartSession(BulletinActivity.this, ExternalKeys.BUGSENSE_KEY);
         setContentView(R.layout.send_bulletin_linear);
 
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
+            ActionBar actionBar = getActionBar();
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         MartusSecurity martusCrypto = AppConfig.getInstance().getCrypto();
         if (!martusCrypto.hasKeyPair()) {

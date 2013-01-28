@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Martus</string>
-    <string name="version">1.0.20120115</string>
+    <string name="version">1.20130128</string>
     <string name="create_sample_bulletin">Create Bulletin</string>
     <string name="error_message">Error</string>
     <string name="confirm_default">Are you sure?</string>
