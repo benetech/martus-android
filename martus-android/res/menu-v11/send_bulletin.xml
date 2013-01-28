@@ -4,17 +4,16 @@
 
     <item android:id="@+id/send_bulletin_menu_item"
         android:showAsAction="ifRoom|withText"
-        android:icon="@drawable/gb_menu_send_now"
         android:title="@string/send_bulletin" />
 
     <item android:id="@+id/cancel_bulletin_menu_item"
             android:showAsAction="ifRoom"
-            android:icon="@drawable/gb_menu_cancel"
+            android:icon="@drawable/ic_menu_cancel"
             android:title="@string/bulletin_cancel" />
 
     <item android:id="@+id/add_attachment_menu_item"
         android:showAsAction="ifRoom"
-        android:icon="@drawable/gb_menu_new_attachment"
+        android:icon="@drawable/ic_menu_new_attachment"
         android:title="@string/add_attachment" />
 
 </menu>
