@@ -345,7 +345,11 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
 
     @Override
     public void onSent(String result) {
-        determinateDialog.dismissAllowingStateLoss();
+        try {
+            determinateDialog.dismissAllowingStateLoss();
+        } catch (IllegalStateException e) {
+            //this is okay as the user may have closed this screen
+        }
         String message = getResultMessage(result, this);
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         if (autoLogout) {
@@ -367,7 +371,11 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
 
     @Override
     public void onZipped(File zippedFile) {
-        indeterminateDialog.dismissAllowingStateLoss();
+        try {
+            indeterminateDialog.dismissAllowingStateLoss();
+        } catch (IllegalStateException e) {
+            //this is okay as the user may have closed this screen
+        }
         sendZippedBulletin(zippedFile);
     }
 

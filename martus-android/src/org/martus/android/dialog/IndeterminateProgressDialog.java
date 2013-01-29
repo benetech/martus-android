@@ -1,15 +1,20 @@
 package org.martus.android.dialog;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.view.KeyEvent;
 
 /**
  * @author roms
  *         Date: 1/17/13
  */
 public class IndeterminateProgressDialog extends DialogFragment {
+
+    private Activity myActivity;
 
     public interface IndeterminateProgressDialogListener {
         String getIndeterminateDialogMessage();
@@ -25,12 +30,30 @@ public class IndeterminateProgressDialog extends DialogFragment {
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+        myActivity = getActivity();
 		final ProgressDialog dialog = new ProgressDialog(getActivity());
 		dialog.setTitle(((IndeterminateProgressDialogListener) getActivity()).getIndeterminateDialogMessage());
 		dialog.setIndeterminate(true);
 		dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
+        dialog.setOnKeyListener(new BackButtonIgnorer());
 		return dialog;
 	}
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        myActivity.finish();
+    }
+
+    private class BackButtonIgnorer implements DialogInterface.OnKeyListener {
+        @Override
+        public boolean onKey(DialogInterface dialogInterface, int keyCode, KeyEvent keyEvent) {
+            if(keyCode == KeyEvent.KEYCODE_BACK){
+                return true;
+            }
+            return false;
+        }
+    }
 
 }
