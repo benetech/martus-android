@@ -26,6 +26,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Base64;
@@ -464,7 +465,20 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
 
     @Override
     public String getConfirmationTitle() {
-        return getString(R.string.confirm_reset_install_bulletin);
+        return getString(R.string.confirm_reset_install);
+    }
+
+    @Override
+    public String getConfirmationMessage() {
+        int count = getNumberOfUnsentBulletins();
+        Resources res = getResources();
+        return res.getQuantityString(R.plurals.confirm_reset_install_extra, count, count);
+    }
+
+    private int getNumberOfUnsentBulletins() {
+        final File cacheDir = getCacheDir();
+        final String[] names = cacheDir.list(new ZipFileFilter());
+        return names.length;
     }
 
     @Override

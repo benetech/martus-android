@@ -101,6 +101,11 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
     }
 
     @Override
+    public String getConfirmationMessage() {
+        return "";
+    }
+
+    @Override
     public void onUserInteraction(){
         resetInactivityTimer();
     }
