@@ -169,6 +169,10 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     }
 
     private void pingServer() {
+        if (! isNetworkAvailable()) {
+            Toast.makeText(this, getString(R.string.no_network_connection), Toast.LENGTH_LONG).show();
+            return;
+        }
         showProgressDialog(getString(R.string.progress_connecting_to_server));
         try {
             String pingUrl = "http://" + serverIP + pingPath;
@@ -522,7 +526,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
                 client.execute(SERVER_COMMAND_PREFIX + NetworkInterfaceXmlRpcConstants.CMD_PING, params);
             } catch (XmlRpcException e) {
                 Log.e(AppConfig.LOG_LABEL, "Ping failed", e);
-                result = getString(R.string.ping_result_ok);
+                result = getString(R.string.ping_result_down);
             }
             return result;
         }

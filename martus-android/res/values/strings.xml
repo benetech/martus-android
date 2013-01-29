@@ -68,6 +68,8 @@
     <string name="pinging_server">Attempting to reach server</string>
     <string name="ping_result_ok">Server is up</string>
     <string name="ping_result_down">Server is down</string>
+    <string name="no_network_connection">Device has no network connection</string>
+    <string name="no_network_create_bulletin_warning">You currently have no network connection. Any bulletins you try to send will fail and be resent next time you log in with network access.</string>
 
     <!-- ============================== -->
     <!--  bulletin screen  -->
