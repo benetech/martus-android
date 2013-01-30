@@ -53,7 +53,6 @@
         <item>Urdu</item>
         <item>Uzbek</item>
         <item>Vietnamese</item>
-        <item>Burmese</item>
     </string-array>
 
 
@@ -64,7 +63,7 @@
         <item>az</item>
         <item>bg</item>
         <item>bn</item>
-        <item>my</item>
+        <item>bur</item>
         <item>zh</item>
         <item>nl</item>
         <item>eo</item>
@@ -109,6 +108,5 @@
         <item>ur</item>
         <item>uz</item>
         <item>vi</item>
-        <item>bur</item>
     </string-array>
 </resources>
