@@ -74,6 +74,8 @@
     <string name="ping_result_down">Server is down</string>
     <string name="no_network_connection">Device has no network connection!</string>
     <string name="no_network_create_bulletin_warning">Any bulletins you try to send will fail and be resent next time you log in with network access.</string>
+    <string name="logout_while_sending_title">Can\'t logout yet</string>
+    <string name="logout_while_sending_message">Please wait until the bulletin has finished sending.</string>
 
     <!-- ============================== -->
     <!--  bulletin screen  -->

@@ -365,7 +365,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
 
     public static String getResultMessage(String result, Context context) {
         String message;
-        if (result.equals(NetworkInterfaceConstants.OK)) {
+        if (result != null && result.equals(NetworkInterfaceConstants.OK)) {
             message = context.getString(R.string.successful_send_notification);
         } else {
             message = context.getString(R.string.failed_send_notification, result);

@@ -149,8 +149,12 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
                 startActivity(intent);
                 return true;
             case R.id.quit_menu_item:
-                logout();
-                finish();
+                if (!MartusApplication.isIgnoreInactivity()) {
+                    logout();
+                    finish();
+                } else {
+                    showMessage(this, getString(R.string.logout_while_sending_message), getString(R.string.logout_while_sending_title));
+                }
                 return true;
             case R.id.server_menu_item:
                 intent = new Intent(MartusActivity.this, ServerActivity.class);
