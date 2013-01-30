@@ -87,7 +87,9 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     public void onResume() {
         super.onResume();
         if (martusCrypto.hasKeyPair()) {
-            checkDesktopKey();
+            if (!checkDesktopKey()) {
+                return;
+            }
             if (!confirmServerPublicKey()) {
                 Intent intent = new Intent(MartusActivity.this, ServerActivity.class);
                 startActivityForResult(intent, EXIT_REQUEST_CODE);
@@ -261,12 +263,14 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         return true;
     }
 
-    private void checkDesktopKey() {
+    private boolean checkDesktopKey() {
         String desktopPublicKeyString = mySettings.getString(SettingsActivity.KEY_DESKTOP_PUBLIC_KEY, "");
         if (desktopPublicKeyString.length() < 1) {
             Intent intent = new Intent(MartusActivity.this, DesktopKeyActivity.class);
             startActivityForResult(intent, ACTIVITY_DESKTOP_KEY);
+            return false;
         }
+        return true;
     }
 
     private boolean isAccountCreated() {
