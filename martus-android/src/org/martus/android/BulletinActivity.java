@@ -108,7 +108,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
                 bulletinAttachments = new HashMap<String, File>(2);
             } catch (Exception e) {
                 Log.e(AppConfig.LOG_LABEL, "problem creating bulletin", e);
-                MartusActivity.showMessage(this, getString(R.string.problem_creating_bulletin), getString(R.string.error_message));
+                showMessage(this, getString(R.string.problem_creating_bulletin), getString(R.string.error_message));
             }
         }
 
@@ -160,7 +160,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
             }
         } catch (Exception e) {
             Log.e(AppConfig.LOG_LABEL, "problem adding attachment to bulletin", e);
-            MartusActivity.showMessage(this, getString(R.string.problem_adding_attachment), getString(R.string.error_message));
+            showMessage(this, getString(R.string.problem_adding_attachment), getString(R.string.error_message));
         }
     }
 
@@ -211,7 +211,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
 
         } catch (Exception e) {
             Log.e(AppConfig.LOG_LABEL, "problem getting files for attachments", e);
-            MartusActivity.showMessage(this, getString(R.string.problem_getting_files_for_attachments), getString(R.string.error_message));
+            showMessage(this, getString(R.string.problem_getting_files_for_attachments), getString(R.string.error_message));
         }
 
         return attachments;
@@ -285,6 +285,10 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         if (shouldShowInstallExplorer) {
             showInstallExplorerDialog();
             shouldShowInstallExplorer = false;
+        }
+        if (! isNetworkAvailable()) {
+            showMessage(this, getString(R.string.no_network_create_bulletin_warning),
+                    getString(R.string.no_network_connection));
         }
     }
 

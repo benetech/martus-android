@@ -64,7 +64,6 @@
     <string name="progress_confirming_magic_word">Confirming Magic Word</string>
     <string name="confirm_reset_install">Reset to freshly installed state?</string>
     <plurals name="confirm_reset_install_extra">
-        <item quantity="zero"></item>
         <item quantity="one">You will lose %1$s failed bulletin that would be resent on your next login.</item>
         <item quantity="other">You will lose %1$s failed bulletins that would be resent on your next login.</item>
     </plurals>
@@ -73,8 +72,8 @@
     <string name="pinging_server">Attempting to reach server</string>
     <string name="ping_result_ok">Server is up</string>
     <string name="ping_result_down">Server is down</string>
-    <string name="no_network_connection">Device has no network connection</string>
-    <string name="no_network_create_bulletin_warning">You currently have no network connection. Any bulletins you try to send will fail and be resent next time you log in with network access.</string>
+    <string name="no_network_connection">Device has no network connection!</string>
+    <string name="no_network_create_bulletin_warning">Any bulletins you try to send will fail and be resent next time you log in with network access.</string>
 
     <!-- ============================== -->
     <!--  bulletin screen  -->
@@ -132,7 +131,7 @@
     <!--  notification bar  -->
     <!-- ============================== -->
     <string name="successful_send_notification">Bulletin sent!</string>
-    <string name="failed_send_notification">Send failed with result: %1$s</string>
+    <string name="failed_send_notification">Send failed due to: %1$s . Will be retried on next login.</string>
     <string name="failure_send_notification">Sending bulletin failed</string>
     <string name="starting_send_notification">Sending …</string>
     <string name="notification_title">Martus - %1$s</string>

@@ -47,7 +47,7 @@ public class DesktopKeyActivity extends BaseActivity {
         String code = editText_code.getText().toString().trim();
         if ("".equals(code)) {
             editText_code.requestFocus();
-            MartusActivity.showMessage(activity, getString(R.string.public_code_validation_empty), getString(R.string.error_message));
+            showMessage(activity, getString(R.string.public_code_validation_empty), getString(R.string.error_message));
             return;
         }
         try {
@@ -78,7 +78,7 @@ public class DesktopKeyActivity extends BaseActivity {
                     try {
                         setPublicKey(new File(filePath));
                     } catch (Exception e) {
-                        MartusActivity.showMessage(activity, getString(R.string.invalid_public_account_file), getString(R.string.error_message));
+                        showMessage(activity, getString(R.string.invalid_public_account_file), getString(R.string.error_message));
                         Log.e("martus", "problem getting HQ key", e);
                     }
                 } else if (resultCode == RESULT_CANCELED) {
@@ -103,7 +103,7 @@ public class DesktopKeyActivity extends BaseActivity {
 
         String publicCode = MartusCrypto.computePublicCode(publicKeyString);
         if(!confirmPublicCode(publicCode, editText_code.getText().toString().trim())) {
-            MartusActivity.showMessage(activity, getString(R.string.invalid_public_code), getString(R.string.error_message));
+            showMessage(activity, getString(R.string.invalid_public_code), getString(R.string.error_message));
             return;
         }
         SharedPreferences.Editor editor = mySettings.edit();

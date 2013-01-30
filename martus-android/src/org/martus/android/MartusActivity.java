@@ -22,8 +22,6 @@ import org.martus.common.network.NetworkInterfaceConstants;
 import org.martus.common.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.common.network.NetworkResponse;
 
-import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -318,13 +316,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         serverIP = mySettings.getString(SettingsActivity.KEY_SERVER_IP, "");
     }
 
-    public static void showMessage(Context context, String msg, String title){
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-        alert.setIcon(android.R.drawable.ic_dialog_alert)
-             .setTitle(title)
-             .setMessage(msg)
-             .show();
-    }
+
 
     void showLoginDialog() {
         LoginDialog loginDialog = LoginDialog.newInstance();

@@ -4,9 +4,11 @@ import org.martus.android.dialog.ConfirmationDialog;
 import org.martus.android.dialog.InstallExplorerDialog;
 import org.martus.android.dialog.LoginRequiredDialog;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -136,8 +138,23 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         //No call for super(). Bug on API Level > 11.
     }
 
+    protected void showMessage(Context context, String msg, String title){
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        alert.setIcon(android.R.drawable.ic_dialog_alert)
+             .setTitle(title)
+             .setMessage(msg)
+             .setPositiveButton(R.string.alert_dialog_ok, new SimpleOkayButtonListener())
+             .show();
+    }
+
+    public class SimpleOkayButtonListener implements DialogInterface.OnClickListener {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+    }
+
     protected boolean isNetworkAvailable() {
-        Log.e(AppConfig.LOG_LABEL, " start isNetworkAvailable ");
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnected();
