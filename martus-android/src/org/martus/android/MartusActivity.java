@@ -166,7 +166,11 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
                 pingServer();
                 return true;
             case R.id.reset_install_menu_item:
-                showConfirmationDialog();
+                if (!MartusApplication.isIgnoreInactivity()) {
+                    showConfirmationDialog();
+                } else {
+                    showMessage(this, getString(R.string.logout_while_sending_message), getString(R.string.reset_while_sending_title));
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
