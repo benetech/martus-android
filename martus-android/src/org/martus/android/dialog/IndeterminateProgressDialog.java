@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.view.KeyEvent;
 
 /**
  * @author roms
@@ -44,16 +43,6 @@ public class IndeterminateProgressDialog extends DialogFragment {
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
         myActivity.finish();
-    }
-
-    private class BackButtonIgnorer implements DialogInterface.OnKeyListener {
-        @Override
-        public boolean onKey(DialogInterface dialogInterface, int keyCode, KeyEvent keyEvent) {
-            if(keyCode == KeyEvent.KEYCODE_BACK){
-                return true;
-            }
-            return false;
-        }
     }
 
 }
