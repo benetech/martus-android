@@ -96,6 +96,8 @@
     <string name="failure_choosing_file">Failed choosing file</string>
     <string name="confirm_cancel_bulletin">Cancel this Bulletin?</string>
     <string name="confirm_remove_attachment">Remove %1$s ?</string>
+    <string name="must_login_first_title">You must first login!</string>
+    <string name="must_login_first_message">Before sending this bulletin</string>
 
     <!-- ============================== -->
     <!--  choose server screen  -->

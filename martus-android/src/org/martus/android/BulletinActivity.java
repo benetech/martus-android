@@ -23,7 +23,6 @@ import org.martus.common.network.NetworkInterfaceConstants;
 import org.martus.common.packet.UniversalId;
 
 import android.app.ActionBar;
-import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
