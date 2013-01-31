@@ -100,6 +100,7 @@
     <string name="confirm_remove_attachment">Remove %1$s ?</string>
     <string name="must_login_first_title">You must first login!</string>
     <string name="must_login_first_message">Before sending this bulletin</string>
+    <string name="install_file_explorer">Try another file explorer</string>
 
     <!-- ============================== -->
     <!--  choose server screen  -->
