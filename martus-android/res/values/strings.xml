@@ -63,6 +63,7 @@
     <string formatted="false" name="tor_link">https://www.torproject.org</string>
     <string name="progress_confirming_magic_word">Confirming Magic Word</string>
     <string name="confirm_reset_install">Reset to freshly installed state?</string>
+    <string name="confirm_reset_install_extra_no_pending">You are okay to reset as there are no unsent bulletins.</string>
     <plurals name="confirm_reset_install_extra">
         <item quantity="one">You will lose %1$s failed bulletin that would be resent on your next login.</item>
         <item quantity="other">You will lose %1$s failed bulletins that would be resent on your next login.</item>

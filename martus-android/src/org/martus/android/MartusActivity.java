@@ -476,8 +476,12 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     @Override
     public String getConfirmationMessage() {
         int count = getNumberOfUnsentBulletins();
-        Resources res = getResources();
-        return res.getQuantityString(R.plurals.confirm_reset_install_extra, count, count);
+        if (count == 0) {
+          return getString(R.string.confirm_reset_install_extra_no_pending);
+        } else {
+            Resources res = getResources();
+            return res.getQuantityString(R.plurals.confirm_reset_install_extra, count, count);
+        }
     }
 
     private int getNumberOfUnsentBulletins() {
