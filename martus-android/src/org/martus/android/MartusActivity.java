@@ -341,6 +341,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
             }
             Toast.makeText(this, getString(R.string.incorrect_password), Toast.LENGTH_SHORT).show();
             showLoginDialog();
+            return;
         }
 
         serverPublicKey = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
