@@ -96,6 +96,7 @@
     <string name="bulletin_packaging_progress">Encrypting and zipping…</string>
     <string name="failure_zipping_bulletin">Failed zipping bulletin</string>
     <string name="failure_choosing_file">Failed choosing file</string>
+    <string name="attachment_no_longer_exists">Couldn\'t send because the following attachment, %1$s , has been deleted from the device</string>
     <string name="confirm_cancel_bulletin">Cancel this Bulletin?</string>
     <string name="confirm_remove_attachment">Remove %1$s ?</string>
     <string name="must_login_first_title">You must first login!</string>

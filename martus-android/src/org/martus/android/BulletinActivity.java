@@ -4,9 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.martus.android.dialog.ConfirmationDialog;
 import org.martus.android.dialog.DeterminateProgressDialog;
@@ -104,7 +105,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         if (null == bulletin) {
             try {
                 bulletin = createBulletin();
-                bulletinAttachments = new HashMap<String, File>(2);
+                bulletinAttachments = new ConcurrentHashMap<String, File>(2);
             } catch (Exception e) {
                 Log.e(AppConfig.LOG_LABEL, "problem creating bulletin", e);
                 showMessage(this, getString(R.string.problem_creating_bulletin), getString(R.string.error_message));
@@ -138,8 +139,15 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
 
     private void sendBulletin() {
         try {
-            for (File file : bulletinAttachments.values()) {
-                addAttachmentToBulletin(file);
+            Iterator<Map.Entry<String,File>> iterator = bulletinAttachments.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<String,File> entry = iterator.next();
+                File file = entry.getValue();
+                if (!addAttachmentToBulletin(file)) {
+                    iterator.remove();
+                    attachmentAdapter.remove(file.getName());
+                    return;
+                }
             }
             zipBulletin(bulletin);
         } catch (Exception e) {
@@ -163,9 +171,15 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         }
     }
 
-    private void addAttachmentToBulletin(File attachment) throws IOException, MartusCrypto.EncryptionException {
+    private boolean addAttachmentToBulletin(File attachment) throws IOException, MartusCrypto.EncryptionException {
         AttachmentProxy attProxy = new AttachmentProxy(attachment);
-        bulletin.addPublicAttachment(attProxy);
+        if (!attachment.exists()) {
+            Toast.makeText(this, getString(R.string.attachment_no_longer_exists, attachment.getName()), Toast.LENGTH_LONG).show();
+            return false;
+        } else {
+            bulletin.addPublicAttachment(attProxy);
+        }
+        return true;
     }
 
     private void addAttachmentToMap(File attachment) {
