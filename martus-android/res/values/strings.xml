@@ -114,7 +114,7 @@
     <!-- ============================== -->
     <!--  desktop key screen  -->
     <!-- ============================== -->
-    <string name="desktop_sync_public_code">First enter server Public Code:</string>
+    <string name="desktop_sync_public_code">First enter desktop Public Code:</string>
     <string name="desktop_sync_title">Import Desktop Account</string>
     <string name="desktop_sync_choose_file">Then choose Desktop Account file</string>
     <string name="desktop_public_code_hint">Desktop Account Public Code</string>
