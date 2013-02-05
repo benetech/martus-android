@@ -1,14 +1,21 @@
 package org.martus.android;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.xmlrpc.XmlRpcException;
+import org.apache.xmlrpc.client.XmlRpcClient;
 import org.martus.android.dialog.ConfirmationDialog;
 import org.martus.android.dialog.DeterminateProgressDialog;
 import org.martus.android.dialog.IndeterminateProgressDialog;
@@ -21,16 +28,19 @@ import org.martus.common.bulletin.Bulletin;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.NetworkInterfaceConstants;
+import org.martus.common.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.common.packet.UniversalId;
 
 import android.app.ActionBar;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -61,6 +71,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
 
     private static final int CONFIRMATION_TYPE_CANCEL_BULLETIN = 0;
     private static final int CONFIRMATION_TYPE_DELETE_ATTACHMENT = 1;
+    private static final String PICASA_INDICATOR = "picasa";
 
     private ClientBulletinStore store;
     private HQKey hqKey;
@@ -210,7 +221,13 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
                         Object payload = bundle.get(Intent.EXTRA_STREAM);
                         if (payload instanceof Uri) {
                             uris = new ArrayList<Uri>(1);
-                            uris.add((Uri)payload);
+                            final Uri payloadUri = (Uri)payload;
+                            if (payloadUri.toString().contains(PICASA_INDICATOR)) {
+                                final AsyncTask<Uri, Void, File> picasaImageTask = new PicasaImageTask();
+                                picasaImageTask.execute(payloadUri);
+                            } else {
+                                uris.add((Uri)payload);
+                            }
                         } else {
                             uris = (ArrayList<Uri>)payload;
                         }
@@ -230,6 +247,15 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         return attachments;
     }
 
+    private void processPicasaResult(File result) {
+        if (null != result) {
+            addAttachmentToMap(result);
+            Toast.makeText(BulletinActivity.this, getString(R.string.fetched_picasa_image), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(BulletinActivity.this, "fetching Picasa image failed", Toast.LENGTH_LONG).show();
+        }
+    }
+
     private File getFileFromUri(Uri uri) throws URISyntaxException {
         String filePath = FileUtils.getPath(this, uri);
         return new File(filePath);
@@ -245,8 +271,16 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
                         Uri uri = data.getData();
                         try {
                             String filePath = FileUtils.getPath(this, uri);
-                            File file = new File(filePath);
-                            addAttachmentToMap(file);
+                            File file = null;
+                            if (filePath != null) {
+                                file = new File(filePath);
+                            } else if (uri.toString().contains(PICASA_INDICATOR))  {
+                                final AsyncTask<Uri, Void, File> picasaImageTask = new PicasaImageTask();
+                                picasaImageTask.execute(uri);
+                            }
+                            if (null != file) {
+                                addAttachmentToMap(file);
+                            }
                         } catch (Exception e) {
                             Log.e(AppConfig.LOG_LABEL, "problem getting attachment", e);
                             Toast.makeText(this, getString(R.string.problem_getting_attachment), Toast.LENGTH_SHORT).show();
@@ -427,6 +461,16 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         }
     }
 
+    private void removeCachedUnsentAttachments() {
+        Set<String> filenames = bulletinAttachments.keySet();
+        for (String filename : filenames) {
+            File file = new File(getCacheDir(), filename);
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+    }
+
     @Override
     public void onProgressUpdate(int progress) {
         if (null != determinateDialog.getProgressDialog()) {
@@ -438,6 +482,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
     public void onConfirmationAccepted() {
         switch (confirmationType) {
             case CONFIRMATION_TYPE_CANCEL_BULLETIN :
+                removeCachedUnsentAttachments();
                 this.finish();
                 break;
             case CONFIRMATION_TYPE_DELETE_ATTACHMENT :
@@ -475,4 +520,64 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         ConfirmationDialog confirmationDialog = ConfirmationDialog.newInstance();
         confirmationDialog.show(getSupportFragmentManager(), "dlg_delete_attachment");
     }
+
+    private File createFileFromInputStream(InputStream inputStream, String fileName) throws IOException {
+
+        File file = new File(getCacheDir(), fileName);
+        BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
+        int read;
+        byte bytes[] = new byte[1024];
+
+        while ((read = inputStream.read(bytes)) != -1) {
+            outputStream.write(bytes, 0, read);
+        }
+
+        outputStream.flush();
+        outputStream.close();
+        return file;
+    }
+
+    private class PicasaImageTask extends AsyncTask<Uri, Void, File> {
+        @Override
+        protected File doInBackground(Uri... uris) {
+
+            final Uri uri = uris[0];
+            File file = null;
+            try {
+                file = getFileFromPicasaUri(uri);
+            } catch (Exception e) {
+                Log.e(AppConfig.LOG_LABEL, "Fetching Picasa image failed", e);
+            }
+            return file;
+        }
+
+        @Override
+        protected void onPostExecute(File result) {
+            super.onPostExecute(result);
+            processPicasaResult(result);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            Toast.makeText(BulletinActivity.this, getString(R.string.fetching_picasa_image), Toast.LENGTH_SHORT).show();
+        }
+
+        private File getFileFromPicasaUri(Uri payloadUri) throws IOException {
+                File file = null;
+                final String[] filePathColumn = { MediaStore.MediaColumns.DATA, MediaStore.MediaColumns.DISPLAY_NAME };
+                final Cursor cursor = getContentResolver().query(payloadUri, filePathColumn, null, null, null);
+                cursor.moveToFirst();
+                final int columnIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
+                if (columnIndex != -1) {
+                    final InputStream is = getContentResolver().openInputStream(payloadUri);
+                    if (is != null) {
+                        final String path = payloadUri.getPath();
+                        final String filename = new File(path).getName();
+                        file = createFileFromInputStream(is, PICASA_INDICATOR + filename + ".jpg");
+                        is.close();
+                    }
+                }
+                return file;
+            }
+        }
 }

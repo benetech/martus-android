@@ -102,6 +102,8 @@
     <string name="must_login_first_title">You must first login!</string>
     <string name="must_login_first_message">Before sending this bulletin</string>
     <string name="install_file_explorer">Try another file explorer</string>
+    <string name="fetching_picasa_image">Fetching Picasa image</string>
+    <string name="fetched_picasa_image">Got Picasa image</string>
 
     <!-- ============================== -->
     <!--  choose server screen  -->
