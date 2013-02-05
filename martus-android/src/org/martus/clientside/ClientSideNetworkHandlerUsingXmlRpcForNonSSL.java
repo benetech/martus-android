@@ -26,12 +26,14 @@ Boston, MA 02111-1307, USA.
 
 package org.martus.clientside;
 
+import javax.xml.parsers.SAXParserFactory;
 import java.net.ConnectException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.Vector;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+import org.apache.xmlrpc.util.SAXParsers;
 import org.martus.common.network.NetworkInterfaceConstants;
 import org.martus.common.network.NonSSLNetworkAPI;
 import org.martus.common.network.NetworkInterfaceXmlRpcConstants;
@@ -119,6 +121,7 @@ public class ClientSideNetworkHandlerUsingXmlRpcForNonSSL extends NonSSLNetworkA
 		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
 		config.setServerURL(new URL(serverUrl));
 		XmlRpcClient xmlRpc = new XmlRpcClient();
+        SAXParsers.setSAXParserFactory(SAXParserFactory.newInstance());
 		xmlRpc.setConfig(config);
 
         //following code seems more Android Gingerbread friendly
