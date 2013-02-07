@@ -145,7 +145,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         }
     }
 
-    private void sendBulletin() {
+    private void addAttachmentsAndSendBulletin() {
         try {
             Iterator<Map.Entry<String,File>> iterator = bulletinAttachments.entrySet().iterator();
             while (iterator.hasNext()) {
@@ -310,7 +310,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
                 startActivity(intent);
                 return true;
             case R.id.send_bulletin_menu_item:
-                sendBulletin();
+                addAttachmentsAndSendBulletin();
                 return true;
             case R.id.cancel_bulletin_menu_item:
                 setConfirmationType(CONFIRMATION_TYPE_CANCEL_BULLETIN);
