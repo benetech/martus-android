@@ -221,7 +221,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
                         if (payload instanceof Uri) {
                             uris = new ArrayList<Uri>(1);
                             final Uri payloadUri = (Uri)payload;
-                            if (payloadUri.toString().contains(PICASA_INDICATOR)) {
+                            if (isPicasaUri(payloadUri)) {
                                 final AsyncTask<Uri, Void, File> picasaImageTask = new PicasaImageTask();
                                 picasaImageTask.execute(payloadUri);
                             } else {
@@ -244,6 +244,10 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         }
 
         return attachments;
+    }
+
+    private boolean isPicasaUri(Uri payloadUri) {
+        return payloadUri.toString().contains(PICASA_INDICATOR);
     }
 
     private void processPicasaResult(File result) {
@@ -270,14 +274,13 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
                         Uri uri = data.getData();
                         try {
                             String filePath = FileUtils.getPath(this, uri);
-                            File file = null;
-                            if (filePath != null) {
-                                file = new File(filePath);
-                            } else if (uri.toString().contains(PICASA_INDICATOR))  {
-                                final AsyncTask<Uri, Void, File> picasaImageTask = new PicasaImageTask();
-                                picasaImageTask.execute(uri);
-                            }
-                            if (null != file) {
+                            if (filePath == null) {
+                                if (isPicasaUri(uri)) {
+                                    final AsyncTask<Uri, Void, File> picasaImageTask = new PicasaImageTask();
+                                    picasaImageTask.execute(uri);
+                                }
+                            } else {
+                                File file = new File(filePath);
                                 addAttachmentToMap(file);
                             }
                         } catch (Exception e) {
