@@ -11,11 +11,8 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.xmlrpc.XmlRpcException;
-import org.apache.xmlrpc.client.XmlRpcClient;
 import org.martus.android.dialog.ConfirmationDialog;
 import org.martus.android.dialog.DeterminateProgressDialog;
 import org.martus.android.dialog.IndeterminateProgressDialog;
@@ -28,7 +25,6 @@ import org.martus.common.bulletin.Bulletin;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.NetworkInterfaceConstants;
-import org.martus.common.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.common.packet.UniversalId;
 
 import android.app.ActionBar;
@@ -157,6 +153,8 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
                 if (!addAttachmentToBulletin(file)) {
                     iterator.remove();
                     attachmentAdapter.remove(file.getName());
+                    Toast.makeText(this, getString(R.string.attachment_no_longer_exists, file.getName()),
+                            Toast.LENGTH_LONG).show();
                     return;
                 }
             }
@@ -185,9 +183,9 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
     private boolean addAttachmentToBulletin(File attachment) throws IOException, MartusCrypto.EncryptionException {
         AttachmentProxy attProxy = new AttachmentProxy(attachment);
         if (!attachment.exists()) {
-            Toast.makeText(this, getString(R.string.attachment_no_longer_exists, attachment.getName()), Toast.LENGTH_LONG).show();
             return false;
-        } else {
+        }
+        else {
             bulletin.addPublicAttachment(attProxy);
         }
         return true;
