@@ -561,21 +561,21 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         }
 
         private File getFileFromPicasaUri(Uri payloadUri) throws IOException {
-                File file = null;
-                final String[] filePathColumn = { MediaStore.MediaColumns.DATA, MediaStore.MediaColumns.DISPLAY_NAME };
-                final Cursor cursor = getContentResolver().query(payloadUri, filePathColumn, null, null, null);
-                cursor.moveToFirst();
-                final int columnIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
-                if (columnIndex != -1) {
-                    final InputStream is = getContentResolver().openInputStream(payloadUri);
-                    if (is != null) {
-                        final String path = payloadUri.getPath();
-                        final String filename = new File(path).getName();
-                        file = createFileFromInputStream(is, PICASA_INDICATOR + filename + ".jpg");
-                        is.close();
-                    }
-                }
-                return file;
-            }
+            File file;
+            final String[] filePathColumn = { MediaStore.MediaColumns.DATA, MediaStore.MediaColumns.DISPLAY_NAME };
+            final Cursor cursor = getContentResolver().query(payloadUri, filePathColumn, null, null, null);
+            cursor.moveToFirst();
+            final int columnIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
+            if (columnIndex == -1) return null;
+
+            final InputStream is = getContentResolver().openInputStream(payloadUri);
+            if (is == null) return null;
+            final String path = payloadUri.getPath();
+            final String filename = new File(path).getName();
+            file = createFileFromInputStream(is, PICASA_INDICATOR + filename + ".jpg");
+            is.close();
+
+            return file;
         }
+    }
 }
