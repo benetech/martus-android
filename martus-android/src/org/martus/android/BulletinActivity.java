@@ -26,6 +26,7 @@ import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.NetworkInterfaceConstants;
 import org.martus.common.packet.UniversalId;
+import org.martus.util.StreamCopier;
 
 import android.app.ActionBar;
 import android.content.ActivityNotFoundException;
@@ -523,13 +524,8 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
 
         File file = new File(getCacheDir(), fileName);
         BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
-        int read;
-        byte bytes[] = new byte[1024];
-
-        while ((read = inputStream.read(bytes)) != -1) {
-            outputStream.write(bytes, 0, read);
-        }
-
+        StreamCopier streamCopier = new StreamCopier();
+        streamCopier.copyStream(inputStream, outputStream);
         outputStream.flush();
         outputStream.close();
         return file;
