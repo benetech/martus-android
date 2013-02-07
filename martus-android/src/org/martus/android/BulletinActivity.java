@@ -274,14 +274,12 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
                         Uri uri = data.getData();
                         try {
                             String filePath = FileUtils.getPath(this, uri);
-                            if (filePath == null) {
-                                if (isPicasaUri(uri)) {
-                                    final AsyncTask<Uri, Void, File> picasaImageTask = new PicasaImageTask();
-                                    picasaImageTask.execute(uri);
-                                }
-                            } else {
+                            if (null != filePath) {
                                 File file = new File(filePath);
                                 addAttachmentToMap(file);
+                            } else if (isPicasaUri(uri)) {
+                                final AsyncTask<Uri, Void, File> picasaImageTask = new PicasaImageTask();
+                                picasaImageTask.execute(uri);
                             }
                         } catch (Exception e) {
                             Log.e(AppConfig.LOG_LABEL, "problem getting attachment", e);
@@ -565,10 +563,13 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
             final Cursor cursor = getContentResolver().query(payloadUri, filePathColumn, null, null, null);
             cursor.moveToFirst();
             final int columnIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
-            if (columnIndex == -1) return null;
-
+            if (columnIndex == -1) {
+                return null;
+            }
             final InputStream is = getContentResolver().openInputStream(payloadUri);
-            if (is == null) return null;
+            if (is == null) {
+                return null;
+            }
             final String path = payloadUri.getPath();
             final String filename = new File(path).getName();
             file = createFileFromInputStream(is, PICASA_INDICATOR + filename + ".jpg");
