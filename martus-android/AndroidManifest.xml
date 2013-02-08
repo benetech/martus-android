@@ -26,7 +26,11 @@
             </intent-filter>
         </activity>
        <activity android:name=".SettingsActivity" android:label="@string/settings_title"></activity>
-       <activity android:name=".DesktopKeyActivity" android:label="@string/desktop_sync_title"></activity>
+       <activity
+               android:name=".DesktopKeyActivity"
+               android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
+               android:label="@string/desktop_sync_title">
+       </activity>
        <activity
            android:name=".BulletinActivity"
            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
