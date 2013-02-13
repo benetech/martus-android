@@ -16,6 +16,7 @@ import org.martus.android.dialog.CreateAccountDialog;
 import org.martus.android.dialog.LoginDialog;
 import org.martus.android.dialog.MagicWordDialog;
 import org.martus.clientside.ClientSideNetworkGateway;
+import org.martus.common.MartusUtilities;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.NetworkInterfaceConstants;
@@ -47,8 +48,10 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     public final static int PROXY_SOCKS_PORT = 9050; //default for Orbot/Tor
 
     private static final String PACKETS_DIR = "packets";
-    private static final String PREFS_DIR = "shared_prefs";
     private static final String SERVER_COMMAND_PREFIX = "MartusServer.";
+    private static final int CONFIRMATION_TYPE_RESET = 0;
+    private static final int CONFIRMATION_TYPE_TAMPERED_DESKTOP_FILE = 1;
+
 
     public static final int MAX_LOGIN_ATTEMPTS = 3;
     public static final int MIN_PASSWORD_SIZE = 8;
@@ -64,6 +67,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     public static final int ACTIVITY_BULLETIN = 3;
     public static final String RETURN_TO = "return_to";
     private final static String pingPath = "/RPC2";
+    private int confirmationType;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,6 +77,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
 
         torCheckbox = (CheckBox)findViewById(R.id.checkBox_use_tor);
         updateSettings();
+        confirmationType = CONFIRMATION_TYPE_RESET;
 
         martusCrypto = AppConfig.getInstance().getCrypto();
 
@@ -268,7 +273,18 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     }
 
     private boolean checkDesktopKey() {
-        String desktopPublicKeyString = mySettings.getString(SettingsActivity.KEY_DESKTOP_PUBLIC_KEY, "");
+
+        try {
+            verifySavedDesktopKeyFile();
+        } catch (MartusUtilities.FileVerificationException e) {
+            confirmationType = CONFIRMATION_TYPE_TAMPERED_DESKTOP_FILE;
+            showConfirmationDialog();
+            return true;
+        }
+
+        SharedPreferences HQSettings = getSharedPreferences(PREFS_DESKTOP_KEY, MODE_PRIVATE);
+        String desktopPublicKeyString = HQSettings.getString(SettingsActivity.KEY_DESKTOP_PUBLIC_KEY, "");
+
         if (desktopPublicKeyString.length() < 1) {
             Intent intent = new Intent(MartusActivity.this, DesktopKeyActivity.class);
             startActivityForResult(intent, ACTIVITY_DESKTOP_KEY);
@@ -470,17 +486,24 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
 
     @Override
     public String getConfirmationTitle() {
-        return getString(R.string.confirm_reset_install);
+        if (confirmationType == CONFIRMATION_TYPE_TAMPERED_DESKTOP_FILE) {
+            return getString(R.string.confirm_tamper_reset_title);
+        } else
+            return getString(R.string.confirm_reset_install);
     }
 
     @Override
     public String getConfirmationMessage() {
-        int count = getNumberOfUnsentBulletins();
-        if (count == 0) {
-          return getString(R.string.confirm_reset_install_extra_no_pending);
+        if (confirmationType == CONFIRMATION_TYPE_TAMPERED_DESKTOP_FILE) {
+            return getString(R.string.confirm_tamper_reset_message);
         } else {
-            Resources res = getResources();
-            return res.getQuantityString(R.plurals.confirm_reset_install_extra, count, count);
+            int count = getNumberOfUnsentBulletins();
+            if (count == 0) {
+              return getString(R.string.confirm_reset_install_extra_no_pending);
+            } else {
+                Resources res = getResources();
+                return res.getQuantityString(R.plurals.confirm_reset_install_extra, count, count);
+            }
         }
     }
 
@@ -505,6 +528,14 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
             zipFile.delete();
         }
         finish();
+    }
+
+    @Override
+    public void onConfirmationCancelled() {
+        if (confirmationType == CONFIRMATION_TYPE_TAMPERED_DESKTOP_FILE) {
+            martusCrypto.clearKeyPair();
+            finish();
+        }
     }
 
     private void processPingResult(String result) {

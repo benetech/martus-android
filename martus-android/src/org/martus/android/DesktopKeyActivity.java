@@ -106,9 +106,17 @@ public class DesktopKeyActivity extends BaseActivity {
             showMessage(activity, getString(R.string.invalid_public_code), getString(R.string.error_message));
             return;
         }
-        SharedPreferences.Editor editor = mySettings.edit();
+
+        SharedPreferences HQSettings = getSharedPreferences(PREFS_DESKTOP_KEY, MODE_PRIVATE);
+        SharedPreferences.Editor editor = HQSettings.edit();
+
         editor.putString(SettingsActivity.KEY_DESKTOP_PUBLIC_KEY, publicKeyString);
         editor.commit();
+
+
+        File desktopKeyFile = getDesktopKeyFile();
+        MartusUtilities.createSignatureFileFromFile(desktopKeyFile, getSecurity());
+
         finish();
     }
 
@@ -122,11 +130,6 @@ public class DesktopKeyActivity extends BaseActivity {
         String signature = (String) importedPublicKeyInfo.get(1);
         MartusUtilities.validatePublicInfo(publicKey, signature, getSecurity());
         return publicKey;
-    }
-
-    public MartusCrypto getSecurity()
-    {
-        return AppConfig.getInstance().getStore().getSignatureGenerator();
     }
 
     boolean confirmPublicCode(String rawPublicCode, String userEnteredPublicCode)

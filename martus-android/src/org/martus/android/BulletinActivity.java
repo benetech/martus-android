@@ -20,6 +20,7 @@ import org.martus.client.bulletinstore.ClientBulletinStore;
 import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.common.HQKey;
 import org.martus.common.HQKeys;
+import org.martus.common.MartusUtilities;
 import org.martus.common.bulletin.AttachmentProxy;
 import org.martus.common.bulletin.Bulletin;
 import org.martus.common.crypto.MartusCrypto;
@@ -32,6 +33,7 @@ import android.app.ActionBar;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -105,7 +107,8 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
             showLoginRequiredDialog();
         }
 
-        hqKey = new HQKey(mySettings.getString(SettingsActivity.KEY_DESKTOP_PUBLIC_KEY, ""));
+        SharedPreferences HQSettings = getSharedPreferences(PREFS_DESKTOP_KEY, MODE_PRIVATE);
+        hqKey = new HQKey(HQSettings.getString(SettingsActivity.KEY_DESKTOP_PUBLIC_KEY, ""));
         store = AppConfig.getInstance().getStore();
         updateSettings();
         gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
@@ -336,6 +339,12 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         if (! isNetworkAvailable()) {
             showMessage(this, getString(R.string.no_network_create_bulletin_warning),
                     getString(R.string.no_network_connection));
+        }
+
+        try {
+            verifySavedDesktopKeyFile();
+        } catch (MartusUtilities.FileVerificationException e) {
+            onFinishLoginRequiredDialog();
         }
     }
 

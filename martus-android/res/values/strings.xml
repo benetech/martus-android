@@ -78,6 +78,8 @@
     <string name="logout_while_sending_title">Can\'t logout yet</string>
     <string name="logout_while_sending_message">Please wait until the bulletin has finished sending.</string>
     <string name="reset_while_sending_title">Can\'t reset yet</string>
+    <string name="confirm_tamper_reset_title">Your desktop key file may have been tampered with</string>
+    <string name="confirm_tamper_reset_message">In the interest of security, please reset to a freshly installed state. Pressing yes button will start the reset. Martus can not function with a tampered file, so pressing no will exit the app.</string>
 
     <!-- ============================== -->
     <!--  bulletin screen  -->

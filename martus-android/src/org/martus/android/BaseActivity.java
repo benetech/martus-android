@@ -1,8 +1,12 @@
 package org.martus.android;
 
+import java.io.File;
+
 import org.martus.android.dialog.ConfirmationDialog;
 import org.martus.android.dialog.InstallExplorerDialog;
 import org.martus.android.dialog.LoginRequiredDialog;
+import org.martus.common.MartusUtilities;
+import org.martus.common.crypto.MartusCrypto;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -33,6 +37,8 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
 
     public static final int EXIT_RESULT_CODE = 10;
     public static final int EXIT_REQUEST_CODE = 10;
+    public static final String PREFS_DESKTOP_KEY = "desktopHQ";
+    protected static final String PREFS_DIR = "shared_prefs";
 
     protected MartusApplication parentApp;
     private String confirmationDialogTitle;
@@ -163,6 +169,24 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
     public void close() {
         setResult(EXIT_RESULT_CODE);
         finish();
+    }
+
+    protected MartusCrypto getSecurity()
+    {
+        return AppConfig.getInstance().getCrypto();
+    }
+
+    protected void verifySavedDesktopKeyFile() throws MartusUtilities.FileVerificationException {
+        File desktopKeyFile = getDesktopKeyFile();
+        if (desktopKeyFile.exists()) {
+            File sigFile = new File(desktopKeyFile.getParent(), desktopKeyFile.getName() + ".sig");
+            MartusUtilities.verifyFileAndSignature(desktopKeyFile, sigFile, getSecurity(), getSecurity().getPublicKeyString());
+        }
+    }
+
+    protected File getDesktopKeyFile() {
+        File prefsDir = new File(getCacheDir().getParent(), PREFS_DIR);
+        return new File(prefsDir, PREFS_DESKTOP_KEY + ".xml");
     }
 
     protected void showProgressDialog(String title) {
