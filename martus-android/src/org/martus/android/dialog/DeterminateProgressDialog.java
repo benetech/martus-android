@@ -1,14 +1,10 @@
 package org.martus.android.dialog;
 
-import org.martus.android.AppConfig;
-
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 
 /**
  * @author roms
@@ -16,10 +12,10 @@ import android.util.Log;
  */
 public class DeterminateProgressDialog extends DialogFragment {
 
-    private Activity myActivity;
 
     public interface DeterminateProgressDialogListener {
         String getDeterminateDialogMessage();
+        void onDeterminateDialogCancel();
     }
 
 	public static DeterminateProgressDialog newInstance() {
@@ -36,7 +32,6 @@ public class DeterminateProgressDialog extends DialogFragment {
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-        myActivity = getActivity();
 		final ProgressDialog dialog = new ProgressDialog(getActivity());
         dialog.setTitle(((DeterminateProgressDialogListener) getActivity()).getDeterminateDialogMessage());
         dialog.setIndeterminate(false);
@@ -51,6 +46,6 @@ public class DeterminateProgressDialog extends DialogFragment {
     @Override
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
-        myActivity.finish();
+        ((DeterminateProgressDialogListener) getActivity()).onDeterminateDialogCancel();
     }
 }

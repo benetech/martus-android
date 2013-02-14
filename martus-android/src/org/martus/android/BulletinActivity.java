@@ -364,6 +364,14 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         return getString(R.string.bulletin_sending_progress);
     }
 
+    @Override
+    public void onDeterminateDialogCancel() {
+        if (autoLogout) {
+            setResult(EXIT_RESULT_CODE);
+        }
+        finish();
+    }
+
     private void zipBulletin(Bulletin bulletin)  {
         indeterminateDialog = IndeterminateProgressDialog.newInstance();
         indeterminateDialog.show(getSupportFragmentManager(), "dlg_zipping");
