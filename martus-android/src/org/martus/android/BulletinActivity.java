@@ -433,7 +433,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
     public void onZipped(File zippedFile) {
         try {
             indeterminateDialog.dismissAllowingStateLoss();
-        } catch (IllegalStateException e) {
+        } catch (Exception e) {
             //this is okay as the user may have closed this screen
         }
         sendZippedBulletin(zippedFile);
