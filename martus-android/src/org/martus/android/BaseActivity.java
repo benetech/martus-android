@@ -33,7 +33,7 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         LoginRequiredDialog.LoginRequiredDialogListener {
 
     private static final long MINUTE_MILLIS = 60000;
-    public static final long INACTIVITY_TIMEOUT = 10 * MINUTE_MILLIS;
+    public static final long INACTIVITY_TIMEOUT = 1 * MINUTE_MILLIS;
 
     public static final int EXIT_RESULT_CODE = 10;
     public static final int EXIT_REQUEST_CODE = 10;
@@ -60,13 +60,18 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
     }
 
     public void resetInactivityTimer(){
+        Log.w(AppConfig.LOG_LABEL, "start resetInactivityTimer");
         inactivityHandler.removeCallbacks(inactivityCallback);
         if (!MartusApplication.isIgnoreInactivity()) {
+            Log.w(AppConfig.LOG_LABEL, "is not ignore in resetInactivityTimer");
             inactivityHandler.postDelayed(inactivityCallback, INACTIVITY_TIMEOUT);
+        } else {
+            Log.w(AppConfig.LOG_LABEL, "is ignore in resetInactivityTimer");
         }
     }
 
     public void stopInactivityTimer(){
+        Log.w(AppConfig.LOG_LABEL, "start stopInactivityTimer");
         inactivityHandler.removeCallbacks(inactivityCallback);
     }
 
@@ -156,7 +161,7 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
     public class SimpleOkayButtonListener implements DialogInterface.OnClickListener {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
-            //To change body of implemented methods use File | Settings | File Templates.
+            //do nothing
         }
     }
 

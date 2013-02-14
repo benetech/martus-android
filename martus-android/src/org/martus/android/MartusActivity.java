@@ -170,6 +170,15 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
             case R.id.ping_server_menu_item:
                 pingServer();
                 return true;
+            case R.id.view_public_code_menu_item:
+                try {
+                    String publicCode = MartusCrypto.getFormattedPublicCode(martusCrypto.getPublicKeyString());
+                    showMessage(this, publicCode, getString(R.string.view_public_code_dialog_title));
+                } catch (Exception e) {
+                    Log.e(AppConfig.LOG_LABEL, "couldn't get public code", e);
+                    showMessage(this, getString(R.string.view_public_code_dialog_error), getString(R.string.view_public_code_dialog_title));
+                }
+                return true;
             case R.id.reset_install_menu_item:
                 if (!MartusApplication.isIgnoreInactivity()) {
                     showConfirmationDialog();
