@@ -113,20 +113,13 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         updateSettings();
         gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
 
-        if (null == bulletin) {
-            try {
-                bulletin = createBulletin();
-                bulletinAttachments = new ConcurrentHashMap<String, File>(2);
-            } catch (Exception e) {
-                Log.e(AppConfig.LOG_LABEL, "problem creating bulletin", e);
-                showMessage(this, getString(R.string.problem_creating_bulletin), getString(R.string.error_message));
-            }
-        }
-
         titleText = (EditText)findViewById(R.id.createBulletinTitle);
         summaryText = (EditText)findViewById(R.id.bulletinSummary);
+        if (null == bulletin) {
+            attachmentAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+            createEmptyBulletinAndClearFields();
+        }
 
-        attachmentAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
         ListView list = (ListView)findViewById(android.R.id.list);
         list.setTextFilterEnabled(true);
         list.setAdapter(attachmentAdapter);
@@ -134,6 +127,19 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         list.setOnItemLongClickListener(this);
 
         addAttachmentFromIntent();
+    }
+
+    private void createEmptyBulletinAndClearFields() {
+        try {
+            bulletin = createBulletin();
+            bulletinAttachments = new ConcurrentHashMap<String, File>(2);
+            titleText.setText("");
+            summaryText.setText("");
+            attachmentAdapter.clear();
+        } catch (Exception e) {
+            Log.e(AppConfig.LOG_LABEL, "problem creating bulletin", e);
+            showMessage(this, getString(R.string.problem_creating_bulletin), getString(R.string.error_message));
+        }
     }
 
     private void chooseAttachment() {
@@ -465,6 +471,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         AsyncTask<Object, Integer, String> uploadTask = new UploadBulletinTask((MartusApplication)getApplication(),
                 this, bulletinId);
         uploadTask.execute(bulletin.getUniversalId(), zippedFile, gateway, AppConfig.getInstance().getCrypto());
+        createEmptyBulletinAndClearFields();
     }
 
     private void removeCachedUriAttachments() {
