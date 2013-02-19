@@ -286,6 +286,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         try {
             verifySavedDesktopKeyFile();
         } catch (MartusUtilities.FileVerificationException e) {
+            Log.e(AppConfig.LOG_LABEL, "Desktop key file corrupted in checkDesktopKey");
             confirmationType = CONFIRMATION_TYPE_TAMPERED_DESKTOP_FILE;
             showConfirmationDialog();
             return true;
