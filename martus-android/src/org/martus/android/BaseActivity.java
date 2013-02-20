@@ -7,14 +7,14 @@ import org.martus.android.dialog.InstallExplorerDialog;
 import org.martus.android.dialog.LoginRequiredDialog;
 import org.martus.common.MartusUtilities;
 import org.martus.common.crypto.MartusCrypto;
+import org.martus.common.crypto.MartusKeyPair;
+import org.martus.common.crypto.MartusSecurity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 /**
@@ -33,7 +32,7 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         LoginRequiredDialog.LoginRequiredDialogListener {
 
     private static final long MINUTE_MILLIS = 60000;
-    public static final long INACTIVITY_TIMEOUT = 1 * MINUTE_MILLIS;
+    public static final long INACTIVITY_TIMEOUT = 10 * MINUTE_MILLIS;
 
     public static final int EXIT_RESULT_CODE = 10;
     public static final int EXIT_REQUEST_CODE = 10;
@@ -47,7 +46,6 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
 
     private Handler inactivityHandler;
     private Runnable inactivityCallback;
-    private SendCompleteReceiver doneSendingReceiver;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +54,6 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         mySettings = PreferenceManager.getDefaultSharedPreferences(this);
         inactivityHandler = new EmptyHandler();
         inactivityCallback = new LogOutProcess(this);
-        doneSendingReceiver = new SendCompleteReceiver();
     }
 
     public void resetInactivityTimer(){
@@ -127,9 +124,6 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
     public void onResume() {
         super.onResume();
         resetInactivityTimer();
-
-        IntentFilter iff= new IntentFilter(UploadBulletinTask.BULLETIN_SEND_COMPLETED_BROADCAST);
-        LocalBroadcastManager.getInstance(this).registerReceiver(doneSendingReceiver, iff);
     }
 
     @Override
@@ -141,7 +135,6 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
     @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(doneSendingReceiver);
     }
 
     @Override
@@ -194,18 +187,25 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         return new File(prefsDir, PREFS_DESKTOP_KEY + ".xml");
     }
 
+    public static MartusSecurity createKeyPairCopy(MartusSecurity original) {
+        MartusSecurity cryptoCopy = null;
+        try {
+            MartusKeyPair keyPair = original.getKeyPair();
+            byte[] data = keyPair.getKeyPairData();
+            cryptoCopy = new MartusSecurity();
+            cryptoCopy.setKeyPairFromData(data);
+            cryptoCopy.setShouldWriteAuthorDecryptableData(false);
+        } catch (Exception e) {
+            Log.e(AppConfig.LOG_LABEL, "Problem copying crypto", e);
+        }
+        return cryptoCopy;
+    }
+
     protected void showProgressDialog(String title) {
         dialog = new ProgressDialog(this);
         dialog.setTitle(title);
         dialog.setIndeterminate(true);
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
-    }
-
-    private class SendCompleteReceiver extends BroadcastReceiver {
-        public void onReceive(Context context, Intent intent) {
-            Log.i(AppConfig.LOG_LABEL, "SendCompleteReceiver onReceive !!!");
-            resetInactivityTimer();
-        }
     }
 }

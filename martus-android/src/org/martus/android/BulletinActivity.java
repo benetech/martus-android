@@ -1,11 +1,15 @@
 package org.martus.android;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
@@ -24,6 +28,7 @@ import org.martus.common.MartusUtilities;
 import org.martus.common.bulletin.AttachmentProxy;
 import org.martus.common.bulletin.Bulletin;
 import org.martus.common.crypto.MartusCrypto;
+import org.martus.common.crypto.MartusKeyPair;
 import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.NetworkInterfaceConstants;
 import org.martus.common.packet.UniversalId;
@@ -40,6 +45,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -350,6 +356,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         try {
             verifySavedDesktopKeyFile();
         } catch (MartusUtilities.FileVerificationException e) {
+            Log.e(AppConfig.LOG_LABEL, "Desktop key file corrupted");
             onFinishLoginRequiredDialog();
         }
     }
@@ -470,8 +477,11 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         }
         AsyncTask<Object, Integer, String> uploadTask = new UploadBulletinTask((MartusApplication)getApplication(),
                 this, bulletinId);
-        uploadTask.execute(bulletin.getUniversalId(), zippedFile, gateway, AppConfig.getInstance().getCrypto());
+        MartusSecurity cryptoCopy = createKeyPairCopy(AppConfig.getInstance().getCrypto());
+        uploadTask.execute(bulletin.getUniversalId(), zippedFile, gateway, cryptoCopy);
         createEmptyBulletinAndClearFields();
+        parentApp.setIgnoreInactivity(false);
+        resetInactivityTimer();
     }
 
     private void removeCachedUriAttachments() {

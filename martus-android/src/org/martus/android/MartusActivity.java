@@ -129,6 +129,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     @Override
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == EXIT_REQUEST_CODE && resultCode == EXIT_RESULT_CODE) {
+            AppConfig.getInstance().getCrypto().clearKeyPair();
             finish();
         }
     }

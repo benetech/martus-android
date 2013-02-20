@@ -349,7 +349,7 @@ public class MartusKeyPairLoader
 		// Reconstitute Keypair
 		RSAPublicKeySpec publicSpec = new RSAPublicKeySpec(modulus, publicExponent);
 		RSAPrivateCrtKeySpec privateSpec = new RSAPrivateCrtKeySpec(modulus, publicExponent, privateExponent, primeP, primeQ, primeExponentP, primeExponentQ, crtCoefficient);
-		KeyFactory factory = KeyFactory.getInstance("RSA", "BC");
+		KeyFactory factory = KeyFactory.getInstance("RSA", "SC");
 		PublicKey publicKey = factory.generatePublic(publicSpec);
 		PrivateKey privateCRTKey = factory.generatePrivate(privateSpec);
 		

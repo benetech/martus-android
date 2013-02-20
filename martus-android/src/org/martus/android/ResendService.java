@@ -39,12 +39,12 @@ public class ResendService extends IntentService implements ProgressUpdater {
         final String serverIP = intent.getStringExtra(SettingsActivity.KEY_SERVER_IP);
         final String serverPublicKey = intent.getStringExtra(SettingsActivity.KEY_SERVER_PUBLIC_KEY);
         final ClientSideNetworkGateway mGateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
-        final MartusSecurity mCrypto = AppConfig.getInstance().getCrypto();
 
         final File cacheDir = getApplicationContext().getCacheDir();
         final String[] names = cacheDir.list(new ZipFileFilter());
         for (String name : names) {
             try {
+                final MartusSecurity mCrypto = BaseActivity.createKeyPairCopy(AppConfig.getInstance().getCrypto());
                 Bulletin tempBulletin = new Bulletin(mCrypto);
                 File zipFile = new File(cacheDir, name);
                 BulletinZipImporter.loadFromFile(tempBulletin, zipFile, mCrypto);

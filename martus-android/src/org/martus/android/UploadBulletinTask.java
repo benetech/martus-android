@@ -14,9 +14,7 @@ import org.martus.common.packet.UniversalId;
 import org.martus.util.StreamableBase64;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.Time;
 import android.util.Log;
 
@@ -65,18 +63,21 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> imple
         } catch (MartusCrypto.MartusSignatureException e) {
             Log.e(AppConfig.LOG_LABEL, "crypto problem uploading file", e);
             result = e.getMessage();
+        } catch (Exception e) {
+            Log.e(AppConfig.LOG_LABEL, "exception uploading file", e);
+            result = e.getMessage();
         } finally {
             if (null != zippedFile && (null != result) && (result.equals(NetworkInterfaceConstants.OK))) {
                 zippedFile.delete();
             }
         }
+        signer.clearKeyPair();
         return result;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        myApplication.setIgnoreInactivity(true);
         createInitialNotification(mNotificationHelper, myApplication);
 
     }
@@ -95,9 +96,6 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> imple
         if (null != sender) {
             sender.onSent(s);
         }
-        myApplication.setIgnoreInactivity(false);
-        Intent in=new Intent(BULLETIN_SEND_COMPLETED_BROADCAST);
-        LocalBroadcastManager.getInstance(myApplication.getApplicationContext()).sendBroadcast(in);
         super.onPostExecute(s);
     }
 
