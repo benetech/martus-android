@@ -25,6 +25,7 @@ import android.util.Log;
 public class UploadBulletinTask extends AsyncTask<Object, Integer, String> implements ProgressUpdater {
 
     public static final String BULLETIN_SEND_COMPLETED_BROADCAST = "send_completed";
+    public static final String FAILED_BULLETINS_DIR = "failed_bulletins";
 
     private NotificationHelper mNotificationHelper;
     private BulletinSender sender;
@@ -67,8 +68,21 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> imple
             Log.e(AppConfig.LOG_LABEL, "exception uploading file", e);
             result = e.getMessage();
         } finally {
-            if (null != zippedFile && (null != result) && (result.equals(NetworkInterfaceConstants.OK))) {
-                zippedFile.delete();
+            if (null != zippedFile) {
+                if ((null != result) && (result.equals(NetworkInterfaceConstants.OK))) {
+                    zippedFile.delete();
+                } else {
+                    if (!zippedFile.getParent().contains(FAILED_BULLETINS_DIR)) {
+                        File failedBulletinsDir = new File (zippedFile.getParent(), FAILED_BULLETINS_DIR);
+                        if (!failedBulletinsDir.exists())
+                        {
+                            failedBulletinsDir.mkdirs();
+                        }
+
+                        File movedFile = new File(failedBulletinsDir.toString(), zippedFile.getName());
+                        zippedFile.renameTo(movedFile);
+                    }
+                }
             }
         }
         signer.clearKeyPair();

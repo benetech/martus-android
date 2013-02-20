@@ -1,26 +1,13 @@
 package org.martus.android;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.martus.client.bulletinstore.ClientBulletinStore;
-import org.martus.clientside.ClientSideNetworkGateway;
-import org.martus.common.MartusUtilities;
 import org.martus.common.bulletin.Bulletin;
 import org.martus.common.bulletin.BulletinZipUtilities;
-import org.martus.common.crypto.MartusCrypto;
-import org.martus.common.crypto.MartusSecurity;
-import org.martus.common.database.BulletinStreamer;
-import org.martus.common.database.Database;
-import org.martus.common.database.ReadableDatabase;
-import org.martus.common.network.NetworkInterfaceConstants;
-import org.martus.common.network.NetworkResponse;
-import org.martus.common.packet.Packet;
-import org.martus.common.packet.UniversalId;
-import org.martus.util.StreamableBase64;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -29,6 +16,8 @@ import android.util.Log;
  *         Date: 10/3/12
  */
 public class ZipBulletinTask extends AsyncTask<Object, Integer, File> {
+
+    private static final SimpleDateFormat FILE_NAME_DATE_FORMAT = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SS_");
 
     private Bulletin bulletin;
     private BulletinSender sender;
@@ -44,23 +33,16 @@ public class ZipBulletinTask extends AsyncTask<Object, Integer, File> {
         final File cacheDir = (File)params[0];
         final ClientBulletinStore store = (ClientBulletinStore)params[1];
 
-        //File tmpBulletin = null;
-
         File file = null;
 
         try {
             store.saveBulletin(bulletin);
-            file = File.createTempFile("tmp_send_", ".zip", cacheDir);
-            //tmpBulletin = File.createTempFile("tmp_", ".bull", cacheDir);
-            //final BulletinStreamer bs = new BulletinStreamer(bulletin, tmpBulletin);
-            //BulletinZipUtilities.exportBulletinPacketsFromDatabaseToZipFile(bs, bulletin.getDatabaseKey(), file, signer);
-
+            file = File.createTempFile("tmp_send_" + getCurrentTimeStamp(), ".zip", cacheDir);
             BulletinZipUtilities.exportBulletinPacketsFromDatabaseToZipFile(store.getDatabase(), bulletin.getDatabaseKey(), file, bulletin.getSignatureGenerator());
         } catch (Exception e) {
             Log.e("martus", "problem serializing bulletin to zip", e);
         }
 
-        //if (null != tmpBulletin) tmpBulletin.delete();
         return file;
     }
 
@@ -75,6 +57,11 @@ public class ZipBulletinTask extends AsyncTask<Object, Integer, File> {
             sender.onZipped(result);
         }
         super.onPostExecute(result);
+    }
+
+    public static String getCurrentTimeStamp() {
+        Date now = new Date();
+        return FILE_NAME_DATE_FORMAT.format(now);
     }
 
 }

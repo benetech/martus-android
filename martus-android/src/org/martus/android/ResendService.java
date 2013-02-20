@@ -41,22 +41,24 @@ public class ResendService extends IntentService implements ProgressUpdater {
         final ClientSideNetworkGateway mGateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
 
         final File cacheDir = getApplicationContext().getCacheDir();
-        final String[] names = cacheDir.list(new ZipFileFilter());
-        for (String name : names) {
-            try {
-                final MartusSecurity mCrypto = BaseActivity.createKeyPairCopy(AppConfig.getInstance().getCrypto());
-                Bulletin tempBulletin = new Bulletin(mCrypto);
-                File zipFile = new File(cacheDir, name);
-                BulletinZipImporter.loadFromFile(tempBulletin, zipFile, mCrypto);
-                mNH = new NotificationHelper(getApplicationContext(), tempBulletin.getUniversalId().hashCode());
-                UploadBulletinTask.createInitialNotification(mNH, getApplicationContext());
-                String result = UploadBulletinTask.doSend(tempBulletin.getUniversalId(), zipFile, mGateway, mCrypto, this);
-                mNH.completed(result);
-            } catch (Exception e) {
-                Log.e(AppConfig.LOG_LABEL, "problem reading zipped bulletin", e);
+        File failedDir = new File (cacheDir, UploadBulletinTask.FAILED_BULLETINS_DIR);
+        if (failedDir.exists()) {
+            final String[] names = failedDir.list(new ZipFileFilter());
+            for (String name : names) {
+                try {
+                    final MartusSecurity mCrypto = BaseActivity.createKeyPairCopy(AppConfig.getInstance().getCrypto());
+                    Bulletin tempBulletin = new Bulletin(mCrypto);
+                    File zipFile = new File(failedDir, name);
+                    BulletinZipImporter.loadFromFile(tempBulletin, zipFile, mCrypto);
+                    mNH = new NotificationHelper(getApplicationContext(), tempBulletin.getUniversalId().hashCode());
+                    UploadBulletinTask.createInitialNotification(mNH, getApplicationContext());
+                    String result = UploadBulletinTask.doSend(tempBulletin.getUniversalId(), zipFile, mGateway, mCrypto, this);
+                    mNH.completed(result);
+                } catch (Exception e) {
+                    Log.e(AppConfig.LOG_LABEL, "problem reading zipped bulletin", e);
+                }
             }
         }
-
     }
 
     @Override
