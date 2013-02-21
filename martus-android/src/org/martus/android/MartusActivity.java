@@ -210,7 +210,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
             final AsyncTask<XmlRpcClient, Void, String> pingTask = new PingTask();
             pingTask.execute(client);
         } catch (MalformedURLException e) {
-
+            // do nothing
         }
     }
 
@@ -521,9 +521,17 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     }
 
     private int getNumberOfUnsentBulletins() {
+        int pendingBulletins;
         final File cacheDir = getCacheDir();
-        final String[] names = cacheDir.list(new ZipFileFilter());
-        return names.length;
+        final String[] sendingBulletinNames = cacheDir.list(new ZipFileFilter());
+        pendingBulletins = sendingBulletinNames.length;
+
+        File failedDir = new File (cacheDir, UploadBulletinTask.FAILED_BULLETINS_DIR);
+        if (failedDir.exists()) {
+            final String[] failedBulletins = failedDir.list(new ZipFileFilter());
+            pendingBulletins = pendingBulletins + failedBulletins.length;
+        }
+        return pendingBulletins;
     }
 
     @Override
