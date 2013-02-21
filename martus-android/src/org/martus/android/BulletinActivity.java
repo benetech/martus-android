@@ -415,7 +415,6 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
     private void updateSettings() {
         serverIP = mySettings.getString(SettingsActivity.KEY_SERVER_IP, "");
         serverPublicKey = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
-        autoLogout = mySettings.getBoolean(SettingsActivity.KEY_AUTO_LOGOUT, false);
     }
 
     @Override

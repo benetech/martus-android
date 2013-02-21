@@ -32,7 +32,6 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         LoginRequiredDialog.LoginRequiredDialogListener {
 
     private static final long MINUTE_MILLIS = 60000;
-    public static final long INACTIVITY_TIMEOUT = 10 * MINUTE_MILLIS;
 
     public static final int EXIT_RESULT_CODE = 10;
     public static final int EXIT_REQUEST_CODE = 10;
@@ -46,6 +45,7 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
 
     private Handler inactivityHandler;
     private Runnable inactivityCallback;
+    private long inactivityTimeout;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +54,9 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         mySettings = PreferenceManager.getDefaultSharedPreferences(this);
         inactivityHandler = new EmptyHandler();
         inactivityCallback = new LogOutProcess(this);
+        int timeoutSetting = Integer.valueOf(mySettings.getString(SettingsActivity.KEY_TIMEOUT, "7"));
+        Log.e(AppConfig.LOG_LABEL, "TIMEOUT IS " + timeoutSetting);
+        inactivityTimeout = timeoutSetting * MINUTE_MILLIS;
     }
 
     public void resetInactivityTimer(){
@@ -61,7 +64,7 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         inactivityHandler.removeCallbacks(inactivityCallback);
         if (!MartusApplication.isIgnoreInactivity()) {
             Log.w(AppConfig.LOG_LABEL, "is not ignore in resetInactivityTimer");
-            inactivityHandler.postDelayed(inactivityCallback, INACTIVITY_TIMEOUT);
+            inactivityHandler.postDelayed(inactivityCallback, inactivityTimeout);
         } else {
             Log.w(AppConfig.LOG_LABEL, "is ignore in resetInactivityTimer");
         }

@@ -28,6 +28,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -74,6 +75,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         super.onCreate(savedInstanceState);
         BugSenseHandler.initAndStartSession(MartusActivity.this, ExternalKeys.BUGSENSE_KEY);
         setContentView(R.layout.main);
+        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 
         torCheckbox = (CheckBox)findViewById(R.id.checkBox_use_tor);
         updateSettings();

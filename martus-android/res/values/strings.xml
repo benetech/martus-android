@@ -20,6 +20,9 @@
     <string name="settings_title">Settings</string>
     <string name="retry_server">Re-enter</string>
     <string name="cancel_server">Cancel</string>
+    <string name="title_timeout_preference">Timeout</string>
+    <string name="summary_timeout_preference">In minutes</string>
+    <string name="dialog_title_timeout_preference">Time out duration</string>
 
     <!-- ============================== -->
     <!--  main screen  -->

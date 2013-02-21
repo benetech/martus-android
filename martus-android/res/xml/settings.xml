@@ -6,6 +6,15 @@
     <PreferenceCategory
             android:title="@string/user_preferences">
 
+        <ListPreference
+                android:key="timeout_preference"
+                android:defaultValue="7"
+                android:title="@string/title_timeout_preference"
+                android:summary="@string/summary_timeout_preference"
+                android:entries="@array/entries_timeout_preference"
+                android:entryValues="@array/values_timeout_preference"
+                android:dialogTitle="@string/dialog_title_timeout_preference" />
+
         <EditTextPreference
                 android:key="author_preference"
                 android:title="@string/title_author_preference"
@@ -19,12 +28,6 @@
                 android:entries="@array/entries_language_preference"
                 android:entryValues="@array/values_language_preference"
                 android:dialogTitle="@string/dialog_title_language_preference" />
-
-        <CheckBoxPreference
-                android:key="logout_preference"
-                android:title="@string/title_logout_preference"
-                android:summary="@string/summary_logout_preference"
-                android:defaultValue="false" />
 
     </PreferenceCategory>
 
