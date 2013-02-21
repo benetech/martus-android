@@ -114,7 +114,7 @@ public class DesktopKeyActivity extends BaseActivity {
         editor.commit();
 
 
-        File desktopKeyFile = getDesktopKeyFile();
+        File desktopKeyFile = getPrefsFile(PREFS_DESKTOP_KEY);
         MartusUtilities.createSignatureFileFromFile(desktopKeyFile, getSecurity());
 
         finish();

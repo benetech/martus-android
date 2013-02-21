@@ -1,5 +1,7 @@
 package org.martus.android;
 
+import java.io.File;
+
 import org.martus.clientside.ClientSideNetworkHandlerUsingXmlRpcForNonSSL;
 import org.martus.common.Exceptions;
 import org.martus.common.MartusUtilities;
@@ -121,18 +123,27 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
 
         try {
             if (confirmServerPublicKey(serverCode, serverPublicKey)) {
-                SharedPreferences.Editor editor = mySettings.edit();
+                SharedPreferences serverSettings = getSharedPreferences(PREFS_SERVER_IP, MODE_PRIVATE);
+                SharedPreferences.Editor editor = serverSettings.edit();
                 editor.putString(SettingsActivity.KEY_SERVER_IP, serverIP);
                 editor.putString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, serverPublicKey);
-                editor.putBoolean(SettingsActivity.KEY_HAVE_UPLOAD_RIGHTS, false);
                 editor.commit();
+
+                SharedPreferences.Editor magicWordEditor = mySettings.edit();
+                magicWordEditor.putBoolean(SettingsActivity.KEY_HAVE_UPLOAD_RIGHTS, false);
+                magicWordEditor.commit();
                 Toast.makeText(this, getString(R.string.successful_server_choice), Toast.LENGTH_SHORT).show();
+
+                File serverIpFile = getPrefsFile(PREFS_SERVER_IP);
+                MartusUtilities.createSignatureFileFromFile(serverIpFile, getSecurity());
+
+
             } else {
                 showErrorMessage(getString(R.string.invalid_server_code), getString(R.string.error_message));
                 return;
             }
-        } catch (StreamableBase64.InvalidBase64Exception e) {
-            Log.e(AppConfig.LOG_LABEL,"problem computing public code", e);
+        } catch (Exception e) {
+            Log.e(AppConfig.LOG_LABEL,"problem processing server IP", e);
             showErrorMessage(getString(R.string.error_computing_public_code), getString(R.string.error_message));
             return;
         }

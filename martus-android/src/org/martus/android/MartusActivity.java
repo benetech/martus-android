@@ -112,7 +112,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
             if (!oc.isOrbotInstalled() || !oc.isOrbotRunning()) {
                 torCheckbox.setChecked(false);
             }
-
+            verifySetupInfo();
         } else {
             if (isAccountCreated()) {
                 showLoginDialog();
@@ -121,6 +121,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
             }
         }
         updateSettings();
+
     }
 
     @Override
@@ -285,16 +286,18 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         return true;
     }
 
-    private boolean checkDesktopKey() {
-
+    private void verifySetupInfo() {
         try {
             verifySavedDesktopKeyFile();
+            verifyServerIPFile();
         } catch (MartusUtilities.FileVerificationException e) {
             Log.e(AppConfig.LOG_LABEL, "Desktop key file corrupted in checkDesktopKey");
             confirmationType = CONFIRMATION_TYPE_TAMPERED_DESKTOP_FILE;
             showConfirmationDialog();
-            return true;
         }
+    }
+
+    private boolean checkDesktopKey() {
 
         SharedPreferences HQSettings = getSharedPreferences(PREFS_DESKTOP_KEY, MODE_PRIVATE);
         String desktopPublicKeyString = HQSettings.getString(SettingsActivity.KEY_DESKTOP_PUBLIC_KEY, "");
@@ -354,8 +357,9 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     }
 
     private void updateSettings() {
-        serverPublicKey = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
-        serverIP = mySettings.getString(SettingsActivity.KEY_SERVER_IP, "");
+        SharedPreferences serverSettings = getSharedPreferences(PREFS_SERVER_IP, MODE_PRIVATE);
+        serverPublicKey = serverSettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
+        serverIP = serverSettings.getString(SettingsActivity.KEY_SERVER_IP, "");
     }
 
 
@@ -383,7 +387,8 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
             return;
         }
 
-        serverPublicKey = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
+        SharedPreferences serverSettings = getSharedPreferences(PREFS_SERVER_IP, MODE_PRIVATE);
+        serverPublicKey = serverSettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
         gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
 
         Intent resendService = new Intent(MartusActivity.this, ResendService.class);
@@ -546,6 +551,10 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         SharedPreferences.Editor editor = mySettings.edit();
         editor.clear();
         editor.commit();
+        File serverIpFile = getPrefsFile(PREFS_SERVER_IP);
+        serverIpFile.delete();
+        File desktopKeyFile = getPrefsFile(PREFS_DESKTOP_KEY);
+        desktopKeyFile.delete();
         logout();
         clearPrefsDir();
         final File cacheDir = getCacheDir();

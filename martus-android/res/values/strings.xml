@@ -81,7 +81,7 @@
     <string name="logout_while_sending_title">Can\'t logout yet</string>
     <string name="logout_while_sending_message">Please wait until the bulletin has finished sending.</string>
     <string name="reset_while_sending_title">Can\'t reset yet</string>
-    <string name="confirm_tamper_reset_title">Your desktop key file may have been tampered with</string>
+    <string name="confirm_tamper_reset_title">Your setup information may have been tampered with</string>
     <string name="confirm_tamper_reset_message">In the interest of security, please reset to a freshly installed state. Pressing yes button will start the reset. Martus can not function with a tampered file, so pressing no will exit the app.</string>
     <string name="view_public_code_menu_item">View Public Code</string>
     <string name="view_public_code_dialog_title">Public Code</string>
@@ -120,7 +120,7 @@
     <string name="invalid_server_ip">Invalid Server IP</string>
     <string name="invalid_server_code">Invalid Server Public Code</string>
     <string name="successful_server_choice">Successfully connected to server!</string>
-    <string name="error_computing_public_code">Problem computing Public Code</string>
+    <string name="error_computing_public_code">Problem saving server preferences</string>
     <string name="progress_connecting_to_server">Connecting to server</string>
 
     <!-- ============================== -->

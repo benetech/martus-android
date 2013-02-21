@@ -419,8 +419,9 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
     }
 
     private void updateSettings() {
-        serverIP = mySettings.getString(SettingsActivity.KEY_SERVER_IP, "");
-        serverPublicKey = mySettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
+        SharedPreferences serverSettings = getSharedPreferences(PREFS_SERVER_IP, MODE_PRIVATE);
+        serverIP = serverSettings.getString(SettingsActivity.KEY_SERVER_IP, "");
+        serverPublicKey = serverSettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
     }
 
     @Override

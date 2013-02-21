@@ -36,6 +36,7 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
     public static final int EXIT_RESULT_CODE = 10;
     public static final int EXIT_REQUEST_CODE = 10;
     public static final String PREFS_DESKTOP_KEY = "desktopHQ";
+    public static final String PREFS_SERVER_IP = "serverIP";
     protected static final String PREFS_DIR = "shared_prefs";
 
     protected MartusApplication parentApp;
@@ -177,17 +178,25 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         return AppConfig.getInstance().getCrypto();
     }
 
-    protected void verifySavedDesktopKeyFile() throws MartusUtilities.FileVerificationException {
-        File desktopKeyFile = getDesktopKeyFile();
-        if (desktopKeyFile.exists()) {
-            File sigFile = new File(desktopKeyFile.getParent(), desktopKeyFile.getName() + ".sig");
-            MartusUtilities.verifyFileAndSignature(desktopKeyFile, sigFile, getSecurity(), getSecurity().getPublicKeyString());
+    protected void verifySignedPrefsFile(String fileName) throws MartusUtilities.FileVerificationException {
+        File prefsFile = getPrefsFile(fileName);
+        if (prefsFile.exists()) {
+            File sigFile = new File(prefsFile.getParent(), prefsFile.getName() + ".sig");
+            MartusUtilities.verifyFileAndSignature(prefsFile, sigFile, getSecurity(), getSecurity().getPublicKeyString());
         }
     }
 
-    protected File getDesktopKeyFile() {
+    protected void verifySavedDesktopKeyFile() throws MartusUtilities.FileVerificationException {
+        verifySignedPrefsFile(PREFS_DESKTOP_KEY);
+    }
+
+    protected void verifyServerIPFile() throws MartusUtilities.FileVerificationException {
+        verifySignedPrefsFile(PREFS_SERVER_IP);
+    }
+
+    protected File getPrefsFile(String fileName) {
         File prefsDir = new File(getCacheDir().getParent(), PREFS_DIR);
-        return new File(prefsDir, PREFS_DESKTOP_KEY + ".xml");
+        return new File(prefsDir, fileName + ".xml");
     }
 
     public static MartusSecurity createKeyPairCopy(MartusSecurity original) {
