@@ -29,6 +29,7 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -52,7 +53,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     private static final String SERVER_COMMAND_PREFIX = "MartusServer.";
     private static final int CONFIRMATION_TYPE_RESET = 0;
     private static final int CONFIRMATION_TYPE_TAMPERED_DESKTOP_FILE = 1;
-
+    private static final String LOGIN_DIALOG_TAG = "dlg_login";
 
     public static final int MAX_LOGIN_ATTEMPTS = 3;
     public static final int MIN_PASSWORD_SIZE = 8;
@@ -360,8 +361,13 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
 
 
     void showLoginDialog() {
+        DialogFragment dialogFragment = (DialogFragment)getSupportFragmentManager().findFragmentByTag(LOGIN_DIALOG_TAG);
+        if (dialogFragment != null) {
+            dialogFragment.dismiss();
+        }
+
         LoginDialog loginDialog = LoginDialog.newInstance();
-        loginDialog.show(getSupportFragmentManager(), "dlg_login");
+        loginDialog.show(getSupportFragmentManager(), LOGIN_DIALOG_TAG);
     }
 
     @Override
