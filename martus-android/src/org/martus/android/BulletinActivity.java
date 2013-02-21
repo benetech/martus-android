@@ -156,6 +156,12 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
 
     private void addAttachmentsAndSendBulletin() {
         try {
+
+            if (!AppConfig.getInstance().getCrypto().hasKeyPair()) {
+                showLoginRequiredDialog();
+                return;
+            }
+
             Iterator<Map.Entry<String,File>> iterator = bulletinAttachments.entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry<String,File> entry = iterator.next();
