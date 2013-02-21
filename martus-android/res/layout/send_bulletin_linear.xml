@@ -54,12 +54,11 @@
             >
         <ListView
                 android:layout_width="0dip"
-                android:layout_height="128dip"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:id="@android:id/list"
                 android:transcriptMode="normal"
                 android:visibility="visible"
-                android:minHeight="27dip"
                 android:layout_marginTop="2dp"
                 android:fastScrollAlwaysVisible="true"/>
     </LinearLayout>
