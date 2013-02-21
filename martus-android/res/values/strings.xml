@@ -86,6 +86,7 @@
     <string name="view_public_code_menu_item">View Public Code</string>
     <string name="view_public_code_dialog_title">Public Code</string>
     <string name="view_public_code_dialog_error">Unable to show public code</string>
+    <string formatted="false" name="contact_us_info">If you have any questions or feedback on Martus, please email info@martus.org</string>
 
     <!-- ============================== -->
     <!--  bulletin screen  -->
