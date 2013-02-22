@@ -46,6 +46,7 @@ public class MartusKeyPairDataConstants
 	public static final String BCE_JCE_PROVIDER_JCERSAPUBLIC_KEY_CLASS_NAME = "org.bouncycastle.jce.provider.JCERSAPublicKey";
 	public static final String BCE_JCE_PROVIDER_JCERSAPRIVATE_KEY_CLASS_NAME = "org.bouncycastle.jce.provider.JCERSAPrivateKey";
 	public static final String BYTE_ARRAY_CLASS_NAME = "[B";
+    public static final String SECURITY_PROVIDER_SPONGYCASTLE = "SC";
 	
 	public static final long BCE_JCE_RSA_PUBLIC_KEY_CLASS_UID = 2675817738516720772L;
 	public static final long BCE_JCE_RSA_PRIVATE_KEY_CLASS_UID = 7834723820638524718L;

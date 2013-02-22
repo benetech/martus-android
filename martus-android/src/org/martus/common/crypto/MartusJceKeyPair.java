@@ -64,7 +64,7 @@ public class MartusJceKeyPair extends MartusKeyPair
 	
 	public MartusJceKeyPair(SecureRandom randomGenerator) throws Exception
 	{
-		if(Security.getProvider("SC") == null)
+		if(Security.getProvider(MartusKeyPairDataConstants.SECURITY_PROVIDER_SPONGYCASTLE) == null)
             Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
 			
 		rand = randomGenerator;
@@ -108,7 +108,8 @@ public class MartusJceKeyPair extends MartusKeyPair
 	
 	public void createRSA(int publicKeyBits) throws Exception
 	{
-		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(RSA_ALGORITHM_NAME, "SC");
+		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(RSA_ALGORITHM_NAME,
+                MartusKeyPairDataConstants.SECURITY_PROVIDER_SPONGYCASTLE);
 		keyPairGenerator.initialize(publicKeyBits, rand);
 		setJceKeyPair(keyPairGenerator.genKeyPair());
 	}
@@ -244,7 +245,8 @@ public class MartusJceKeyPair extends MartusKeyPair
 
 	private static Cipher createRSAEngine(Key key, int mode) throws NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, InvalidKeyException
 	{
-		Cipher rsaCipherEngine = Cipher.getInstance(RSA_ALGORITHM, "SC");
+		Cipher rsaCipherEngine = Cipher.getInstance(RSA_ALGORITHM,
+                MartusKeyPairDataConstants.SECURITY_PROVIDER_SPONGYCASTLE);
 		rsaCipherEngine.init(mode, key, rand);
 		return rsaCipherEngine;
 	}
