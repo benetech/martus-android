@@ -32,6 +32,7 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         LoginRequiredDialog.LoginRequiredDialogListener {
 
     private static final long MINUTE_MILLIS = 60000;
+    private static final String DEFAULT_TIMEOUT_MINUTES = "7";
 
     public static final int EXIT_RESULT_CODE = 10;
     public static final int EXIT_REQUEST_CODE = 10;
@@ -55,8 +56,8 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         mySettings = PreferenceManager.getDefaultSharedPreferences(this);
         inactivityHandler = new EmptyHandler();
         inactivityCallback = new LogOutProcess(this);
-        int timeoutSetting = Integer.valueOf(mySettings.getString(SettingsActivity.KEY_TIMEOUT, "7"));
-        Log.e(AppConfig.LOG_LABEL, "TIMEOUT IS " + timeoutSetting);
+        int timeoutSetting = Integer.valueOf(mySettings.getString(SettingsActivity.KEY_TIMEOUT_MINUTES, DEFAULT_TIMEOUT_MINUTES));
+        Log.i(AppConfig.LOG_LABEL, "TIMEOUT IS " + timeoutSetting);
         inactivityTimeout = timeoutSetting * MINUTE_MILLIS;
     }
 
@@ -199,7 +200,7 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         return new File(prefsDir, fileName + ".xml");
     }
 
-    public static MartusSecurity createKeyPairCopy(MartusSecurity original) {
+    public static MartusSecurity cloneSecurity(MartusSecurity original) {
         MartusSecurity cryptoCopy = null;
         try {
             MartusKeyPair keyPair = original.getKeyPair();

@@ -540,7 +540,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         File failedDir = new File (cacheDir, UploadBulletinTask.FAILED_BULLETINS_DIR);
         if (failedDir.exists()) {
             final String[] failedBulletins = failedDir.list(new ZipFileFilter());
-            pendingBulletins = pendingBulletins + failedBulletins.length;
+            pendingBulletins += failedBulletins.length;
         }
         return pendingBulletins;
     }

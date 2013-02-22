@@ -21,7 +21,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
     public static final String KEY_HAVE_UPLOAD_RIGHTS = "server_upload_rights";
     public static final String KEY_DEFAULT_LANGUAGE = "language_preference";
-    public static final String KEY_TIMEOUT = "timeout_preference";
+    public static final String KEY_TIMEOUT_MINUTES = "timeout_preference";
     public static final String KEY_SERVER_IP = "server_ip_preference";
     public static final String KEY_AUTHOR = "author_preference";
     public static final String KEY_DESKTOP_PUBLIC_KEY = "desktop_public_keystring";
@@ -76,7 +76,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
                 final String languageCode = sharedPreferences.getString(key, "?");
                 final int index = Arrays.asList(languageCodesArray).indexOf(languageCode);
                 preference.setSummary(languageNamesArray[index]);
-            } else if (key.equals(KEY_TIMEOUT)) {
+            } else if (key.equals(KEY_TIMEOUT_MINUTES)) {
                 final String timeoutValue = sharedPreferences.getString(key, "?");
                 final int index = Arrays.asList(timeoutValuesArray).indexOf(timeoutValue);
                 preference.setSummary(timeoutNamesArray[index]);

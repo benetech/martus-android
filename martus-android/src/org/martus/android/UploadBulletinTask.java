@@ -46,11 +46,11 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> imple
         final MartusSecurity signer = (MartusSecurity)params[3];
 
 
-        return doSend(uid, zippedFile, gateway, signer, this);
+        return doSend(uid, zippedFile, gateway, signer, this, myApplication);
     }
 
     public static String doSend(UniversalId uid, File zippedFile, ClientSideNetworkGateway gateway,
-                                MartusSecurity signer, ProgressUpdater updater) {
+                                MartusSecurity signer, ProgressUpdater updater, Context context) {
         String result = null;
 
         try {
@@ -72,15 +72,15 @@ public class UploadBulletinTask extends AsyncTask<Object, Integer, String> imple
                 if ((null != result) && (result.equals(NetworkInterfaceConstants.OK))) {
                     zippedFile.delete();
                 } else {
-                    if (!zippedFile.getParent().contains(FAILED_BULLETINS_DIR)) {
+                    if (zippedFile.getParentFile().equals(context.getCacheDir())) {
                         File failedBulletinsDir = new File (zippedFile.getParent(), FAILED_BULLETINS_DIR);
-                        if (!failedBulletinsDir.exists())
-                        {
-                            failedBulletinsDir.mkdirs();
-                        }
-
+                        failedBulletinsDir.mkdirs();
                         File movedFile = new File(failedBulletinsDir.toString(), zippedFile.getName());
-                        zippedFile.renameTo(movedFile);
+                        boolean successfulMove = zippedFile.renameTo(movedFile);
+                        if (!successfulMove) {
+                            Log.e(AppConfig.LOG_LABEL, "problem moving failed bulletin to failed directory");
+                            result = "problem moving failed bulletin";
+                        }
                     }
                 }
             }

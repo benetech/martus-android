@@ -1,7 +1,6 @@
 package org.martus.android;
 
 import java.io.File;
-import java.io.FilenameFilter;
 
 import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.common.bulletin.Bulletin;
@@ -46,13 +45,13 @@ public class ResendService extends IntentService implements ProgressUpdater {
             final String[] names = failedDir.list(new ZipFileFilter());
             for (String name : names) {
                 try {
-                    final MartusSecurity mCrypto = BaseActivity.createKeyPairCopy(AppConfig.getInstance().getCrypto());
+                    final MartusSecurity mCrypto = BaseActivity.cloneSecurity(AppConfig.getInstance().getCrypto());
                     Bulletin tempBulletin = new Bulletin(mCrypto);
                     File zipFile = new File(failedDir, name);
                     BulletinZipImporter.loadFromFile(tempBulletin, zipFile, mCrypto);
                     mNH = new NotificationHelper(getApplicationContext(), tempBulletin.getUniversalId().hashCode());
                     UploadBulletinTask.createInitialNotification(mNH, getApplicationContext());
-                    String result = UploadBulletinTask.doSend(tempBulletin.getUniversalId(), zipFile, mGateway, mCrypto, this);
+                    String result = UploadBulletinTask.doSend(tempBulletin.getUniversalId(), zipFile, mGateway, mCrypto, this, getApplicationContext());
                     mNH.completed(result);
                 } catch (Exception e) {
                     Log.e(AppConfig.LOG_LABEL, "problem reading zipped bulletin", e);

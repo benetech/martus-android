@@ -477,7 +477,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         }
         AsyncTask<Object, Integer, String> uploadTask = new UploadBulletinTask((MartusApplication)getApplication(),
                 this, bulletinId);
-        MartusSecurity cryptoCopy = createKeyPairCopy(AppConfig.getInstance().getCrypto());
+        MartusSecurity cryptoCopy = cloneSecurity(AppConfig.getInstance().getCrypto());
         uploadTask.execute(bulletin.getUniversalId(), zippedFile, gateway, cryptoCopy);
         createEmptyBulletinAndClearFields();
         parentApp.setIgnoreInactivity(false);
