@@ -221,6 +221,12 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         clearDirectory(prefsDirFile);
     }
 
+    private void clearFailedBulletinsDir() {
+            File prefsDirFile = new File(getCacheDir(), UploadBulletinTask.FAILED_BULLETINS_DIR);
+            clearDirectory(prefsDirFile);
+            prefsDirFile.delete();
+        }
+
     private void removePacketsDir() {
         File packetsDirFile = new File(getCacheDir(), PACKETS_DIR);
         clearDirectory(packetsDirFile);
@@ -557,6 +563,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         desktopKeyFile.delete();
         logout();
         clearPrefsDir();
+        clearFailedBulletinsDir();
         final File cacheDir = getCacheDir();
         final String[] names = cacheDir.list(new ZipFileFilter());
         for (String name : names) {
