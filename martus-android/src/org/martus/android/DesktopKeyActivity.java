@@ -17,7 +17,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
-import com.bugsense.trace.BugSenseHandler;
 
 /**
  * @author roms
@@ -34,7 +33,6 @@ public class DesktopKeyActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        BugSenseHandler.initAndStartSession(DesktopKeyActivity.this, ExternalKeys.BUGSENSE_KEY);
         setContentView(R.layout.desktop_sync);
         activity = this;
 
@@ -59,12 +57,6 @@ public class DesktopKeyActivity extends BaseActivity {
             Log.e("martus", "Failed choosing file", e);
             e.printStackTrace();
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        BugSenseHandler.closeSession(DesktopKeyActivity.this);
     }
 
     @Override

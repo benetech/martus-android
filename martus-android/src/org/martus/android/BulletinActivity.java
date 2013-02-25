@@ -50,7 +50,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-import com.bugsense.trace.BugSenseHandler;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
 /**
@@ -94,7 +93,6 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        BugSenseHandler.initAndStartSession(BulletinActivity.this, ExternalKeys.BUGSENSE_KEY);
         setContentView(R.layout.send_bulletin_linear);
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
@@ -359,12 +357,6 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
             Log.e(AppConfig.LOG_LABEL, "Desktop key file corrupted");
             onFinishLoginRequiredDialog();
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        BugSenseHandler.closeSession(BulletinActivity.this);
     }
 
     @Override

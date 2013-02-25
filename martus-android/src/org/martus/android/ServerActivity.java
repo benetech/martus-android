@@ -27,7 +27,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.bugsense.trace.BugSenseHandler;
 
 /**
  * @author roms
@@ -46,7 +45,6 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        BugSenseHandler.initAndStartSession(ServerActivity.this, ExternalKeys.BUGSENSE_KEY);
         setContentView(R.layout.choose_server);
 
         if ((Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) && haveVerifiedServerInfo()) {
@@ -67,12 +65,6 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
             return true;
         }
         return false;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        BugSenseHandler.closeSession(ServerActivity.this);
     }
 
     @Override
