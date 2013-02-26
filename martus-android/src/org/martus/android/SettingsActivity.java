@@ -27,6 +27,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     public static final String KEY_DESKTOP_PUBLIC_KEY = "desktop_public_keystring";
     public static final String KEY_SERVER_PUBLIC_KEY = "server_public_keystring";
     public static final String KEY_KEY_PAIR = "key_pair";
+    public static final String DEFAULT_TIMEOUT_MINUTES = "7";
 
     String[] languageNamesArray;
     String[] languageCodesArray;
@@ -77,9 +78,10 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
                 final int index = Arrays.asList(languageCodesArray).indexOf(languageCode);
                 preference.setSummary(languageNamesArray[index]);
             } else if (key.equals(KEY_TIMEOUT_MINUTES)) {
-                final String timeoutValue = sharedPreferences.getString(key, "?");
+                final String timeoutValue = sharedPreferences.getString(key, DEFAULT_TIMEOUT_MINUTES);
                 final int index = Arrays.asList(timeoutValuesArray).indexOf(timeoutValue);
                 preference.setSummary(timeoutNamesArray[index]);
+                BaseActivity.setTimeout(Integer.valueOf(timeoutValue));
             } else {
                 // Set summary to be the selected value
                 preference.setSummary(sharedPreferences.getString(key, ""));

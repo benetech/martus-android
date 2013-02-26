@@ -33,7 +33,7 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         LoginRequiredDialog.LoginRequiredDialogListener {
 
     private static final long MINUTE_MILLIS = 60000;
-    private static final String DEFAULT_TIMEOUT_MINUTES = "7";
+
 
     public static final int EXIT_RESULT_CODE = 10;
     public static final int EXIT_REQUEST_CODE = 10;
@@ -48,7 +48,7 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
 
     private Handler inactivityHandler;
     private Runnable inactivityCallback;
-    private long inactivityTimeout;
+    private static long inactivityTimeout;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,19 +58,16 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         mySettings = PreferenceManager.getDefaultSharedPreferences(this);
         inactivityHandler = new EmptyHandler();
         inactivityCallback = new LogOutProcess(this);
-        int timeoutSetting = Integer.valueOf(mySettings.getString(SettingsActivity.KEY_TIMEOUT_MINUTES, DEFAULT_TIMEOUT_MINUTES));
-        Log.i(AppConfig.LOG_LABEL, "TIMEOUT IS " + timeoutSetting);
-        inactivityTimeout = timeoutSetting * MINUTE_MILLIS;
+        int timeoutSetting = Integer.valueOf(mySettings.getString(SettingsActivity.KEY_TIMEOUT_MINUTES, SettingsActivity.DEFAULT_TIMEOUT_MINUTES));
+        setTimeout(timeoutSetting);
     }
 
     public void resetInactivityTimer(){
-        Log.w(AppConfig.LOG_LABEL, "start resetInactivityTimer");
         inactivityHandler.removeCallbacks(inactivityCallback);
         if (!MartusApplication.isIgnoreInactivity()) {
-            Log.w(AppConfig.LOG_LABEL, "is not ignore in resetInactivityTimer");
             inactivityHandler.postDelayed(inactivityCallback, inactivityTimeout);
         } else {
-            Log.w(AppConfig.LOG_LABEL, "is ignore in resetInactivityTimer");
+            Log.i(AppConfig.LOG_LABEL, "is ignore in resetInactivityTimer");
         }
     }
 
@@ -92,6 +89,10 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         intent.putExtra(MartusActivity.RETURN_TO, MartusActivity.ACTIVITY_BULLETIN);
         intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(intent);
+    }
+
+    public static void setTimeout(int timeoutSetting) {
+        BaseActivity.inactivityTimeout = timeoutSetting * MINUTE_MILLIS;
     }
 
     public void showInstallExplorerDialog() {
@@ -131,12 +132,6 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
     public void onResume() {
         super.onResume();
         resetInactivityTimer();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        stopInactivityTimer();
     }
 
     @Override
