@@ -46,14 +46,14 @@ public class ConfirmationDialog extends DialogFragment {
         return dialog;
     }
 
-    private class PositiveButtonHandler implements DialogInterface.OnClickListener {
+    protected class PositiveButtonHandler implements DialogInterface.OnClickListener {
         @Override
         public void onClick(DialogInterface dialogInterface, int whichButton) {
             ((ConfirmationDialogListener) getActivity()).onConfirmationAccepted();
         }
     }
 
-    private class NegativeButtonHandler implements DialogInterface.OnClickListener {
+    protected class NegativeButtonHandler implements DialogInterface.OnClickListener {
         @Override
         public void onClick(DialogInterface dialogInterface, int whichButton) {
             ((ConfirmationDialogListener) getActivity()).onConfirmationCancelled();

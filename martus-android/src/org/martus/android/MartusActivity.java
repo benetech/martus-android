@@ -12,9 +12,11 @@ import java.util.Vector;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+import org.martus.android.dialog.ConfirmationDialog;
 import org.martus.android.dialog.CreateAccountDialog;
 import org.martus.android.dialog.LoginDialog;
 import org.martus.android.dialog.MagicWordDialog;
+import org.martus.android.dialog.ModalConfirmationDialog;
 import org.martus.clientside.ClientSideNetworkGateway;
 import org.martus.common.MartusUtilities;
 import org.martus.common.crypto.MartusCrypto;
@@ -291,8 +293,13 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         } catch (MartusUtilities.FileVerificationException e) {
             Log.e(AppConfig.LOG_LABEL, "Desktop key file corrupted in checkDesktopKey");
             confirmationType = CONFIRMATION_TYPE_TAMPERED_DESKTOP_FILE;
-            showConfirmationDialog();
+            showModalConfirmationDialog();
         }
+    }
+
+    private void showModalConfirmationDialog() {
+        ModalConfirmationDialog confirmationDialog = ModalConfirmationDialog.newInstance();
+        confirmationDialog.show(getSupportFragmentManager(), "dlg_confirmation");
     }
 
     private boolean checkDesktopKey() {
