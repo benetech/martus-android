@@ -12,7 +12,6 @@ import java.util.Vector;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
-import org.martus.android.dialog.ConfirmationDialog;
 import org.martus.android.dialog.CreateAccountDialog;
 import org.martus.android.dialog.LoginDialog;
 import org.martus.android.dialog.MagicWordDialog;
@@ -303,7 +302,6 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     }
 
     private boolean checkDesktopKey() {
-
         SharedPreferences HQSettings = getSharedPreferences(PREFS_DESKTOP_KEY, MODE_PRIVATE);
         String desktopPublicKeyString = HQSettings.getString(SettingsActivity.KEY_DESKTOP_PUBLIC_KEY, "");
 
@@ -553,13 +551,11 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     @Override
     public void onConfirmationAccepted() {
         removePacketsDir();
-        SharedPreferences.Editor editor = mySettings.edit();
-        editor.clear();
-        editor.commit();
-        File serverIpFile = getPrefsFile(PREFS_SERVER_IP);
-        serverIpFile.delete();
-        File desktopKeyFile = getPrefsFile(PREFS_DESKTOP_KEY);
-        desktopKeyFile.delete();
+        clearPreferences(mySettings.edit());
+        clearPreferences(getSharedPreferences(PREFS_DESKTOP_KEY, MODE_PRIVATE).edit());
+        clearPreferences(getSharedPreferences(PREFS_SERVER_IP, MODE_PRIVATE).edit());
+        removePrefsFile(PREFS_SERVER_IP);
+        removePrefsFile(PREFS_DESKTOP_KEY);
         logout();
         clearPrefsDir();
         clearFailedBulletinsDir();
@@ -570,6 +566,16 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
             zipFile.delete();
         }
         finish();
+    }
+
+    private void removePrefsFile(String prefName) {
+        File serverIpFile = getPrefsFile(prefName);
+        serverIpFile.delete();
+    }
+
+    private void clearPreferences(SharedPreferences.Editor editor) {
+        editor.clear();
+        editor.commit();
     }
 
     @Override
