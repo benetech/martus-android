@@ -11,8 +11,10 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -20,7 +22,8 @@ import android.widget.TextView;
  * @author roms
  *         Date: 12/22/12
  */
-public class CreateAccountDialog extends DialogFragment implements DialogInterface.OnClickListener, TextWatcher {
+public class CreateAccountDialog extends DialogFragment implements DialogInterface.OnClickListener, TextWatcher,
+        TextView.OnEditorActionListener {
 
     public static final int MIN_PASSWORD_SIZE = 8;
     private EditText newPasswordText;
@@ -50,6 +53,7 @@ public class CreateAccountDialog extends DialogFragment implements DialogInterfa
         final View createAccountDialog = factory.inflate(R.layout.create_account, null);
         newPasswordText = (EditText) createAccountDialog.findViewById(R.id.new_password_field);
         confirmPasswordText = (EditText) createAccountDialog.findViewById(R.id.confirm_password_field);
+        confirmPasswordText.setOnEditorActionListener(this);
         error = (TextView) createAccountDialog.findViewById(R.id.password_problem_text);
 
         confirmPasswordText.addTextChangedListener(this);
@@ -70,6 +74,16 @@ public class CreateAccountDialog extends DialogFragment implements DialogInterfa
             case -2:    ((CreateAccountDialogListener) getActivity()).onCancelNewAccountDialog();
                         break;
         }
+    }
+
+    @Override
+    public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
+            ((CreateAccountDialogListener) getActivity()).onFinishNewAccountDialog(newPasswordText, confirmPasswordText);
+            this.dismiss();
+            return true;
+        }
+        return false;
     }
 
     public void afterTextChanged(Editable s) {
