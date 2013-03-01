@@ -554,8 +554,6 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         clearPreferences(mySettings.edit());
         clearPreferences(getSharedPreferences(PREFS_DESKTOP_KEY, MODE_PRIVATE).edit());
         clearPreferences(getSharedPreferences(PREFS_SERVER_IP, MODE_PRIVATE).edit());
-        removePrefsFile(PREFS_SERVER_IP);
-        removePrefsFile(PREFS_DESKTOP_KEY);
         logout();
         clearPrefsDir();
         clearFailedBulletinsDir();

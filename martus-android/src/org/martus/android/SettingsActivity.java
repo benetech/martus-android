@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.view.MenuItem;
+//import com.bugsense.trace.BugSenseHandler;
 
 /**
  * @author roms
@@ -37,6 +38,8 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Comment out for production build
+        //BugSenseHandler.initAndStartSession(SettingsActivity.this, ExternalKeys.BUGSENSE_KEY);
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
             ActionBar actionBar = getActionBar();
@@ -118,6 +121,8 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        //Comment out for production build
+        //BugSenseHandler.closeSession(SettingsActivity.this);
     }
 
 }

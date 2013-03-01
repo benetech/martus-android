@@ -23,6 +23,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+//import com.bugsense.trace.BugSenseHandler;
 
 /**
  * @author roms
@@ -51,6 +52,8 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Comment out for production build
+        //BugSenseHandler.initAndStartSession(this, ExternalKeys.BUGSENSE_KEY);
         parentApp = (MartusApplication) this.getApplication();
         confirmationDialogTitle = getString(R.string.confirm_default);
         mySettings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -89,8 +92,12 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
         startActivity(intent);
     }
 
-    public static void setTimeout(int timeoutSetting) {
-        BaseActivity.inactivityTimeout = timeoutSetting * MINUTE_MILLIS;
+    /**
+     *
+     * @param timeoutSettingInMinutes number of minutes before timeout
+     */
+    public static void setTimeout(int timeoutSettingInMinutes) {
+        BaseActivity.inactivityTimeout = timeoutSettingInMinutes * MINUTE_MILLIS;
     }
 
     public void showInstallExplorerDialog() {
@@ -140,6 +147,8 @@ public class BaseActivity extends FragmentActivity implements ConfirmationDialog
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        //Comment out for production build
+        //BugSenseHandler.closeSession(this);
     }
 
     @Override
