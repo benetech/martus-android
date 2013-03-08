@@ -34,6 +34,7 @@
     <string name="magic_word_dialog_title">Enter Magic Word</string>
     <string name="alert_dialog_ok">OK</string>
     <string name="password_dialog_cancel">Cancel</string>
+    <string name="create_account_dialog_cancel">Exit</string>
     <string name="incorrect_password">Incorrect Password</string>
     <string name="error_create_account">Problem creating account</string>
     <string name="error_getting_server_key">Problem connecting to server</string>

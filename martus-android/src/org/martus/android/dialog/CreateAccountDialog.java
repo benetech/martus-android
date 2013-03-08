@@ -63,7 +63,7 @@ public class CreateAccountDialog extends DialogFragment implements DialogInterfa
             .setTitle(R.string.create_account_dialog_title)
             .setView(createAccountDialog)
             .setPositiveButton(R.string.alert_dialog_ok, this)
-            .setNegativeButton(R.string.password_dialog_cancel,this)
+            .setNegativeButton(R.string.create_account_dialog_cancel,this)
             .create();
     }
 
