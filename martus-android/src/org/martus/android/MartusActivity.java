@@ -54,6 +54,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     private static final int CONFIRMATION_TYPE_RESET = 0;
     private static final int CONFIRMATION_TYPE_TAMPERED_DESKTOP_FILE = 1;
     private static final String LOGIN_DIALOG_TAG = "dlg_login";
+	public static final String NEW_ACCOUNT_DIALOG_TAG = "dlg_new_account";
 
     public static final int MAX_LOGIN_ATTEMPTS = 3;
     public static final int MIN_PASSWORD_SIZE = 8;
@@ -417,7 +418,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
 
     void showCreateAccountDialog() {
         CreateAccountDialog newAccountDialog = CreateAccountDialog.newInstance();
-        newAccountDialog.show(getSupportFragmentManager(), "dlg_new_account");
+        newAccountDialog.show(getSupportFragmentManager(), NEW_ACCOUNT_DIALOG_TAG);
     }
 
     public void onFinishNewAccountDialog(TextView passwordText, TextView confirmPasswordText) {
@@ -436,12 +437,16 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
             failed = true;
         }
 
+	    DialogFragment dialogFragment = (DialogFragment)getSupportFragmentManager().findFragmentByTag(NEW_ACCOUNT_DIALOG_TAG);
+        if (dialogFragment != null) {
+            dialogFragment.dismiss();
+        }
+
         if (failed) {
             showCreateAccountDialog();
         } else {
             createAccount(password);
-            checkDesktopKey();
-            //newAccountDialog.dismiss();
+	        onResume();
         }
     }
 
