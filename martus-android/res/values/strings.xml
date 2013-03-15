@@ -48,7 +48,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="start_orbot_">Start Orbot</string>
-    <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot not
+    <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot is not
         running. Would you like to start it?
     </string>
     <string name="use_tor">Use Tor</string>
@@ -58,7 +58,7 @@
     <string name="enter_magic_word_hint">Enter Magic Word</string>
     <string name="settings_pwd_equal">Passwords match</string>
     <string name="settings_pwd_not_equal">Passwords don\'t match!</string>
-    <string name="invalid_password">Must be at least 8 characters</string>
+    <string name="invalid_password">Password must be at least 8 characters</string>
     <string name="invalid_magic_word">Invalid Magic Word</string>
     <string name="success_magic_word">Success - you can now upload bulletins!</string>
     <string name="problem_confirming_magic_word">Problem confirming Magic Word</string>
@@ -83,10 +83,10 @@
     <string name="logout_while_sending_message">Please wait until the bulletin has finished sending.</string>
     <string name="reset_while_sending_title">Can\'t reset yet</string>
     <string name="confirm_tamper_reset_title">Your setup information may have been tampered with</string>
-    <string name="confirm_tamper_reset_message">In the interest of security, please reset to a freshly installed state. Pressing yes button will start the reset. Martus can not function with a tampered file, so pressing no will exit the app.</string>
+    <string name="confirm_tamper_reset_message">In the interest of security, please reset to a freshly installed state. Pressing the Yes button will start the reset. Martus can not function with a tampered settings file, so pressing No will exit the app.</string>
     <string name="view_public_code_menu_item">View Public Code</string>
     <string name="view_public_code_dialog_title">Public Code</string>
-    <string name="view_public_code_dialog_error">Unable to show public code</string>
+    <string name="view_public_code_dialog_error">Unable to show Public Code</string>
     <string formatted="false" name="contact_us_info">If you have any questions or feedback on Martus, please email info@martus.org</string>
 
     <!-- ============================== -->
@@ -137,12 +137,10 @@
     <string name="select_file_picker">Select a file chooser</string>
     <string name="attachments_label">Attachments (press and hold to remove) :</string>
     <string name="server_ip_label">Server IP Address:</string>
-    <string name="server_ip_hint">Enter server IP address</string>
+    <string name="server_ip_hint">Enter Server IP address</string>
     <string name="server_public_code_label">Server Public Code:</string>
-    <string name="server_public_code_hint">Enter server Public Code</string>
+    <string name="server_public_code_hint">Enter Server Public Code</string>
     <string name="choose_server_title">Choose Server</string>
-    <string name="title_logout_preference">Auto logout</string>
-    <string name="summary_logout_preference">Logout after sending each bulletin</string>
     <string name="choose_file">Martus File Chooser</string>
     <string name="install_explorer_text">If you can\'t find the file you were thinking of, try installing a more advanced file explorer:</string>
     <string formatted="false" name="file_explorer_store_link">play.google.com/store/search?q=%22open+source%22+file+manager+explorer</string>
