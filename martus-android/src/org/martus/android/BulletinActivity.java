@@ -49,6 +49,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
@@ -98,6 +99,8 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
             ActionBar actionBar = getActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
+	        TextView gingerbreadWarningText = (TextView)findViewById(R.id.gingerbreadMenuWarning);
+	        gingerbreadWarningText.setVisibility(View.GONE);
         }
 
         MartusSecurity martusCrypto = AppConfig.getInstance().getCrypto();
@@ -327,7 +330,6 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
                 addAttachmentsAndSendBulletin();
                 return true;
             case R.id.cancel_bulletin_menu_item:
-                setConfirmationType(CONFIRMATION_TYPE_CANCEL_BULLETIN);
                 showConfirmationDialog();
                 return true;
             case R.id.add_attachment_menu_item:
@@ -359,7 +361,20 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         }
     }
 
-    @Override
+	@Override
+	public void showConfirmationDialog()
+	{
+		setConfirmationType(CONFIRMATION_TYPE_CANCEL_BULLETIN);
+		super.showConfirmationDialog();
+	}
+
+	@Override
+	public void onBackPressed()
+	{
+        showConfirmationDialog();
+	}
+
+	@Override
     public String getIndeterminateDialogMessage() {
         return getString(R.string.bulletin_packaging_progress);
     }

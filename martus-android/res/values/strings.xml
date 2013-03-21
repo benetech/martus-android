@@ -91,6 +91,7 @@
     <!-- ============================== -->
     <!--  bulletin screen  -->
     <!-- ============================== -->
+    <string name="gingerbread_extra_help_text">(Press the Menu button to Add attachments or Send)</string>
     <string name="send_bulletin">Send</string>
     <string name="add_attachment">Add attachment</string>
     <string name="enter_summary">Optional Summary</string>

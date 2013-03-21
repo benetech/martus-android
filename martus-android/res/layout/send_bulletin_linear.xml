@@ -14,6 +14,14 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dip">
 
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/gingerbread_extra_help_text"
+                android:id="@+id/gingerbreadMenuWarning"
+                android:layout_gravity="center"
+                android:singleLine="false"/>
+
         <EditText
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
