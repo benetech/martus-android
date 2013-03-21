@@ -327,7 +327,6 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
                 addAttachmentsAndSendBulletin();
                 return true;
             case R.id.cancel_bulletin_menu_item:
-                setConfirmationType(CONFIRMATION_TYPE_CANCEL_BULLETIN);
                 showConfirmationDialog();
                 return true;
             case R.id.add_attachment_menu_item:
@@ -359,7 +358,20 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         }
     }
 
-    @Override
+	@Override
+	public void showConfirmationDialog()
+	{
+		setConfirmationType(CONFIRMATION_TYPE_CANCEL_BULLETIN);
+		super.showConfirmationDialog();
+	}
+
+	@Override
+	public void onBackPressed()
+	{
+        showConfirmationDialog();
+	}
+
+	@Override
     public String getIndeterminateDialogMessage() {
         return getString(R.string.bulletin_packaging_progress);
     }
