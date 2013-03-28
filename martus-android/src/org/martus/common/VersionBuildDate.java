@@ -29,6 +29,6 @@ public class VersionBuildDate
 {
 	public static String getVersionBuildDate()
 	{
-		return "#{BUILDDATE}";
+		return "Mobile-Beta-1";
 	}
 }
