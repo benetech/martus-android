@@ -322,9 +322,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         switch (item.getItemId()) {
             case android.R.id.home:
                 // app icon in action bar clicked; go home
-                Intent intent = new Intent(this, MartusActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+	            showConfirmationDialog();
                 return true;
             case R.id.send_bulletin_menu_item:
                 addAttachmentsAndSendBulletin();
