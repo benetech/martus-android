@@ -18,6 +18,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -168,7 +169,8 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
     }
 
     private boolean haveVerifiedServerInfo() {
-        return mySettings.getString(SettingsActivity.KEY_SERVER_IP, "").length() > 1;
+	    SharedPreferences serverSettings = getSharedPreferences(PREFS_SERVER_IP, MODE_PRIVATE);
+        return serverSettings.getString(SettingsActivity.KEY_SERVER_IP, "").length() > 1;
     }
 
     private class CancelButtonHandler implements DialogInterface.OnClickListener {
