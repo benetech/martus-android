@@ -188,6 +188,10 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         ArrayList<File> attachments = getFilesFromIntent(intent);
 
         try {
+	        if (!attachments.isEmpty()) {
+		        hideActionBarBackButton();
+	        }
+
             for (File attachment : attachments) {
                 addAttachmentToMap(attachment);
             }
@@ -197,7 +201,15 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         }
     }
 
-    private boolean addAttachmentToBulletin(File attachment) throws IOException, MartusCrypto.EncryptionException {
+	private void hideActionBarBackButton()
+	{
+		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
+            ActionBar actionBar = getActionBar();
+			actionBar.setDisplayHomeAsUpEnabled(false);
+		}
+	}
+
+	private boolean addAttachmentToBulletin(File attachment) throws IOException, MartusCrypto.EncryptionException {
         AttachmentProxy attProxy = new AttachmentProxy(attachment);
         if (!attachment.exists()) {
             return false;
