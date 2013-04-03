@@ -21,15 +21,15 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 //import com.bugsense.trace.BugSenseHandler;
 
 /**
  * @author roms
  *         Date: 12/19/12
  */
-public class BaseActivity extends FragmentActivity implements ConfirmationDialog.ConfirmationDialogListener,
+public class BaseActivity extends SherlockFragmentActivity implements ConfirmationDialog.ConfirmationDialogListener,
         LoginRequiredDialog.LoginRequiredDialogListener {
 
     private static final long MINUTE_MILLIS = 60000;

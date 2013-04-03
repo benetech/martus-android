@@ -28,18 +28,20 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.util.Base64;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 
 public class MartusActivity extends BaseActivity implements LoginDialog.LoginDialogListener,
@@ -132,6 +134,18 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         }
     }
 
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+	    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+	        if (event.getAction() == KeyEvent.ACTION_UP &&
+	            keyCode == KeyEvent.KEYCODE_MENU) {
+	            openOptionsMenu();
+	            return true;
+	        }
+	    }
+	    return super.onKeyUp(keyCode, event);
+	}
+
     public void sendBulletin(View view) {
         Intent intent = new Intent(MartusActivity.this, BulletinActivity.class);
         startActivityForResult(intent, EXIT_REQUEST_CODE) ;
@@ -139,7 +153,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
+        MenuInflater inflater = getSupportMenuInflater();
         inflater.inflate(R.menu.main, menu);
         return true;
     }

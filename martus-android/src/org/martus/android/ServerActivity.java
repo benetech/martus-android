@@ -10,7 +10,6 @@ import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.NonSSLNetworkAPI;
 import org.martus.util.StreamableBase64;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -18,16 +17,16 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.view.MenuItem;
 
 /**
  * @author roms
@@ -49,7 +48,7 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
         setContentView(R.layout.choose_server);
 
         if ((Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) && haveVerifiedServerInfo()) {
-            ActionBar actionBar = getActionBar();
+            ActionBar actionBar = getSupportActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 

@@ -29,7 +29,6 @@ import org.martus.common.network.NetworkInterfaceConstants;
 import org.martus.common.packet.UniversalId;
 import org.martus.util.StreamCopier;
 
-import android.app.ActionBar;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -37,20 +36,19 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
 /**
@@ -96,12 +94,8 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.send_bulletin_linear);
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-            ActionBar actionBar = getActionBar();
-            actionBar.setDisplayHomeAsUpEnabled(true);
-	        TextView gingerbreadWarningText = (TextView)findViewById(R.id.gingerbreadMenuWarning);
-	        gingerbreadWarningText.setVisibility(View.GONE);
-        }
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         MartusSecurity martusCrypto = AppConfig.getInstance().getCrypto();
         if (!martusCrypto.hasKeyPair()) {
@@ -203,10 +197,8 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
 
 	private void hideActionBarBackButton()
 	{
-		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-            ActionBar actionBar = getActionBar();
+            ActionBar actionBar = getSupportActionBar();
 			actionBar.setDisplayHomeAsUpEnabled(false);
-		}
 	}
 
 	private boolean addAttachmentToBulletin(File attachment) throws IOException, MartusCrypto.EncryptionException {
@@ -324,7 +316,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
+        MenuInflater inflater = getSupportMenuInflater();
         inflater.inflate(R.menu.send_bulletin, menu);
         return true;
     }
