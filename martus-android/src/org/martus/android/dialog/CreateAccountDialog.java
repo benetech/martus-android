@@ -57,6 +57,7 @@ public class CreateAccountDialog extends DialogFragment implements DialogInterfa
         error = (TextView) createAccountDialog.findViewById(R.id.password_problem_text);
 
         confirmPasswordText.addTextChangedListener(this);
+	    newPasswordText.addTextChangedListener(this);
 
         return new AlertDialog.Builder(getActivity())
             .setIcon(android.R.drawable.ic_dialog_alert)
