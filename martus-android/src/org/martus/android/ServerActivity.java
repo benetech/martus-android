@@ -2,6 +2,7 @@ package org.martus.android;
 
 import java.io.File;
 
+import org.martus.android.dialog.LoginDialog;
 import org.martus.clientside.ClientSideNetworkHandlerUsingXmlRpcForNonSSL;
 import org.martus.common.Exceptions;
 import org.martus.common.MartusUtilities;
@@ -15,7 +16,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -32,7 +32,7 @@ import com.actionbarsherlock.view.MenuItem;
  * @author roms
  *         Date: 12/10/12
  */
-public class ServerActivity extends BaseActivity implements TextView.OnEditorActionListener {
+public class ServerActivity extends BaseActivity implements TextView.OnEditorActionListener, LoginDialog.LoginDialogListener {
 
     private static final int MIN_SERVER_CODE = 20;
     private static final int MIN_SERVER_IP = 7;
@@ -47,7 +47,7 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choose_server);
 
-        if ((Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) && haveVerifiedServerInfo()) {
+        if (haveVerifiedServerInfo()) {
             ActionBar actionBar = getSupportActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
@@ -68,15 +68,32 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
     }
 
     @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            switch (item.getItemId()) {
-                case android.R.id.home:
-                    finish();
-                    return true;
-                default:
-                    return super.onOptionsItemSelected(item);
-            }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
+    }
+
+	@Override
+    public void onResume() {
+        super.onResume();
+		if (haveVerifiedServerInfo())
+            showLoginDialog();
+    }
+
+	@Override
+    public void onFinishPasswordDialog(TextView passwordText) {
+        char[] password = passwordText.getText().toString().trim().toCharArray();
+        boolean confirmed = (password.length >= MIN_PASSWORD_SIZE) && confirmAccount(password);
+        if (!confirmed) {
+            Toast.makeText(this, getString(R.string.incorrect_password), Toast.LENGTH_SHORT).show();
+            showLoginDialog();
+        }
+	}
 
     public void confirmServer(View view) {
         serverIP = textIp.getText().toString().trim();

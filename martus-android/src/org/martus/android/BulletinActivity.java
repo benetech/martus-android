@@ -97,7 +97,6 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        MartusSecurity martusCrypto = AppConfig.getInstance().getCrypto();
         if (!martusCrypto.hasKeyPair()) {
             showLoginRequiredDialog();
         }

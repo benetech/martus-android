@@ -1,9 +1,7 @@
 package org.martus.android;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -55,14 +53,12 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     private static final String SERVER_COMMAND_PREFIX = "MartusServer.";
     private static final int CONFIRMATION_TYPE_RESET = 0;
     private static final int CONFIRMATION_TYPE_TAMPERED_DESKTOP_FILE = 1;
-    private static final String LOGIN_DIALOG_TAG = "dlg_login";
+
 	public static final String NEW_ACCOUNT_DIALOG_TAG = "dlg_new_account";
 
     public static final int MAX_LOGIN_ATTEMPTS = 3;
-    public static final int MIN_PASSWORD_SIZE = 8;
     private String serverPublicKey;
 
-    private MartusSecurity martusCrypto;
     private ClientSideNetworkGateway gateway = null;
     private String serverIP;
     private int invalidLogins;
@@ -83,8 +79,6 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         torCheckbox = (CheckBox)findViewById(R.id.checkBox_use_tor);
         updateSettings();
         confirmationType = CONFIRMATION_TYPE_RESET;
-
-        martusCrypto = AppConfig.getInstance().getCrypto();
 
     }
 
@@ -333,23 +327,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         return keyPairString.length() > 1;
     }
 
-    private boolean confirmAccount(char[] password)  {
 
-        String keyPairString = mySettings.getString(SettingsActivity.KEY_KEY_PAIR, "");
-
-        // construct keypair from value read from prefs
-        byte[] decodedKeyPair = Base64.decode(keyPairString, Base64.NO_WRAP);
-        InputStream is = new ByteArrayInputStream(decodedKeyPair);
-        try {
-            martusCrypto.readKeyPair(is, password);
-        } catch (Exception e) {
-            //Log.e(AppConfig.LOG_LABEL, "Problem confirming password", e);
-            return false;
-        }
-
-        martusCrypto.setShouldWriteAuthorDecryptableData(false);
-        return true;
-    }
 
     private void createAccount(char[] password)  {
         martusCrypto.createKeyPair();
@@ -382,15 +360,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
 
 
 
-    void showLoginDialog() {
-        DialogFragment dialogFragment = (DialogFragment)getSupportFragmentManager().findFragmentByTag(LOGIN_DIALOG_TAG);
-        if (dialogFragment != null) {
-            dialogFragment.dismiss();
-        }
 
-        LoginDialog loginDialog = LoginDialog.newInstance();
-        loginDialog.show(getSupportFragmentManager(), LOGIN_DIALOG_TAG);
-    }
 
     @Override
     public void onFinishPasswordDialog(TextView passwordText) {
@@ -425,9 +395,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         onResume();
     }
 
-    public void onCancelPasswordDialog() {
-        this.finish();
-    }
+
 
 
     void showCreateAccountDialog() {

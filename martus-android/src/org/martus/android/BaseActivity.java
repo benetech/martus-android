@@ -1,9 +1,12 @@
 package org.martus.android;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 
 import org.martus.android.dialog.ConfirmationDialog;
 import org.martus.android.dialog.InstallExplorerDialog;
+import org.martus.android.dialog.LoginDialog;
 import org.martus.android.dialog.LoginRequiredDialog;
 import org.martus.common.MartusUtilities;
 import org.martus.common.crypto.MartusCrypto;
@@ -21,6 +24,8 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
+import android.util.Base64;
 import android.util.Log;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 //import com.bugsense.trace.BugSenseHandler;
@@ -40,6 +45,8 @@ public class BaseActivity extends SherlockFragmentActivity implements Confirmati
     public static final String PREFS_DESKTOP_KEY = "desktopHQ";
     public static final String PREFS_SERVER_IP = "serverIP";
     protected static final String PREFS_DIR = "shared_prefs";
+	private static final String LOGIN_DIALOG_TAG = "dlg_login";
+	static final int MIN_PASSWORD_SIZE = 8;
 
     protected MartusApplication parentApp;
     private String confirmationDialogTitle;
@@ -49,6 +56,7 @@ public class BaseActivity extends SherlockFragmentActivity implements Confirmati
     private Handler inactivityHandler;
     private Runnable inactivityCallback;
     private static long inactivityTimeout;
+	MartusSecurity martusCrypto;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +69,7 @@ public class BaseActivity extends SherlockFragmentActivity implements Confirmati
         inactivityCallback = new LogOutProcess(this);
         int timeoutSetting = Integer.valueOf(mySettings.getString(SettingsActivity.KEY_TIMEOUT_MINUTES, SettingsActivity.DEFAULT_TIMEOUT_MINUTES));
         setTimeout(timeoutSetting);
+	    martusCrypto = AppConfig.getInstance().getCrypto();
     }
 
     public void resetInactivityTimer(){
@@ -82,6 +91,37 @@ public class BaseActivity extends SherlockFragmentActivity implements Confirmati
         loginRequiredDialog.show(getSupportFragmentManager(), "dlg_login");
     }
 
+	void showLoginDialog() {
+        DialogFragment dialogFragment = (DialogFragment)getSupportFragmentManager().findFragmentByTag(LOGIN_DIALOG_TAG);
+        if (dialogFragment != null) {
+            dialogFragment.dismiss();
+        }
+
+        LoginDialog loginDialog = LoginDialog.newInstance();
+        loginDialog.show(getSupportFragmentManager(), LOGIN_DIALOG_TAG);
+    }
+
+	boolean confirmAccount(char[] password)  {
+
+        String keyPairString = mySettings.getString(SettingsActivity.KEY_KEY_PAIR, "");
+
+        // construct keypair from value read from prefs
+        byte[] decodedKeyPair = Base64.decode(keyPairString, Base64.NO_WRAP);
+        InputStream is = new ByteArrayInputStream(decodedKeyPair);
+        try {
+            martusCrypto.readKeyPair(is, password);
+        } catch (Exception e) {
+            //Log.e(AppConfig.LOG_LABEL, "Problem confirming password", e);
+            return false;
+        }
+
+        martusCrypto.setShouldWriteAuthorDecryptableData(false);
+        return true;
+    }
+
+	public void onCancelPasswordDialog() {
+        this.finish();
+    }
 
     public void onFinishLoginRequiredDialog() {
         BaseActivity.this.finish();
