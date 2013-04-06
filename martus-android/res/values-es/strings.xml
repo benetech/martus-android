@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Martus</string>
+    <string name="version">1.20130128</string>
+    <string name="create_sample_bulletin">Crear Boletín</string>
+    <string name="error_message">[error]</string>
+    <string name="confirm_default">¿Está seguro?</string>
+
+    <!-- ============================== -->
+    <!--  settings screen  -->
+    <!-- ============================== -->
+    <string name="user_preferences">Ajustes del usuario</string>
+    <string name="title_author_preference">Autor</string>
+    <string name="summary_author_preference">Autor</string>
+    <string name="dialog_title_author_preference">Autor</string>
+    <string name="title_language_preference">Boletín idioma</string>
+    <string name="summary_language_preference">Boletín idioma</string>
+    <string name="dialog_title_language_preference">Boletín idioma</string>
+    <string name="settings_title">Configuración</string>
+    <string name="retry_server">Volver a entrar en</string>
+    <string name="cancel_server">Cancelar</string>
+    <string name="title_timeout_preference">Tiempo transcurrido</string>
+    <string name="summary_timeout_preference">En cuestión de minutos</string>
+    <string name="dialog_title_timeout_preference">Time out duración</string>
+
+    <!-- ============================== -->
+    <!--  main screen  -->
+    <!-- ============================== -->
+    <string name="alert_dialog_password">Contraseña:</string>
+    <string name="alert_dialog_confirm_password">Confirmar Contraseña:</string>
+    <string name="alert_dialog_magic_word">Word Magic:</string>
+    <string name="password_dialog_title">Acceso</string>
+    <string name="magic_word_dialog_title">Introduce Word Magic</string>
+    <string name="alert_dialog_ok">OK</string>
+    <string name="password_dialog_cancel">Cancelar</string>
+    <string name="create_account_dialog_cancel">Salir</string>
+    <string name="incorrect_password">Contraseña incorrecta</string>
+    <string name="error_create_account">Problema al crear cuenta</string>
+    <string name="error_getting_server_key">Problema al conectarse al servidor</string>
+    <string name="no_upload_rights">Palabra mágica incorrecta</string>
+    <string name="create_account_dialog_title">Crear una nueva contraseña</string>
+    <string name="quit_menu_title">Cerrar sesión</string>
+    <string name="server_menu_title">Seleccione Servidor</string>
+    <string name="market_orbot">market://search?q=pname:org.torproject.android</string>
+    <string name="install_orbot_">Instale Orbot</string>
+    <string name="you_must_have_orbot">Debe tener instalado Orbot</string>
+    <string name="yes">Si</string>
+    <string name="no">no</string>
+    <string name="start_orbot_">Comience Orbot</string>
+    <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">Orbot no se está ejecutando. ¿Te gustaría empezar?
+    </string>
+    <string name="use_tor">Usar Tor</string>
+    <string name="create_password_hint">Nueva contraseña</string>
+    <string name="confirm_password_hint">Repetir contraseña</string>
+    <string name="enter_password_hint">Introducir contraseña</string>
+    <string name="enter_magic_word_hint">Introduce Word Magic</string>
+    <string name="settings_pwd_equal">Las contraseñas coincida</string>
+    <string name="settings_pwd_not_equal">Las contraseñas no coinciden</string>
+    <string name="invalid_password">Las contraseñas deben tener al menos 8 caracteres.</string>
+    <string name="invalid_magic_word">Invalid Word Magic</string>
+    <string name="success_magic_word">Éxito - ahora puede cargar boletines!</string>
+    <string name="problem_confirming_magic_word">Problema Magia confirmando la Palabra</string>
+    <string name="tor_explanation">Tor es una red abierta que le ayuda a defenderse contra una forma de vigilancia conocido como análisis de tráfico.
+        Tor le protege transmitiendo sus comunicaciones a una red distribuida por todo el mundo. Esto hará que el envío de boletines mucho más lentas.</string>
+    <string formatted="false" name="tor_link">https://www.torproject.org</string>
+    <string name="progress_confirming_magic_word">Confirmación de Word Magic</string>
+    <string name="confirm_reset_install">Cambiar a otro recién instalado?</string>
+    <string name="confirm_reset_install_extra_no_pending">Está bien para reiniciar ya que no hay boletines enviados.</string>
+    <plurals name="confirm_reset_install_extra">
+        <item quantity="one">Usted perderá %1$s ha fallado o enviando actualmente boletín que se resienten en el siguiente inicio de sesión.</item>
+        <item quantity="other">Usted perderá %1$s ha fallado o el envío de boletines que actualmente se resienten en el siguiente inicio de sesión.</item>
+    </plurals>
+    <string name="reset_to_install">Cambiar a otro recién instalado</string>
+    <string name="ping_server_menu_item">Verificando Servidor</string>
+    <string name="ping_result_ok">Servidor está activo</string>
+    <string name="ping_result_down">El servidor está abajo</string>
+    <string name="no_network_connection">El dispositivo tiene ninguna conexión de red!</string>
+    <string name="no_network_create_bulletin_warning">Los boletines que tratan de enviar un error y se resienten la próxima vez que se conecte con acceso a la red.</string>
+    <string name="logout_while_sending_title">No se puede salir aún</string>
+    <string name="logout_while_sending_message">Espere hasta que el boletín ha terminado de enviar.</string>
+    <string name="reset_while_sending_title">No se puede restablecer sin embargo,</string>
+    <string name="confirm_tamper_reset_title">La información de su configuración puede haber sido manipulado</string>
+    <string name="confirm_tamper_reset_message">En aras de la seguridad, restablezca a su estado recién instalado. Al pulsar el botón Sí comenzará el reinicio. Martus no puede funcionar con un archivo de configuración manipulado, tan apremiante No saldrá de la aplicación.</string>
+    <string name="view_public_code_menu_item">Ver código Pública</string>
+    <string name="view_public_code_dialog_title">Código Público</string>
+    <string name="view_public_code_dialog_error">No se puede mostrar Código Público</string>
+    <string formatted="false" name="contact_us_info">Si usted tiene alguna pregunta o comentario sobre Martus, por favor correo electrónico info@martus.org</string>
+
+    <!-- ============================== -->
+    <!--  bulletin screen  -->
+    <!-- ============================== -->
+    <string name="gingerbread_extra_help_text">(Pulse el botón Menu para agregar datos adjuntos o enviar)</string>
+    <string name="send_bulletin">Enviar</string>
+    <string name="add_attachment">Añadir adjunto</string>
+    <string name="enter_summary">Resumen Opcional</string>
+    <string name="default_author">Autor Desconocido</string>
+    <string name="title_hint">Título</string>
+    <string name="bulletin_cancel">Cancelar</string>
+    <string name="problem_creating_bulletin">No se pudo crear el nuevo boletín</string>
+    <string name="problem_adding_attachment">Problema al añadir el apego a boletín</string>
+    <string name="problem_getting_files_for_attachments">Problema al añadir el apego a boletín</string>
+    <string name="problem_getting_attachment">Problema al añadir el apego a boletín</string>
+    <string name="bulletin_sending_progress">Enviando…</string>
+    <string name="bulletin_packaging_progress">Cifrar y comprimir…</string>
+    <string name="failure_zipping_bulletin">No se pudo comprimir boletín</string>
+    <string name="failure_choosing_file">No se ha podido elegir el archivo</string>
+    <string name="attachment_no_longer_exists">No se pudo enviar porque el siguiente anexo, %1$s ha sido borrado del dispositivo</string>
+    <string name="confirm_cancel_bulletin">Cancelar este Boletín?</string>
+    <string name="confirm_remove_attachment">Retire %1$s ?</string>
+    <string name="must_login_first_title">En primer lugar debe identificar!</string>
+    <string name="must_login_first_message">Antes de enviar este boletín</string>
+    <string name="install_file_explorer">Pruebe con otro explorador de archivos</string>
+    <string name="fetching_picasa_image">Captación de imágenes Picasa</string>
+    <string name="fetched_picasa_image">Tengo imágenes Picasa</string>
+
+    <!-- ============================== -->
+    <!--  choose server screen  -->
+    <!-- ============================== -->
+    <string name="invalid_server_ip">IP del servidor no válido</string>
+    <string name="invalid_server_code">No válido Código del Servidor Público</string>
+    <string name="successful_server_choice">Correctamente conectado al servidor!</string>
+    <string name="error_computing_public_code">Problema al guardar las preferencias del servidor</string>
+    <string name="progress_connecting_to_server">Conectando al servidor</string>
+
+    <!-- ============================== -->
+    <!--  desktop key screen  -->
+    <!-- ============================== -->
+    <string name="desktop_sync_public_code">Primero introduzca el Código Pública escritorio:</string>
+    <string name="desktop_sync_title">Importar cuenta de Escritorio</string>
+    <string name="desktop_sync_choose_file">A continuación, seleccione el archivo de cuenta de Escritorio</string>
+    <string name="desktop_public_code_hint">Escritorio Código de Cuenta Pública</string>
+    <string name="invalid_public_account_file">Invalid Account escritorio expediente de información pública</string>
+    <string name="invalid_public_code">Código Público no coincide con el archivo</string>
+    <string name="public_code_validation_empty">Código Público no puede estar vacío</string>
+    <string name="select_file_picker">Seleccione un selector de archivos</string>
+    <string name="attachments_label">Anexos (presione y mantenga presionado para quitar):</string>
+    <string name="server_ip_label">Dirección IP del servidor:</string>
+    <string name="server_ip_hint">Introduzca la dirección IP del servidor</string>
+    <string name="server_public_code_label">Servidor Público Código:</string>
+    <string name="server_public_code_hint">Ingrese el código de servidor público</string>
+    <string name="choose_server_title">Seleccione Servidor</string>
+    <string name="choose_file">Martus Archivo Selector</string>
+    <string name="install_explorer_text">Si no puede encontrar el archivo que estaba pensando, intente instalar un explorador de archivos más avanzado:</string>
+    <string formatted="false" name="file_explorer_store_link">play.google.com/store/search?q=%22open+source%22+file+manager+explorer</string>
+
+    <!-- ============================== -->
+    <!--  notification bar  -->
+    <!-- ============================== -->
+    <string name="successful_send_notification">Boletín enviado!</string>
+    <string name="failed_send_notification">Enviar fracasado debido a: %1$s . Se volverá a intentar el inicio de sesión siguiente.</string>
+    <string name="failure_send_notification">Envío de boletín no</string>
+    <string name="starting_send_notification">Enviando ...</string>
+    <string name="notification_title">Martus - %1$s</string>
+
+
+</resources>
