@@ -24,6 +24,8 @@ import org.martus.common.network.NetworkResponse;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -193,6 +195,17 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
                     showMessage(this, getString(R.string.logout_while_sending_message), getString(R.string.reset_while_sending_title));
                 }
                 return true;
+	        case R.id.show_version_menu_item:
+		        PackageInfo pInfo;
+		        String version;
+		        try {
+			        pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+			        version = pInfo.versionName;
+		        } catch (PackageManager.NameNotFoundException e) {
+			        version = "?";
+		        }
+		        Toast.makeText(this, version, Toast.LENGTH_LONG).show();
+		        return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

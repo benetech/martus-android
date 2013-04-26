@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">Martus</string>
-    <string name="version">1.20130128</string>
     <string name="create_sample_bulletin">Create Bulletin</string>
     <string name="error_message">Error</string>
     <string name="confirm_default">Are you sure?</string>
@@ -86,6 +85,7 @@
     <string name="view_public_code_dialog_title">Public Code</string>
     <string name="view_public_code_dialog_error">Unable to show Public Code</string>
     <string formatted="false" name="contact_us_info">If you have any questions or feedback on Martus, please email info@martus.org</string>
+    <string name="show_version">Show Version</string>
 
     <!-- ============================== -->
     <!--  bulletin screen  -->
@@ -152,6 +152,7 @@
     <string name="failure_send_notification">Sending bulletin failed</string>
     <string name="starting_send_notification">Sending …</string>
     <string name="notification_title">Martus - %1$s</string>
+
 
 
 </resources>

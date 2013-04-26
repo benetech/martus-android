@@ -3,7 +3,7 @@
     package="org.martus.android"
     android:installLocation="auto"
     android:versionCode="1"
-    android:versionName="@string/version" >
+    android:versionName="1.20130425" >
 
     <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="17" />
 	<uses-permission android:name="android.permission.INTERNET" />
