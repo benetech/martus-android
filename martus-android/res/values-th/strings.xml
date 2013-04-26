@@ -1,0 +1,154 @@
+<resources>
+
+    <string name="app_name">"Martus"</string>
+    <string name="version">"1.20130128"</string>
+    <string name="create_sample_bulletin">"สร้าง Bulletin"</string>
+    <string name="error_message">"ข้อผิดพลาด"</string>
+    <string name="confirm_default">"คุณแน่ใจหรือไม่"</string>
+
+    <!-- ============================== -->
+    <!--  settings screen  -->
+    <!-- ============================== -->
+    <string name="user_preferences">"การตั้งค่าของผู้ใช้"</string>
+    <string name="title_author_preference">"ผู้เรียบเรียง:"</string>
+    <string name="summary_author_preference">"ผู้เรียบเรียง:"</string>
+    <string name="dialog_title_author_preference">"ผู้เรียบเรียง:"</string>
+    <string name="title_language_preference">"ภาษา Bulletin"</string>
+    <string name="summary_language_preference">"ภาษา Bulletin"</string>
+    <string name="dialog_title_language_preference">"ภาษา Bulletin"</string>
+    <string name="settings_title">"การตั้งค่า"</string>
+    <string name="retry_server">"เข้าใหม่"</string>
+    <string name="cancel_server">"ยกเลิก"</string>
+    <string name="title_timeout_preference">"การหยุดพักชั่วคราว"</string>
+    <string name="summary_timeout_preference">"ในนาทีที่"</string>
+    <string name="dialog_title_timeout_preference">"เวลาออกระยะเวลา"</string>
+
+    <!-- ============================== -->
+    <!--  main screen  -->
+    <!-- ============================== -->
+    <string name="alert_dialog_password">"รหัสผ่าน:"</string>
+    <string name="alert_dialog_confirm_password">"ยืนยันรหัสผ่าน *"</string>
+    <string name="alert_dialog_magic_word">"คำ Magic:"</string>
+    <string name="password_dialog_title">"เข้าสู่ระบบ"</string>
+    <string name="magic_word_dialog_title">"ใส่คำวิเศษ"</string>
+    <string name="alert_dialog_ok">"ตกลง"</string>
+    <string name="password_dialog_cancel">"ยกเลิก"</string>
+    <string name="create_account_dialog_cancel">"ออก"</string>
+    <string name="incorrect_password">"รหัสผ่านไม่ถูกต้อง"</string>
+    <string name="error_create_account">"ปัญหาการสร้างบัญชี"</string>
+    <string name="error_getting_server_key">"ปัญหาการเชื่อมต่อไปยังเซิร์ฟเวอร์"</string>
+    <string name="no_upload_rights">"คำวิเศษที่ไม่ถูกต้อง"</string>
+    <string name="create_account_dialog_title">"สร้างรหัสผ่านใหม่"</string>
+    <string name="quit_menu_title">"ออกจากระบบ"</string>
+    <string name="server_menu_title">"เลือกเซิร์ฟเวอร์"</string>
+    <string name="market_orbot">"market://search?q=pname:org.torproject.android"</string>
+    <string name="install_orbot_">"ตั้ง Orbot"</string>
+    <string name="you_must_have_orbot">"คุณต้องมีการติดตั้ง Orbot"</string>
+    <string name="yes">"ใช่"</string>
+    <string name="no">"ไม่ใช่"</string>
+    <string name="start_orbot_">"เริ่ม Orbot"</string>
+    <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">"Orbot ไม่ได้ทำงาน คุณต้องการที่จะเริ่มต้นหรือไม่"</string>
+    <string name="use_tor">"ใช้ Tor"</string>
+    <string name="create_password_hint">"รหัสผ่านใหม่:"</string>
+    <string name="confirm_password_hint">"ทำซ้ำรหัสผ่าน"</string>
+    <string name="enter_password_hint">"ใส่รหัสผ่าน"</string>
+    <string name="enter_magic_word_hint">"ใส่คำวิเศษ"</string>
+    <string name="settings_pwd_equal">"รหัสผ่านตรงกับ"</string>
+    <string name="settings_pwd_not_equal">"รหัสผ่านไม่ตรงกัน"</string>
+    <string name="invalid_password">"รหัสผ่านต้องมีอย่างน้อย %d ตัวอักษร"</string>
+    <string name="invalid_magic_word">"ที่ไม่ถูกต้องคำวิเศษ"</string>
+    <string name="success_magic_word">"ประสบความสำเร็จ - ตอนนี้คุณสามารถอัปโหลดประกาศ!"</string>
+    <string name="problem_confirming_magic_word">"คำวิเศษปัญหายืนยัน"</string>
+    <string name="tor_explanation">"Tor เป็นเครือข่ายเปิดที่ช่วยป้องกันรูปแบบของการเฝ้าระวังเครือข่ายที่รู้จักกันเป็นการวิเคราะห์การจราจร Tor ปกป้องคุณโดยกำยำการสื่อสารของคุณทั่วเครือข่ายการกระจายทั่วทุกมุมโลก มันจะทำให้การส่งแถลงการณ์ช้ามาก"</string>
+    <string formatted="false" name="tor_link">"https://www.torproject.org"</string>
+    <string name="progress_confirming_magic_word">"ยืนยันคำวิเศษ"</string>
+    <string name="confirm_reset_install">"ตั้งกลับไปที่รัฐติดตั้งสด?"</string>
+    <string name="confirm_reset_install_extra_no_pending">"คุณกำลังถูกตั้งค่าที่ไม่มีแถลงการณ์ยังไม่ได้ส่ง"</string>
+    <plurals name="confirm_reset_install_extra">
+        <item quantity="one">"คุณจะสูญเสีย %1$s ล้มเหลวหรือยังส่งประกาศว่าจะไม่พอใจจะเข้าสู่ระบบเมื่อต่อไปของคุณ"</item>
+        <item quantity="other">"คุณจะสูญเสีย %1$s ล้มเหลวหรือยังส่งแถลงการณ์ว่าจะไม่พอใจจะเข้าสู่ระบบเมื่อต่อไปของคุณ"</item>
+    </plurals>
+    <string name="reset_to_install">"ตั้งกลับไปที่รัฐติดตั้งสด"</string>
+    <string name="ping_server_menu_item">"ตรวจสอบเซิร์ฟเวอร์"</string>
+    <string name="ping_result_ok">"เซิร์ฟเวอร์ขึ้น"</string>
+    <string name="ping_result_down">"เซิร์ฟเวอร์จะลง"</string>
+    <string name="no_network_connection">"อุปกรณ์เชื่อมต่อเครือข่ายมีไม่!"</string>
+    <string name="no_network_create_bulletin_warning">"แถลงการณ์ใด ๆ ที่คุณพยายามที่จะส่งจะล้มเหลวและจะไม่พอใจในครั้งต่อไปที่คุณเข้าสู่ระบบด้วยการเข้าถึงเครือข่าย"</string>
+    <string name="logout_while_sending_title">"ไม่สามารถออกจากระบบยัง"</string>
+    <string name="logout_while_sending_message">"โปรดรอสักครู่จนกว่าข่าวได้เสร็จสิ้นการส่ง"</string>
+    <string name="reset_while_sending_title">"ไม่สามารถตั้งค่ายัง"</string>
+    <string name="confirm_tamper_reset_title">"ข้อมูลการตั้งค่าของคุณอาจได้รับการดัดแปลงด้วย"</string>
+    <string name="confirm_tamper_reset_message">"ในความสนใจของการรักษาความปลอดภัยโปรดตั้งค่าใหม่เป็นรัฐที่ติดตั้งสด กดปุ่ม Yes จะเริ่มตั้งค่า Martus ไม่สามารถทำงานกับแฟ้มการตั้งค่าการดัดแปลงเพื่อให้กดจะไม่มีออกจาก app"</string>
+    <string name="view_public_code_menu_item">"ดูรหัสสาธารณะ"</string>
+    <string name="view_public_code_dialog_title">"รหัสสาธารณะ"</string>
+    <string name="view_public_code_dialog_error">"ไม่สามารถแสดงรหัสสาธารณะ"</string>
+    <string formatted="false" name="contact_us_info">"หากคุณมีคำถามใด ๆ หรือความคิดเห็นเกี่ยวกับ Martus กรุณา info@martus.org อีเมล์"</string>
+
+    <!-- ============================== -->
+    <!--  bulletin screen  -->
+    <!-- ============================== -->
+    <string name="gingerbread_extra_help_text">"(กดปุ่มเมนูเพื่อเพิ่มสิ่งที่แนบหรือส่ง)"</string>
+    <string name="send_bulletin">"ส่ง"</string>
+    <string name="add_attachment">"เพิ่มสิ่งที่แนบ"</string>
+    <string name="enter_summary">"ข้อมูลอย่างย่อเสริม"</string>
+    <string name="default_author">"ผู้เขียนไม่ทราบ"</string>
+    <string name="title_hint">"ชื่อเพลง"</string>
+    <string name="bulletin_cancel">"ยกเลิก"</string>
+    <string name="problem_creating_bulletin">"ไม่สามารถสร้างข่าวใหม่"</string>
+    <string name="problem_adding_attachment">"ปัญหาในการเพิ่มสิ่งที่แนบไปข่าว"</string>
+    <string name="problem_getting_files_for_attachments">"ปัญหาในการเพิ่มสิ่งที่แนบไปข่าว"</string>
+    <string name="problem_getting_attachment">"ปัญหาในการเพิ่มสิ่งที่แนบไปข่าว"</string>
+    <string name="bulletin_sending_progress">"กำลังส่ง ..."</string>
+    <string name="bulletin_packaging_progress">"การเข้ารหัสและการซิป ..."</string>
+    <string name="failure_zipping_bulletin">"ข่าว zipping ล้มเหลว"</string>
+    <string name="failure_choosing_file">"ไฟล์เลือกล้มเหลว"</string>
+    <string name="attachment_no_longer_exists">"ไม่สามารถส่งสิ่งที่แนบมาเพราะต่อไปนี้ %1$s ได้รับการลบออกจากเครื่อง"</string>
+    <string name="confirm_cancel_bulletin">"ยกเลิกประกาศนี้"</string>
+    <string name="confirm_remove_attachment">"ลบ %1$s ?"</string>
+    <string name="must_login_first_title">"ก่อนอื่นคุณต้องเข้าสู่ระบบ!"</string>
+    <string name="must_login_first_message">"ก่อนที่จะส่งข่าวสารนี้"</string>
+    <string name="install_file_explorer">"ลองสำรวจแฟ้มอื่น"</string>
+    <string name="fetching_picasa_image">"เรียก Picasa ภาพ"</string>
+    <string name="fetched_picasa_image">"มี Picasa ภาพ"</string>
+
+    <!-- ============================== -->
+    <!--  choose server screen  -->
+    <!-- ============================== -->
+    <string name="invalid_server_ip">"IP เซิร์ฟเวอร์ไม่ถูกต้อง"</string>
+    <string name="invalid_server_code">"ที่ไม่ถูกต้องเซิร์ฟเวอร์รหัสสาธารณะ"</string>
+    <string name="successful_server_choice">"เชื่อมต่อสำเร็จไปยังเซิร์ฟเวอร์!"</string>
+    <string name="error_computing_public_code">"ปัญหาในการบันทึกการตั้งค่าเซิร์ฟเวอร์"</string>
+    <string name="progress_connecting_to_server">"เชื่อมต่อกับเซิร์ฟเวอร์"</string>
+
+    <!-- ============================== -->
+    <!--  desktop key screen  -->
+    <!-- ============================== -->
+    <string name="desktop_sync_public_code">"ครั้งแรกใส่รหัสสาธารณะเดสก์ทอป"</string>
+    <string name="desktop_sync_title">"นำเข้าบัญชีสก์ท็อป"</string>
+    <string name="desktop_sync_choose_file">"แล้วเลือกแฟ้มบัญชีสก์ท็อป"</string>
+    <string name="desktop_public_code_hint">"เดสก์ท็บัญชีรหัสสาธารณะ"</string>
+    <string name="invalid_public_account_file">"ที่ไม่ถูกต้องบัญชีสาธารณะแฟ้มข้อมูลสก์ท็อป"</string>
+    <string name="invalid_public_code">"รหัสสาธารณะไม่ตรงกับแฟ้ม"</string>
+    <string name="public_code_validation_empty">"รหัสสาธารณะต้องไม่ว่างเปล่า"</string>
+    <string name="select_file_picker">"เลือกเลือกแฟ้ม"</string>
+    <string name="attachments_label">"สิ่งที่แนบมา (กดค้างไว้เพื่อลบ):"</string>
+    <string name="server_ip_label">"ที่อยู่ IP ของเซิร์ฟเวอร์:"</string>
+    <string name="server_ip_hint">"ป้อนที่อยู่ IP ของเซิร์ฟเวอร์"</string>
+    <string name="server_public_code_label">"เซิร์ฟเวอร์รหัสสาธารณะ:"</string>
+    <string name="server_public_code_hint">"ป้อนเซิร์ฟเวอร์รหัสสาธารณะ"</string>
+    <string name="choose_server_title">"เลือกเซิร์ฟเวอร์"</string>
+    <string name="choose_file">"Martus เลือกแฟ้ม"</string>
+    <string name="install_explorer_text">"ถ้าคุณไม่สามารถหาไฟล์ที่คุณมีความคิดของให้ลองติดตั้ง explorer แฟ้มที่สูงขึ้น:"</string>
+    <string formatted="false" name="file_explorer_store_link">"play.google.com/store/search?q=%22open+source%22+file+manager+explorer"</string>
+
+    <!-- ============================== -->
+    <!--  notification bar  -->
+    <!-- ============================== -->
+    <string name="successful_send_notification">"แถลงการณ์ส่ง!"</string>
+    <string name="failed_send_notification">"การส่งล้มเหลวเนื่องจาก: %1$s . จะ retried การเข้าสู่ระบบต่อไป"</string>
+    <string name="failure_send_notification">"กำลังดำเนินการส่งล้มเหลวข่าว"</string>
+    <string name="starting_send_notification">"กำลังส่ง ..."</string>
+    <string name="notification_title">"Martus - %1$s"</string>
+
+
+</resources>

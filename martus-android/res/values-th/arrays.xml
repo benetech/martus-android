@@ -1,0 +1,128 @@
+<resources>
+
+
+    <string-array name="entries_language_preference">
+        <item>"อังกฤษ"</item>
+        <item>"ภาษาอาหรับ"</item>
+        <item>"อาร์เมเนีย"</item>
+        <item>"ชาวอาเซร์ไบจัน"</item>
+        <item>"บัลแกเรีย"</item>
+        <item>"เบงกอล, บางลา"</item>
+        <item>"พม่า"</item>
+        <item>"ไชนีส"</item>
+        <item>"ดัตช์"</item>
+        <item>"ภาษาโลก"</item>
+        <item>"Farsi / Dari"</item>
+        <item>"ฝรั่งเศส"</item>
+        <item>"เยอรมัน"</item>
+        <item>"คุชราต"</item>
+        <item>"เฮาซา"</item>
+        <item>"ชาวอิสราเอล"</item>
+        <item>"ภาษาฮินดี"</item>
+        <item>"ชาวฮังการี"</item>
+        <item>"อิตาเลียน"</item>
+        <item>"ภาษาญี่ปุ่น"</item>
+        <item>"ชาวชวา"</item>
+        <item>"กันนาดา"</item>
+        <item>"คาซัคสถาน"</item>
+        <item>"ขอม"</item>
+        <item>"คีร์กีซ"</item>
+        <item>"เกาหลี"</item>
+        <item>"เคิร์ด"</item>
+        <item>"มาลายาลัม"</item>
+        <item>"ฐี"</item>
+        <item>"เนปาล"</item>
+        <item>"Oriya"</item>
+        <item>"ปัญจาบ"</item>
+        <item>"Pashto, Pushto"</item>
+        <item>"ขัด"</item>
+        <item>"ภาษาโปรตุเกส"</item>
+        <item>"โรมาเนีย"</item>
+        <item>"ชาวรัสเซีย"</item>
+        <item>"เซอร์เบีย"</item>
+        <item>"สินธุ"</item>
+        <item>"สิงหล"</item>
+        <item>"สเปน"</item>
+        <item>"ทมิฬ"</item>
+        <item>"ทาจิกิสถาน"</item>
+        <item>"เตลูกู"</item>
+        <item>"(ภาษาไทย)"</item>
+        <item>Turkish</item>
+        <item>"เติร์กเมนิสถาน"</item>
+        <item>"ยูเครน"</item>
+        <item>"ภาษาอิรดู"</item>
+        <item>"เกี่ยวกับยุสเบกิสทัน"</item>
+        <item>"เวียตนาม"</item>
+    </string-array>
+
+
+    <string-array name="values_language_preference">
+        <item>en</item>
+        <item>ar</item>
+        <item>arm</item>
+        <item>az</item>
+        <item>bg</item>
+        <item>bn</item>
+        <item>bur</item>
+        <item>zh</item>
+        <item>nl</item>
+        <item>eo</item>
+        <item>fa</item>
+        <item>fr</item>
+        <item>de</item>
+        <item>gu</item>
+        <item>ha</item>
+        <item>he</item>
+        <item>hi</item>
+        <item>hu</item>
+        <item>it</item>
+        <item>ja</item>
+        <item>jv</item>
+        <item>kn</item>
+        <item>kk</item>
+        <item>km</item>
+        <item>ky</item>
+        <item>ko</item>
+        <item>ku</item>
+        <item>ml</item>
+        <item>mr</item>
+        <item>ne</item>
+        <item>or</item>
+        <item>pa</item>
+        <item>ps</item>
+        <item>pl</item>
+        <item>pt</item>
+        <item>ro</item>
+        <item>ru</item>
+        <item>sr</item>
+        <item>sd</item>
+        <item>si</item>
+        <item>es</item>
+        <item>ta</item>
+        <item>tg</item>
+        <item>te</item>
+        <item>th</item>
+        <item>tr</item>
+        <item>tk</item>
+        <item>uk</item>
+        <item>ur</item>
+        <item>uz</item>
+        <item>vi</item>
+    </string-array>
+
+    <string-array name="entries_timeout_preference">
+        <item>"10 นาที"</item>
+        <item>"7 นาที"</item>
+        <item>"เพียงแค่ 5 นาที"</item>
+        <item>"3 นาที"</item>
+        <item>"1 รายงานการประชุม"</item>
+    </string-array>
+
+    <string-array name="values_timeout_preference">
+        <item>"1"</item>
+        <item>"7"</item>
+        <item>"5"</item>
+        <item>"3"</item>
+        <item>"1"</item>
+    </string-array>
+</resources>

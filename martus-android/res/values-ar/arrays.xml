@@ -1,0 +1,128 @@
+<resources>
+
+
+    <string-array name="entries_language_preference">
+        <item>"English"</item>
+        <item>"العربية"</item>
+        <item>"الأرميني"</item>
+        <item>"أذربيجان"</item>
+        <item>"البلغارية"</item>
+        <item>"البنغالية والبنغالية"</item>
+        <item>"البورمين"</item>
+        <item>"الصينية"</item>
+        <item>"الهولندين"</item>
+        <item>"الاسبرانتو"</item>
+        <item>"الفارسية / الدارية"</item>
+        <item>"الفرنسية"</item>
+        <item>"الألمانيون"</item>
+        <item>"الغوغاراتية"</item>
+        <item>"الهوسا"</item>
+        <item>"العبرية"</item>
+        <item>"اللغة الهندية"</item>
+        <item>"المجريون"</item>
+        <item>"الإيطاليون"</item>
+        <item>"اليابانين"</item>
+        <item>"جاوي"</item>
+        <item>"الكنادية"</item>
+        <item>"الكازاخستانية"</item>
+        <item>"الخميرية"</item>
+        <item>"القيرغيز لغة"</item>
+        <item>"اللغة الكورية"</item>
+        <item>"كردي"</item>
+        <item>"الماليالامية"</item>
+        <item>"الماراثية"</item>
+        <item>"النيبالية"</item>
+        <item>"أوريا"</item>
+        <item>"بنجابي"</item>
+        <item>"الباشتو، البشتونية"</item>
+        <item>"البولندين"</item>
+        <item>"البرتغاليون"</item>
+        <item>"روماني"</item>
+        <item>"الروسية"</item>
+        <item>"صربي"</item>
+        <item>"السيندى"</item>
+        <item>"السنهالية"</item>
+        <item>"الإنجليزية"</item>
+        <item>"التاميلية"</item>
+        <item>"الطاجيكية"</item>
+        <item>"التيلوغوية"</item>
+        <item>"التايلاندين"</item>
+        <item>"الترك"</item>
+        <item>"التركمان"</item>
+        <item>"الأوكراني"</item>
+        <item>"لإسبانية"</item>
+        <item>"الأوزبكي"</item>
+        <item>"الفيتناميون"</item>
+    </string-array>
+
+
+    <string-array name="values_language_preference">
+        <item>en</item>
+        <item>ar</item>
+        <item>arm</item>
+        <item>az</item>
+        <item>bg</item>
+        <item>bn</item>
+        <item>bur</item>
+        <item>zh</item>
+        <item>nl</item>
+        <item>eo</item>
+        <item>fa</item>
+        <item>fr</item>
+        <item>de</item>
+        <item>gu</item>
+        <item>ha</item>
+        <item>he</item>
+        <item>hi</item>
+        <item>hu</item>
+        <item>it</item>
+        <item>ja</item>
+        <item>jv</item>
+        <item>kn</item>
+        <item>kk</item>
+        <item>km</item>
+        <item>ky</item>
+        <item>ko</item>
+        <item>ku</item>
+        <item>ml</item>
+        <item>mr</item>
+        <item>ne</item>
+        <item>or</item>
+        <item>pa</item>
+        <item>ps</item>
+        <item>pl</item>
+        <item>pt</item>
+        <item>ro</item>
+        <item>ru</item>
+        <item>sr</item>
+        <item>sd</item>
+        <item>si</item>
+        <item>es</item>
+        <item>ta</item>
+        <item>tg</item>
+        <item>te</item>
+        <item>th</item>
+        <item>tr</item>
+        <item>tk</item>
+        <item>uk</item>
+        <item>ur</item>
+        <item>uz</item>
+        <item>vi</item>
+    </string-array>
+
+    <string-array name="entries_timeout_preference">
+        <item>"10 دقائق)"</item>
+        <item>"7 دقائق"</item>
+        <item>"5 دقائق"</item>
+        <item>"3 دقائق"</item>
+        <item>"1 دقيقة"</item>
+    </string-array>
+
+    <string-array name="values_timeout_preference">
+        <item>"10"</item>
+        <item>"٦"</item>
+        <item>"٥"</item>
+        <item>"٣"</item>
+        <item>"١"</item>
+    </string-array>
+</resources>

@@ -1,0 +1,153 @@
+<resources>
+
+    <string name="app_name">"برنامج Martus"</string>
+    <string name="create_sample_bulletin">"إنشاء نشرة"</string>
+    <string name="error_message">"خطأ"</string>
+    <string name="confirm_default">"هل أنت متأكد؟"</string>
+
+    <!-- ============================== -->
+    <!--  settings screen  -->
+    <!-- ============================== -->
+    <string name="user_preferences">"إعدادات المستخدم"</string>
+    <string name="title_author_preference">"كاتب"</string>
+    <string name="summary_author_preference">"كاتب"</string>
+    <string name="dialog_title_author_preference">"كاتب"</string>
+    <string name="title_language_preference">"نشرة اللغة"</string>
+    <string name="summary_language_preference">"نشرة اللغة"</string>
+    <string name="dialog_title_language_preference">"نشرة اللغة"</string>
+    <string name="settings_title">"إعدادات"</string>
+    <string name="retry_server">"إعادة إدخال"</string>
+    <string name="cancel_server">"إلغاء"</string>
+    <string name="title_timeout_preference">"مهلة"</string>
+    <string name="summary_timeout_preference">"في دقائق"</string>
+    <string name="dialog_title_timeout_preference">"مهلة مدتها"</string>
+
+    <!-- ============================== -->
+    <!--  main screen  -->
+    <!-- ============================== -->
+    <string name="alert_dialog_password">"كلمة السر:"</string>
+    <string name="alert_dialog_confirm_password">"تأكيد كلمة المرور:"</string>
+    <string name="alert_dialog_magic_word">"الكلمة السحرية:"</string>
+    <string name="password_dialog_title">"دخول"</string>
+    <string name="magic_word_dialog_title">"أدخل الكلمة السحرية"</string>
+    <string name="alert_dialog_ok">"حسنا"</string>
+    <string name="password_dialog_cancel">"إلغاء"</string>
+    <string name="create_account_dialog_cancel">"خروج"</string>
+    <string name="incorrect_password">"كلمة المرور غير صحيحة"</string>
+    <string name="error_create_account">"مشكلة إنشاء حساب"</string>
+    <string name="error_getting_server_key">"مشكلة في الاتصال بالخادم"</string>
+    <string name="no_upload_rights">"الكلمة السحرية غير صحيحة"</string>
+    <string name="create_account_dialog_title">"إنشاء كلمة مرور جديدة"</string>
+    <string name="quit_menu_title">"خروج"</string>
+    <string name="server_menu_title">"اختر خادم"</string>
+    <string name="market_orbot">"؟ :/ السوق / س = pname البحث: org.torproject.android"</string>
+    <string name="install_orbot_">"تثبيت Orbot"</string>
+    <string name="you_must_have_orbot">"يجب أن يكون لديك تثبيت Orbot"</string>
+    <string name="yes">"نعم"</string>
+    <string name="no">"لا"</string>
+    <string name="start_orbot_">"بدء Orbot"</string>
+    <string name="orbot_doesn_t_appear_to_be_running_would_you_like_to_start_it_up_and_connect_to_tor_">"Orbot ليست قيد التشغيل. ترغب تشغيله؟"</string>
+    <string name="use_tor">"استخدام تور"</string>
+    <string name="create_password_hint">"كلمة مرور جديدة"</string>
+    <string name="confirm_password_hint">"كرر كلمة السر"</string>
+    <string name="enter_password_hint">"أدخل كلمة المرور"</string>
+    <string name="enter_magic_word_hint">"أدخل الكلمة السحرية"</string>
+    <string name="settings_pwd_equal">"تتطابق كلمات المرور"</string>
+    <string name="settings_pwd_not_equal">"لا تتطابق كلمات المرور!"</string>
+    <string name="invalid_password">"يجب أن تكون كلمة المرور 8 أحرف على الأقل"</string>
+    <string name="invalid_magic_word">"الكلمة السحرية غير صالحة"</string>
+    <string name="success_magic_word">"النجاح - يمكنك الآن تحميل نشرات!"</string>
+    <string name="problem_confirming_magic_word">"كلمة ماجيك المشكلة مؤكدا"</string>
+    <string name="tor_explanation">"تور هو شبكة مفتوحة تساعد دفاع ضد شكل من أشكال المراقبة المعروفة باسم شبكة تحليل حركة المرور. تور يحميك من كذاب الاتصالات الخاصة بك حول شبكة موزعة في جميع أنحاء العالم. وستجعل إرسال نشرات أبطأ بكثير."</string>
+    <string formatted="false" name="tor_link">"https://www.torproject.org"</string>
+    <string name="progress_confirming_magic_word">"مؤكدا الكلمة السحرية"</string>
+    <string name="confirm_reset_install">"لإعادة تثبيت الدولة طازجة؟"</string>
+    <string name="confirm_reset_install_extra_no_pending">"كنت بخير لإعادة تعيين كما لا توجد نشرات غير المرسلة."</string>
+    <plurals name="confirm_reset_install_extra">
+        <item quantity="one">"ستفقد %1$s فشل أو إرسال نشرة حاليا أن تستاء على تسجيل الدخول الخاص بك المقبل."</item>
+        <item quantity="other">"ستفقد %1$s فشل أو إرسال نشرات حاليا أن تستاء على تسجيل الدخول الخاص بك المقبل."</item>
+    </plurals>
+    <string name="reset_to_install">"لإعادة تثبيت الدولة طازجة"</string>
+    <string name="ping_server_menu_item">"تحقق خادم"</string>
+    <string name="ping_result_ok">"الخادم هو ما يصل"</string>
+    <string name="ping_result_down">"الملقم باستمرار"</string>
+    <string name="no_network_connection">"لا يوجد لديه جهاز اتصال الشبكة!"</string>
+    <string name="no_network_create_bulletin_warning">"فإن أي نشرات محاولة إرسال تفشل وتستاء أن المرة التالية التي تقوم بتسجيل الدخول مع الوصول إلى شبكة الاتصال."</string>
+    <string name="logout_while_sending_title">"لا يمكن الخروج حتى الآن"</string>
+    <string name="logout_while_sending_message">"يرجى الانتظار حتى انتهاء نشرة الإرسال."</string>
+    <string name="reset_while_sending_title">"لا يمكن إعادة تعيين بعد"</string>
+    <string name="confirm_tamper_reset_title">"قد يكون تم الإعداد معلوماتك العبث"</string>
+    <string name="confirm_tamper_reset_message">"في مصلحة الأمن، الرجاء إعادة تثبيت إلى حالة طازجة. والضغط على زر إعادة الضبط نعم بدء. يمكن برنامج Martus لا تعمل مع ملف الإعدادات العبث، والضغط حتى لا سيتم إنهاء التطبيق."</string>
+    <string name="view_public_code_menu_item">"عرض التعليمات البرمجية العامة"</string>
+    <string name="view_public_code_dialog_title">"قانون العام"</string>
+    <string name="view_public_code_dialog_error">"غير قادر على عرض قانون العام"</string>
+    <string formatted="false" name="contact_us_info">"إذا كان لديك أي أسئلة أو تعليقات على برنامج Martus، يرجى info@martus.org البريد الإلكتروني"</string>
+
+    <!-- ============================== -->
+    <!--  bulletin screen  -->
+    <!-- ============================== -->
+    <string name="gingerbread_extra_help_text">"(اضغط على زر القائمة لإضافة مرفقات أو إرسال)"</string>
+    <string name="send_bulletin">"إرسال"</string>
+    <string name="add_attachment">"إضافة المرفقات"</string>
+    <string name="enter_summary">"ملخص اختياري"</string>
+    <string name="default_author">"غير معروف الكاتب"</string>
+    <string name="title_hint">"لقب"</string>
+    <string name="bulletin_cancel">"إلغاء"</string>
+    <string name="problem_creating_bulletin">"تعذر إنشاء نشرة جديدة"</string>
+    <string name="problem_adding_attachment">"مضيفا مشكلة التعلق نشرة"</string>
+    <string name="problem_getting_files_for_attachments">"مضيفا مشكلة التعلق نشرة"</string>
+    <string name="problem_getting_attachment">"مضيفا مشكلة التعلق نشرة"</string>
+    <string name="bulletin_sending_progress">"إرسال ..."</string>
+    <string name="bulletin_packaging_progress">"تشفير وفتح سوستة ..."</string>
+    <string name="failure_zipping_bulletin">"فتح سوستة نشرة فشل"</string>
+    <string name="failure_choosing_file">"فشل ملف اختيار"</string>
+    <string name="attachment_no_longer_exists">"لا يمكن إرسال المرفقات لأن التالي، %1$s تم حذف من الجهاز"</string>
+    <string name="confirm_cancel_bulletin">"إلغاء هذه النشرة؟"</string>
+    <string name="confirm_remove_attachment">"إزالة %1$s ؟"</string>
+    <string name="must_login_first_title">"يجب عليك تسجيل الدخول أولا!"</string>
+    <string name="must_login_first_message">"قبل إرسال هذه النشرة"</string>
+    <string name="install_file_explorer">"محاولة أخرى مستكشف الملفات"</string>
+    <string name="fetching_picasa_image">"جلب بيكاسا الصور"</string>
+    <string name="fetched_picasa_image">"حصلت بيكاسا الصور"</string>
+
+    <!-- ============================== -->
+    <!--  choose server screen  -->
+    <!-- ============================== -->
+    <string name="invalid_server_ip">"خادم IP غير صالح"</string>
+    <string name="invalid_server_code">"صالح قانون خادم العامة"</string>
+    <string name="successful_server_choice">"الاتصال بنجاح إلى الخادم!"</string>
+    <string name="error_computing_public_code">"مشكلة في حفظ تفضيلات خادم"</string>
+    <string name="progress_connecting_to_server">"الاتصال بملقم"</string>
+
+    <!-- ============================== -->
+    <!--  desktop key screen  -->
+    <!-- ============================== -->
+    <string name="desktop_sync_public_code">"أولا إدخال رمز سطح المكتب العام:"</string>
+    <string name="desktop_sync_title">"استيراد حساب سطح المكتب"</string>
+    <string name="desktop_sync_choose_file">"ثم اختر سطح المكتب ملف حساب"</string>
+    <string name="desktop_public_code_hint">"سطح المكتب رمز الحساب العام"</string>
+    <string name="invalid_public_account_file">"غير صالحة سطح المكتب ملف معلومات الحساب العامة"</string>
+    <string name="invalid_public_code">"قانون العام لا يطابق ملف"</string>
+    <string name="public_code_validation_empty">"يمكن القانون العام لا يكون فارغا"</string>
+    <string name="select_file_picker">"حدد ملف محدد"</string>
+    <string name="attachments_label">"المرفقات (اضغط مع الاستمرار لإزالة):"</string>
+    <string name="server_ip_label">"خادم IP العنوان:"</string>
+    <string name="server_ip_hint">"أدخل عنوان IP ملقم"</string>
+    <string name="server_public_code_label">"رمز الملقم العام:"</string>
+    <string name="server_public_code_hint">"أدخل كود خادم العامة"</string>
+    <string name="choose_server_title">"اختر خادم"</string>
+    <string name="choose_file">"برنامج Martus ملف محدد"</string>
+    <string name="install_explorer_text">"إذا كنت لا يمكن العثور على الملف الذي كانوا يفكرون، حاول تثبيت مستكشف الملفات الأكثر تقدما:"</string>
+    <string formatted="false" name="file_explorer_store_link">"play.google.com / مخزن / البحث؟ س = 22open٪ + 22 +٪ مصدر ملف + + مدير المستكشف"</string>
+
+    <!-- ============================== -->
+    <!--  notification bar  -->
+    <!-- ============================== -->
+    <string name="successful_send_notification">"أرسلت نشرة!"</string>
+    <string name="failed_send_notification">"إرسال فشلت بسبب: %1$s . ستتم إعادة محاولة الدخول على التالي."</string>
+    <string name="failure_send_notification">"إرسال نشرة فشل"</string>
+    <string name="starting_send_notification">"إرسال ..."</string>
+    <string name="notification_title">"برنامج Martus - %1$s"</string>
+
+
+</resources>
