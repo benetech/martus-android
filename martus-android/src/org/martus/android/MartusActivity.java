@@ -303,7 +303,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
         if (serverPublicKey.isEmpty()) {
             return false;
         }
-        gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
+        gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey, ((MartusApplication)getApplication()).getTransport());
         return true;
     }
 
@@ -390,7 +390,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
 
         SharedPreferences serverSettings = getSharedPreferences(PREFS_SERVER_IP, MODE_PRIVATE);
         serverPublicKey = serverSettings.getString(SettingsActivity.KEY_SERVER_PUBLIC_KEY, "");
-        gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
+        gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey, ((MartusApplication)getApplication()).getTransport());
 
         Intent resendService = new Intent(MartusActivity.this, ResendService.class);
         resendService.putExtra(SettingsActivity.KEY_SERVER_IP, serverIP);

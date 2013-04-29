@@ -26,32 +26,49 @@ Boston, MA 02111-1307, USA.
 
 package org.martus.clientside;
 
-import javax.xml.parsers.SAXParserFactory;
+import java.io.IOException;
 import java.net.ConnectException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Vector;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.apache.xmlrpc.util.SAXParsers;
+import org.martus.common.MartusLogger;
 import org.martus.common.network.NetworkInterfaceConstants;
-import org.martus.common.network.NonSSLNetworkAPI;
 import org.martus.common.network.NetworkInterfaceXmlRpcConstants;
+import org.martus.common.network.NonSSLNetworkAPI;
+import org.martus.common.network.NonSSLNetworkAPIWithHelpers;
+import org.martus.common.network.TorTransportWrapper;
 
-import android.util.Log;
-
-public class ClientSideNetworkHandlerUsingXmlRpcForNonSSL extends NonSSLNetworkAPI implements NetworkInterfaceConstants, NetworkInterfaceXmlRpcConstants
+public class ClientSideNetworkHandlerUsingXmlRpcForNonSSL extends NonSSLNetworkAPIWithHelpers implements NetworkInterfaceConstants, NetworkInterfaceXmlRpcConstants
 	
 {
 	public ClientSideNetworkHandlerUsingXmlRpcForNonSSL(String serverName)
 	{
-		this(serverName, NetworkInterfaceXmlRpcConstants.defaultNonSSLPorts);
+		this(serverName, (TorTransportWrapper)null);
+	}
+	
+	public ClientSideNetworkHandlerUsingXmlRpcForNonSSL(String serverName, TorTransportWrapper transportToUse)
+	{
+		this(serverName, NetworkInterfaceXmlRpcConstants.defaultNonSSLPorts, transportToUse);
+	}
+	
+	public ClientSideNetworkHandlerUsingXmlRpcForNonSSL(String serverName, int[] portsToUse)
+	{
+		this(serverName, portsToUse, null);
 	}
 
-	public ClientSideNetworkHandlerUsingXmlRpcForNonSSL(String serverName, int[] portsToUse)
+	public ClientSideNetworkHandlerUsingXmlRpcForNonSSL(String serverName, int[] portsToUse, TorTransportWrapper transportToUse)
 	{
 		server = serverName;
 		ports = portsToUse;
+		transport = transportToUse;
 	}
 
 	// begin MartusXmlRpc interface
@@ -65,9 +82,8 @@ public class ClientSideNetworkHandlerUsingXmlRpcForNonSSL extends NonSSLNetworkA
 	{
 		logging("MartusServerProxyViaXmlRpc:getServerInformation");
 		Vector params = new Vector();
-		Object test = callServer(server, CMD_SERVER_INFO, params);
-//		return (Vector)callServer(server, CMD_SERVER_INFO, params);
-		return (Vector) test;
+		Object[] result = (Object[]) callServer(server, CMD_SERVER_INFO, params);
+		return new Vector(Arrays.asList(result));
 	}
 
 	// end MartusXmlRpc interface
@@ -80,19 +96,8 @@ public class ClientSideNetworkHandlerUsingXmlRpcForNonSSL extends NonSSLNetworkA
 			int port = ports[indexOfPortThatWorkedLast];
 			try
 			{
-				Object serverData = callServerAtPort(serverName, method, params, port);
-				if(serverData instanceof Object[]){
-					Object[] dataToconvert = (Object[]) serverData;
-					Vector data = new Vector();
-//					data.addAll(Arrays.asList(serverData));
-					for (int j = 0; j < dataToconvert.length; j++){
-						data.add(dataToconvert[j]);
-					}
-					return data;
-				}else{
-					return serverData;
-				}
-				}
+				return callServerAtPort(serverName, method, params, port);
+			}
 			catch(ConnectException e)
 			{
 				indexOfPortThatWorkedLast = (indexOfPortThatWorkedLast+1)%numPorts;
@@ -102,7 +107,6 @@ public class ClientSideNetworkHandlerUsingXmlRpcForNonSSL extends NonSSLNetworkA
 			{
 				logging("MartusServerProxyViaXmlRpc:callServer Exception=" + e);
 				e.printStackTrace();
-                Log.e("martus", "MartusServerProxyViaXmlRpc:callServer Exception=", e);
 				return null;
 			}
 		}
@@ -110,25 +114,25 @@ public class ClientSideNetworkHandlerUsingXmlRpcForNonSSL extends NonSSLNetworkA
 	}
 	
 	public Object callServerAtPort(String serverName, String method, Vector params, int port)
-            throws Exception {
+		throws MalformedURLException, XmlRpcException, IOException
+	{
+		if(ClientPortOverride.useInsecurePorts)
+			port += 9000;
+		
 		final String serverUrl = "http://" + serverName + ":" + port + "/RPC2";
-		logging("MartusServerProxyViaXmlRpc:callServer serverUrl=" + serverUrl);
+		MartusLogger.logVerbose("MartusServerProxyViaXmlRpc:callServer serverUrl=" + serverUrl);
 
 		// NOTE: We **MUST** create a new XmlRpcClient for each call, because
 		// there is a memory leak in apache xmlrpc 1.1 that will cause out of 
 		// memory exceptions if we reuse an XmlRpcClient object
-//		XmlRpcClient client = new XmlRpcClientLite(serverUrl);
+		XmlRpcClient client = new XmlRpcClient();
+		
 		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
 		config.setServerURL(new URL(serverUrl));
-		XmlRpcClient xmlRpc = new XmlRpcClient();
-        SAXParsers.setSAXParserFactory(SAXParserFactory.newInstance());
-		xmlRpc.setConfig(config);
-
-        //following code seems more Android Gingerbread friendly
-/*        XMLRPCClient client = new XMLRPCClient(new URL(serverUrl), "", "");
-        return client.call("MartusServer." + method);*/
-
-		return xmlRpc.execute("MartusServer." + method, params);
+		SAXParsers.setSAXParserFactory(SAXParserFactory.newInstance());
+		client.setConfig(config);
+		
+		return client.execute("MartusServer." + method, params);
 	}
 
 	private void logging(String message)
@@ -153,6 +157,7 @@ public class ClientSideNetworkHandlerUsingXmlRpcForNonSSL extends NonSSLNetworkA
 
 	String server;
 	int[] ports;
+	private TorTransportWrapper transport;
 	static int indexOfPortThatWorkedLast = 0;
 	boolean debugMode;
 }

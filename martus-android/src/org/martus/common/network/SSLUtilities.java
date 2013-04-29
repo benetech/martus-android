@@ -1,8 +1,8 @@
 /*
 
 The Martus(tm) free, social justice documentation and
-monitoring software. Copyright (C) 2001-2007, Beneficent
-Technology, Inc. (The Benetech Initiative).
+monitoring software. Copyright (C) 2013, Beneficent
+Technology, Inc. (Benetech).
 
 Martus is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -23,41 +23,31 @@ Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 
 */
-
 package org.martus.common.network;
 
-import java.util.Arrays;
+import java.security.NoSuchAlgorithmException;
 import java.util.Vector;
 
-public class NetworkResponse
+import org.martus.common.MartusLogger;
+
+public class SSLUtilities
 {
-	public NetworkResponse(Vector rawServerReturnData)
+
+	public static Vector<String> getAcceptableCipherSuites(Vector<String> supportedCipherSuites) throws NoSuchAlgorithmException 
 	{
-		if(rawServerReturnData == null)
-		{
-			resultCode = NetworkInterfaceConstants.NO_SERVER;
+		Vector<String> goodCipherSuites = new Vector<String>();
+		for (String cipher : supportedCipherSuites) {
+			if(!cipher.contains("TLS"))
+				continue;
+			if(!cipher.contains("RSA"))
+				continue;
+			if(cipher.contains("ECDH"))
+				continue;
+			
+			goodCipherSuites.add(cipher);
 		}
-		else
-		{
-			resultCode = (String)rawServerReturnData.get(0);
-			if(rawServerReturnData.size() >= 2)
-			{
-				Object[] result = (Object[]) rawServerReturnData.get(1);
-				resultVector = new Vector(Arrays.asList(result));
-			}
-		}
+		MartusLogger.log("Limiting SSL cipher suites to: " + goodCipherSuites);
+		return goodCipherSuites;
 	}
 
-	public String getResultCode()
-	{
-		return resultCode;
-	}
-
-	public Vector getResultVector()
-	{
-		return resultVector;
-	}
-
-	String resultCode;
-	Vector resultVector;
 }

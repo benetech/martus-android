@@ -44,13 +44,12 @@ import java.util.zip.ZipOutputStream;
 import org.martus.common.MartusConstants;
 import org.martus.common.MartusUtilities;
 import org.martus.common.ProgressMeterInterface;
-import org.martus.common.MartusUtilities.BulletinNotFoundException;
-import org.martus.common.MartusUtilities.NotYourBulletinErrorException;
 import org.martus.common.bulletinstore.BulletinStore;
 import org.martus.common.crypto.MartusCrypto;
+import org.martus.common.database.Database.RecordHiddenException;
 import org.martus.common.database.DatabaseKey;
 import org.martus.common.database.PacketStreamOpener;
-import org.martus.common.database.Database.RecordHiddenException;
+import org.martus.common.database.ReadableDatabase;
 import org.martus.common.network.BulletinRetrieverGatewayInterface;
 import org.martus.common.network.NetworkInterfaceConstants;
 import org.martus.common.network.NetworkResponse;
@@ -114,7 +113,7 @@ public class BulletinZipUtilities
 		}
 	}
 
-	public static void exportBulletinPacketsFromDatabaseToZipFile(PacketStreamOpener db, DatabaseKey headerKey, File destZipFile, MartusCrypto security) throws
+	public static void exportBulletinPacketsFromDatabaseToZipFile(ReadableDatabase db, DatabaseKey headerKey, File destZipFile, MartusCrypto security) throws
 			IOException,
 			MartusCrypto.CryptoException,
 			UnsupportedEncodingException,
@@ -330,13 +329,7 @@ public class BulletinZipUtilities
 	public static int retrieveBulletinZipToStream(UniversalId uid, OutputStream outputStream,
 			int chunkSize, BulletinRetrieverGatewayInterface gateway, MartusCrypto security,
 			ProgressMeterInterface progressMeter)
-		throws
-			MartusCrypto.MartusSignatureException,
-			MartusUtilities.ServerErrorException,
-			IOException,
-			StreamableBase64.InvalidBase64Exception, 
-			NotYourBulletinErrorException,
-			BulletinNotFoundException
+		throws Exception
 	{
 		int masterTotalSize = 0;
 		int totalSize = 0;
@@ -361,8 +354,8 @@ public class BulletinZipUtilities
 				throw new MartusUtilities.ServerErrorException("result=" + lastResponse);
 			}
 	
-			Object[] result = response.getResultArray();
-			totalSize = ((Integer)result[0]).intValue();
+			Vector result = response.getResultVector();
+			totalSize = ((Integer)result.get(0)).intValue();
 			if(masterTotalSize == 0)
 				masterTotalSize = totalSize;
 	
@@ -371,12 +364,12 @@ public class BulletinZipUtilities
 			if(totalSize < 0)
 				throw new MartusUtilities.ServerErrorException("totalSize negative");
 	
-			int thisChunkSize = ((Integer)result[1]).intValue();
+			int thisChunkSize = ((Integer)result.get(1)).intValue();
 			if(thisChunkSize < 0 || thisChunkSize > totalSize - chunkOffset)
 				throw new MartusUtilities.ServerErrorException("chunkSize out of range: " + thisChunkSize);
 	
 			// TODO: validate that length of data == chunkSize that was returned
-			String data = (String)result[2];
+			String data = (String)result.get(2);
 			StringReader reader = new StringReader(data);
 	
 			StreamableBase64.decode(reader, outputStream);

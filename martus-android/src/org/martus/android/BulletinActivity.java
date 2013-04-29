@@ -105,7 +105,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
         hqKey = new HQKey(HQSettings.getString(SettingsActivity.KEY_DESKTOP_PUBLIC_KEY, ""));
         store = AppConfig.getInstance().getStore();
         updateSettings();
-        gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey);
+        gateway = ClientSideNetworkGateway.buildGateway(serverIP, serverPublicKey, ((MartusApplication)getApplication()).getTransport());
 
         titleText = (EditText)findViewById(R.id.createBulletinTitle);
         summaryText = (EditText)findViewById(R.id.bulletinSummary);

@@ -28,29 +28,33 @@ package org.martus.clientside;
 
 import java.io.IOException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Vector;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
-
+import org.apache.xmlrpc.client.XmlRpcTransportFactory;
 import org.apache.xmlrpc.util.SAXParsers;
 import org.martus.common.MartusLogger;
 import org.martus.common.MartusUtilities;
-import org.martus.common.network.NetworkInterface;
+import org.martus.common.network.ClientSideNetworkInterface;
 import org.martus.common.network.NetworkInterfaceConstants;
 import org.martus.common.network.NetworkInterfaceXmlRpcConstants;
+import org.martus.common.network.SSLUtilities;
 import org.martus.common.network.SimpleHostnameVerifier;
 import org.martus.common.network.SimpleX509TrustManager;
+import org.martus.common.network.TorTransportWrapper;
 import org.martus.util.Stopwatch;
 
-
 public class ClientSideNetworkHandlerUsingXmlRpc
-	implements NetworkInterfaceConstants, NetworkInterfaceXmlRpcConstants, NetworkInterface
+	implements NetworkInterfaceConstants, NetworkInterfaceXmlRpcConstants, ClientSideNetworkInterface
 {
 
 	public static class SSLSocketSetupException extends Exception 
@@ -59,22 +63,49 @@ public class ClientSideNetworkHandlerUsingXmlRpc
 
 	public ClientSideNetworkHandlerUsingXmlRpc(String serverName, int[] portsToUse) throws SSLSocketSetupException
 	{
+		this(serverName, portsToUse, null);
+	}
+	
+	public ClientSideNetworkHandlerUsingXmlRpc(String serverName, int[] portsToUse, TorTransportWrapper transportToUse) throws SSLSocketSetupException
+	{
 		server = serverName;
 		ports = portsToUse;
+		transport = transportToUse;
 
 		RESULT_NO_SERVER = new Vector();
 		RESULT_NO_SERVER.add(NetworkInterfaceConstants.NO_SERVER);
 		
 		try
 		{
+			restrictCipherSuites();
+
 			tm = new SimpleX509TrustManager();
 			HttpsURLConnection.setDefaultSSLSocketFactory(MartusUtilities.createSocketFactory(tm));
 			HttpsURLConnection.setDefaultHostnameVerifier(new SimpleHostnameVerifier());
 		}
 		catch (Exception e)
 		{
+			MartusLogger.logException(e);
 			throw new SSLSocketSetupException();
 		}
+	}
+
+	private void restrictCipherSuites() throws NoSuchAlgorithmException 
+	{
+		SSLSocketFactory socketFactory = (SSLSocketFactory)SSLSocketFactory.getDefault();
+		String[] rawCipherSuites = socketFactory.getDefaultCipherSuites();
+		Vector<String> supportedCipherSuites = new Vector<String>(Arrays.asList(rawCipherSuites));
+		Vector<String> goodCipherSuites = SSLUtilities.getAcceptableCipherSuites(supportedCipherSuites);
+		String goodCipherSuitesAsString = "";
+		for (String cipher : goodCipherSuites) 
+		{
+			if(goodCipherSuitesAsString.length() > 0)
+				goodCipherSuitesAsString += ",";
+			goodCipherSuitesAsString += cipher;
+		}
+		MartusLogger.log("Limiting SSL cipher suites to: " + goodCipherSuitesAsString);
+		// NOTE: This seems ugly, but there doesn't seem to be any cleaner way
+		System.setProperty("https.cipherSuites", goodCipherSuitesAsString);
 	}
 
 	// begin ServerInterface
@@ -197,7 +228,11 @@ public class ClientSideNetworkHandlerUsingXmlRpc
 		int portIndexToTryNext = indexOfPortThatWorkedLast;
 		for(int i=0; i < numPorts; ++i)
 		{
-			Vector result = caller.call(this, serverName, ports[portIndexToTryNext]);
+			int port = ports[portIndexToTryNext];
+			if(ClientPortOverride.useInsecurePorts)
+				port += 9000;
+			
+			Vector result = caller.call(this, serverName, port);
 			
 			if(result == null || !result.equals(RESULT_NO_SERVER))
 			{
@@ -292,23 +327,17 @@ public class ClientSideNetworkHandlerUsingXmlRpc
 	{
 		try
 		{
-			Object xmldata = executeXmlRpc(serverName, method, params, port);
-			Vector result = new Vector();//(Vector)executeXmlRpc(serverName, method, params, port);
-			if(xmldata instanceof Object[]){
-				Object[] dataToconvert = (Object[]) xmldata;
-				Vector data = new Vector();
-				for (int j = 0; j < dataToconvert.length; j++){
-					data.add(dataToconvert[j]);
-				}
-				result = data;
-			}
+			Object[] result = (Object[])executeXmlRpc(serverName, method, params, port);
 			if(tm.getExpectedPublicKey() == null)
 				throw new Exception("Trust Manager never called");
-			return result;
+			if(result == null)
+				return null;
+			
+			return new Vector(Arrays.asList(result));
 		}
 		catch (IOException e)
 		{
-			if(e.getMessage().startsWith("Connection"))
+			if(e.getMessage().contains("Connection refused"))
 				return RESULT_NO_SERVER;
 
 			if(e.getMessage().contains("RSA premaster"))
@@ -319,15 +348,20 @@ public class ClientSideNetworkHandlerUsingXmlRpc
 			}
 			//TODO throw IOExceptions so caller can decide what to do.
 			//This was added for connection refused: connect (no server connected)
-			//System.out.println("ServerInterfaceXmlRpcHandler:callServer Exception=" + e);
-			//e.printStackTrace();
+			MartusLogger.logException(e);		
 		}
 		catch (XmlRpcException e)
 		{
-			if(e.getMessage().indexOf("NoSuchMethodException") < 0)
+			String message = e.getMessage();
+			if(message == null)
+				message = "";
+			boolean wasNoSuchMethodException = message.indexOf("NoSuchMethodException") >= 0;
+			boolean wasTimeoutException = message.indexOf("Connection timed out") >= 0;
+			boolean wasConnectionRefusedException = message.indexOf("Connection refused") >= 0;
+			if(!wasNoSuchMethodException && !wasTimeoutException && !wasConnectionRefusedException)
 			{
-				System.out.println("ServerInterfaceXmlRpcHandler:callServer XmlRpcException=" + e);
-				e.printStackTrace();
+				MartusLogger.log("ServerInterfaceXmlRpcHandler:callServer XmlRpcException=" + e);
+				MartusLogger.logException(e);
 			}
 		}
 		catch (Exception e)
@@ -338,25 +372,32 @@ public class ClientSideNetworkHandlerUsingXmlRpc
 		return null;
 	}
 	
-	public Object executeXmlRpc(String serverName, String method,
-									Vector params, int port)
-            throws Exception {
+	public Object executeXmlRpc(String serverName, String method, Vector params, int port) throws Exception 
+	{
+		if(!transport.isReady())
+		{
+			MartusLogger.log("Warning: JTor transport not ready for " + method);
+			return new String[] { NetworkInterfaceConstants.TRANSPORT_NOT_READY };
+		}
+		
 		final String serverUrl = "https://" + serverName + ":" + port + "/RPC2";
-		//System.out.println("ServerInterfaceXmlRpcHandler:callServer serverUrl=" + serverUrl);
+		MartusLogger.logVerbose("ServerInterfaceXmlRpcHandler:callServer serverUrl=" + serverUrl);
 		
 		// NOTE: We **MUST** create a new XmlRpcClient for each call, because
 		// there is a memory leak in apache xmlrpc 1.1 that will cause out of 
 		// memory exceptions if we reuse an XmlRpcClient object
-//		XmlRpcClient client = new XmlRpcClient(serverUrl);
+		XmlRpcClient client = new XmlRpcClient();
+		XmlRpcTransportFactory transportFactory = transport.createTransport(client, tm);
+		if(transportFactory != null)
+			client.setTransportFactory(transportFactory);
+		
 		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
 		config.setServerURL(new URL(serverUrl));
-		XmlRpcClient client = new XmlRpcClient();
-        SAXParsers.setSAXParserFactory(SAXParserFactory.newInstance());
-        client.setConfig(config);
+		SAXParsers.setSAXParserFactory(SAXParserFactory.newInstance());
+		client.setConfig(config);
+		
 		Stopwatch sw = new Stopwatch();
-
 		Object result = client.execute("MartusServer." + method, params);
-
 		sw.stop();
 		final int MAX_EXPECTED_TIME_MILLIS = 60 * 1000;
 		if(sw.elapsed() > MAX_EXPECTED_TIME_MILLIS)
@@ -373,6 +414,7 @@ public class ClientSideNetworkHandlerUsingXmlRpc
 	SimpleX509TrustManager tm;
 	String server;
 	int[] ports;
+	private TorTransportWrapper transport;
 	
 	static Vector RESULT_NO_SERVER;
 

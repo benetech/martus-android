@@ -27,25 +27,22 @@ Boston, MA 02111-1307, USA.
 package org.martus.clientside;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Vector;
+
+import org.martus.common.MartusUtilities.ServerErrorException;
 import org.martus.common.ProgressMeterInterface;
 import org.martus.common.VersionBuildDate;
-import org.martus.common.MartusUtilities.BulletinNotFoundException;
-import org.martus.common.MartusUtilities.NotYourBulletinErrorException;
-import org.martus.common.MartusUtilities.ServerErrorException;
 import org.martus.common.bulletin.BulletinZipUtilities;
 import org.martus.common.crypto.MartusCrypto;
-import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
 import org.martus.common.network.BulletinRetrieverGatewayInterface;
+import org.martus.common.network.ClientSideNetworkInterface;
+import org.martus.common.network.TorTransportWrapper;
 import org.martus.common.network.NetworkInterface;
 import org.martus.common.network.NetworkInterfaceConstants;
 import org.martus.common.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.common.network.NetworkResponse;
 import org.martus.common.packet.UniversalId;
-import org.martus.util.StreamableBase64.InvalidBase64Exception;
 
 public class ClientSideNetworkGateway implements BulletinRetrieverGatewayInterface
 {
@@ -178,25 +175,25 @@ public class ClientSideNetworkGateway implements BulletinRetrieverGatewayInterfa
 		String signature = signer.createSignatureOfVectorOfStrings(parameters);
 		return new NetworkResponse(server.getServerCompliance(signer.getPublicKeyString(), parameters, signature));
 	}
-	
-	static public ClientSideNetworkGateway buildGateway(String serverName, String serverPublicKey)
+
+	static public ClientSideNetworkGateway buildGateway(String serverName, String serverPublicKey, TorTransportWrapper transportToUse)
 	{
-		NetworkInterface server = buildNetworkInterface(serverName, serverPublicKey);
+		NetworkInterface server = buildNetworkInterface(serverName, serverPublicKey, transportToUse);
 		if(server == null)
 			return null;
-		
+
 		return new ClientSideNetworkGateway(server);
 	}
 
-	public static NetworkInterface buildNetworkInterface(String serverName, String serverPublicKey)
+	public static ClientSideNetworkInterface buildNetworkInterface(String serverName, String serverPublicKey, TorTransportWrapper transport)
 	{
 		if(serverName.length() == 0)
 			return null;
-	
+
 		try
 		{
 			int[] ports = NetworkInterfaceXmlRpcConstants.defaultSSLPorts;
-			ClientSideNetworkHandlerUsingXmlRpc handler = new ClientSideNetworkHandlerUsingXmlRpc(serverName, ports);
+			ClientSideNetworkHandlerUsingXmlRpc handler = new ClientSideNetworkHandlerUsingXmlRpc(serverName, ports, transport);
 			handler.getSimpleX509TrustManager().setExpectedPublicKey(serverPublicKey);
 			return handler;
 		}
@@ -208,7 +205,7 @@ public class ClientSideNetworkGateway implements BulletinRetrieverGatewayInterfa
 		}
 	}
 
-	public Object[] downloadFieldOfficeAccountIds(MartusCrypto security, String myAccountId) throws ServerErrorException
+	public Vector downloadFieldOfficeAccountIds(MartusCrypto security, String myAccountId) throws ServerErrorException
 	{
 		try
 		{
@@ -216,7 +213,7 @@ public class ClientSideNetworkGateway implements BulletinRetrieverGatewayInterfa
 			String resultCode = response.getResultCode();
 			if(!resultCode.equals(NetworkInterfaceConstants.OK))
 				throw new ServerErrorException(resultCode);
-			return response.getResultArray();
+			return response.getResultVector();
 		}
 		catch(MartusCrypto.MartusSignatureException e)
 		{
@@ -227,10 +224,7 @@ public class ClientSideNetworkGateway implements BulletinRetrieverGatewayInterfa
 
 	public File retrieveBulletin(UniversalId uid, MartusCrypto security,
 			int chunkSize, ProgressMeterInterface progressMeter)
-			throws IOException, FileNotFoundException,
-			MartusSignatureException, ServerErrorException,
-			InvalidBase64Exception, NotYourBulletinErrorException,
-			BulletinNotFoundException
+			throws Exception
 	{
 		File tempFile = File.createTempFile("$$$MartusRetrievedBulletin", null);
 		tempFile.deleteOnExit();

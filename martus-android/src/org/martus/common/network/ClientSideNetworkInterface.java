@@ -1,8 +1,8 @@
 /*
 
 The Martus(tm) free, social justice documentation and
-monitoring software. Copyright (C) 2001-2007, Beneficent
-Technology, Inc. (The Benetech Initiative).
+monitoring software. Copyright (C) 2010, Beneficent
+Technology, Inc. (Benetech).
 
 Martus is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -23,41 +23,9 @@ Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 
 */
-
 package org.martus.common.network;
 
-import java.util.Arrays;
-import java.util.Vector;
-
-public class NetworkResponse
+public interface ClientSideNetworkInterface  extends NetworkInterface
 {
-	public NetworkResponse(Vector rawServerReturnData)
-	{
-		if(rawServerReturnData == null)
-		{
-			resultCode = NetworkInterfaceConstants.NO_SERVER;
-		}
-		else
-		{
-			resultCode = (String)rawServerReturnData.get(0);
-			if(rawServerReturnData.size() >= 2)
-			{
-				Object[] result = (Object[]) rawServerReturnData.get(1);
-				resultVector = new Vector(Arrays.asList(result));
-			}
-		}
-	}
 
-	public String getResultCode()
-	{
-		return resultCode;
-	}
-
-	public Vector getResultVector()
-	{
-		return resultVector;
-	}
-
-	String resultCode;
-	Vector resultVector;
 }

@@ -29,7 +29,7 @@ public class GetDraftBulletinsTask extends AsyncTask<Object, Void, String> {
         Vector bulletinIds = new Vector();
         try {
             response = gateway.getDraftBulletinIds(signer, accountId, bulletinIds);
-            result = response.getResultArray().length + "";
+            result = response.getResultVector().size() + "";
         } catch (MartusCrypto.MartusSignatureException e) {
             Log.e("martus", "problem getting draft bulletin ids", e);
         }

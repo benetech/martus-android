@@ -30,11 +30,30 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.martus.android.AppConfig;
+
+import android.util.Log;
+
 public class MartusLogger 
 {
+	public static void temporarilyDisableLogging()
+	{
+		disabled = true;
+	}
+
+	public static void reEnableLogging()
+	{
+		disabled = false;
+	}
+
 	public static void disableLogging()
 	{
 		destination = null;
+	}
+	
+	public static void setDestination(PrintStream newDestination)
+	{
+		destination = newDestination;
 	}
 	
 	public static void logBeginProcess(String text)
@@ -49,19 +68,31 @@ public class MartusLogger
 
 	public synchronized static void log(String text)
 	{
-		if(destination != null)
-		{
-			Date now = new Date();
-			DateFormat df = new SimpleDateFormat("EEE MM/dd HH:mm:ss zzz");
-			destination.println(df.format(now) + " " + text);
-		}
+		if(!canLog())
+			return;
+		
+		Date now = new Date();
+		DateFormat df = new SimpleDateFormat("EEE MM/dd HH:mm:ss zzz");
+		destination.println(df.format(now) + " " + text);
+		Log.i(AppConfig.LOG_LABEL, df.format(now) + " " + text);
+	}
+
+	private static boolean canLog()
+	{
+		if(disabled)
+			return false;
+		
+		if(destination == null)
+			return false;
+			
+		return true;
 	}
 	
 	public synchronized static void logCurrentStack()
 	{
-		if(destination == null)
+		if(!canLog())
 			return;
-
+		
 		try
 		{
 			throw new Throwable("Current Stack");
@@ -74,11 +105,12 @@ public class MartusLogger
 	
 	public synchronized static void logException(Exception e)
 	{
-		if(destination == null)
+		if(!canLog())
 			return;
 		
 		destination.println(e.getMessage());
 		e.printStackTrace(destination);
+		Log.e(AppConfig.LOG_LABEL, "Mobile Martus Exception", e);
 	}
 	
 	public static void logError(String errorText)
@@ -91,10 +123,40 @@ public class MartusLogger
 		log("WARNING: " + errorText);
 	}
 	
+	public static void logVerbose(String string)
+	{
+		// TODO: Add a verbose mode where verbose logging really happens
+	}
+
 	public static PrintStream getDestination()
 	{
 		return destination;
 	}
 	
-	private static PrintStream destination = System.out;
+	public static void logMemoryStatistics()
+	{
+		if(!canLog())
+			return;
+		
+		log(getMemoryStatistics());
+	}
+
+	public static String getMemoryStatistics()
+	{
+		System.gc();
+		Runtime runtime = Runtime.getRuntime();
+		long totalMegs = megs(runtime.totalMemory());
+		long maxMegs = megs(runtime.maxMemory());
+		long usedMegs = megs(runtime.totalMemory() - runtime.freeMemory());
+		String memoryStatistics = "\nMemory Statistics: Using " + usedMegs + " megs of " + totalMegs + " megs; max avail=" + maxMegs;
+		return memoryStatistics;
+	}
+
+	public static long megs(long bytes)
+	{
+		return bytes/1024L/1024L;
+	}
+
+	private static PrintStream destination = MartusLogger.getDestination();
+	private static boolean disabled = false;
 }
