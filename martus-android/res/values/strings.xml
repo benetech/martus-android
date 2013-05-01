@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--   This file MUST be saved in UTF-8 format!-->
+<!--   Lines beginning with <!- are comments and are ignored by Mobile Martus -->
+<!--   Do not translate comments -->
+<!--   Each entry has a name and a value. The name is the English name of the field, -->
+<!--   and the value is the part between the '>' and '<' -->
+<!--   Translate the value and leave the name alone -->
+<!--  1. Do not translate the words 'Martus' or 'Benetech' or 'Orbot' or 'Picasa' or any emails or urls-->
+<!--  2. Do not translate the lines immediately following a 'Do Not Translate next line' comment-->
+<!--  3. Do not translate words that start with %, but you may move them around-->
+<!--     as grammatically appropriate.-->
+
 <resources>
 
     <string name="app_name">Martus</string>
@@ -41,6 +53,7 @@
     <string name="create_account_dialog_title">Create new password</string>
     <string name="quit_menu_title">Logout</string>
     <string name="server_menu_title">Choose Server</string>
+    <!-- Do Not Translate next line-->
     <string name="market_orbot">market://search?q=pname:org.torproject.android</string>
     <string name="install_orbot_">Install Orbot</string>
     <string name="you_must_have_orbot">You must have Orbot installed</string>
@@ -62,6 +75,7 @@
     <string name="problem_confirming_magic_word">Problem confirming Magic Word</string>
     <string name="tor_explanation">Tor is an open network that helps defend against a form of network surveillance known as traffic analysis.
         Tor protects you by bouncing your communications around a distributed network all around the world. It will make sending bulletins much slower.</string>
+    <!-- Do Not Translate next line-->
     <string formatted="false" name="tor_link">https://www.torproject.org</string>
     <string name="progress_confirming_magic_word">Confirming Magic Word</string>
     <string name="confirm_reset_install">Reset to freshly installed state?</string>
@@ -146,6 +160,7 @@
     <string name="choose_server_title">Choose Server</string>
     <string name="choose_file">Martus File Chooser</string>
     <string name="install_explorer_text">If you can\'t find the file you were thinking of, try installing a more advanced file explorer:</string>
+    <!-- Do Not Translate next line-->
     <string formatted="false" name="file_explorer_store_link">play.google.com/store/search?q=%22open+source%22+file+manager+explorer</string>
 
     <!-- ============================== -->
@@ -155,6 +170,7 @@
     <string name="failed_send_notification">Send failed due to: %1$s . Will be retried on next login.</string>
     <string name="failure_send_notification">Sending bulletin failed</string>
     <string name="starting_send_notification">Sending …</string>
+    <!-- Do Not Translate next line-->
     <string name="notification_title">Martus - %1$s</string>
 
 
