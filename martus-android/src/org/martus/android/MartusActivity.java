@@ -2,6 +2,7 @@ package org.martus.android;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -21,6 +22,7 @@ import org.martus.common.crypto.MartusSecurity;
 import org.martus.common.network.NetworkInterfaceConstants;
 import org.martus.common.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.common.network.NetworkResponse;
+import org.martus.util.StreamableBase64;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,6 +32,7 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.util.Base64;
@@ -50,6 +53,7 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     public final static String PROXY_HOST = "127.0.0.1"; //test the local device proxy provided by Orbot/Tor
     public final static int PROXY_HTTP_PORT = 8118; //default for Orbot/Tor
     public final static int PROXY_SOCKS_PORT = 9050; //default for Orbot/Tor
+	public static final String ACCOUNT_ID_FILENAME = "Mobile_Public_Account_ID.mpi";
 
     private static final String PACKETS_DIR = "packets";
     private static final String SERVER_COMMAND_PREFIX = "MartusServer.";
@@ -169,7 +173,8 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
                     logout();
                     finish();
                 } else {
-                    showMessage(this, getString(R.string.logout_while_sending_message), getString(R.string.logout_while_sending_title));
+                    showMessage(this, getString(R.string.logout_while_sending_message),
+		                    getString(R.string.logout_while_sending_title));
                 }
                 return true;
             case R.id.server_menu_item:
@@ -185,14 +190,16 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
                     showMessage(this, publicCode, getString(R.string.view_public_code_dialog_title));
                 } catch (Exception e) {
                     Log.e(AppConfig.LOG_LABEL, "couldn't get public code", e);
-                    showMessage(this, getString(R.string.view_public_code_dialog_error), getString(R.string.view_public_code_dialog_title));
+                    showMessage(this, getString(R.string.view_public_code_dialog_error),
+		                    getString(R.string.view_public_code_dialog_title));
                 }
                 return true;
             case R.id.reset_install_menu_item:
                 if (!MartusApplication.isIgnoreInactivity()) {
                     showConfirmationDialog();
                 } else {
-                    showMessage(this, getString(R.string.logout_while_sending_message), getString(R.string.reset_while_sending_title));
+                    showMessage(this, getString(R.string.logout_while_sending_message),
+		                    getString(R.string.reset_while_sending_title));
                 }
                 return true;
 	        case R.id.show_version_menu_item:
@@ -206,10 +213,29 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
 		        }
 		        Toast.makeText(this, version, Toast.LENGTH_LONG).show();
 		        return true;
+	        case R.id.export_mpi_menu_item:
+		        File externalDir = Environment.getExternalStorageDirectory();
+		        File mpiFile = new File(externalDir, ACCOUNT_ID_FILENAME);
+		        try {
+			        exportPublicInfo(mpiFile);
+			        Toast.makeText(this, getString(R.string.export_public_account_id_success,
+					        mpiFile.getAbsolutePath()), Toast.LENGTH_LONG).show();
+		        } catch (Exception e) {
+			        Log.e(AppConfig.LOG_LABEL, "couldn't export public id", e);
+			        showMessage(this, getString(R.string.export_public_account_id_dialog_error),
+					        getString(R.string.export_public_account_id_dialog_title));
+		        }
+		        return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+	private void exportPublicInfo(File exportFile) throws IOException,
+			StreamableBase64.InvalidBase64Exception,
+			MartusCrypto.MartusSignatureException {
+			MartusUtilities.exportClientPublicKey(getSecurity(), exportFile);
+		}
 
     private void pingServer() {
         if (! isNetworkAvailable()) {
