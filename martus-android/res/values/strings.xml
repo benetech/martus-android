@@ -78,13 +78,13 @@
     <!-- Do Not Translate next line-->
     <string formatted="false" name="tor_link">https://www.torproject.org</string>
     <string name="progress_confirming_magic_word">Confirming Magic Word</string>
-    <string name="confirm_reset_install">Reset to freshly installed state?</string>
-    <string name="confirm_reset_install_extra_no_pending">You are okay to reset as there are no unsent bulletins.</string>
+    <string name="confirm_reset_install">Are you sure you want to delete?</string>
+    <string name="confirm_reset_install_extra_no_pending">You will not lose any unsent bulletins if you delete.</string>
     <plurals name="confirm_reset_install_extra">
         <item quantity="one">You will lose %1$s failed or currently sending bulletin that would be resent on your next login.</item>
         <item quantity="other">You will lose %1$s failed or currently sending bulletins that would be resent on your next login.</item>
     </plurals>
-    <string name="reset_to_install">Reset to freshly installed state</string>
+    <string name="reset_to_install">Delete My Account</string>
     <string name="ping_server_menu_item">Check Server</string>
     <string name="ping_result_ok">Server is up</string>
     <string name="ping_result_down">Server is down</string>
