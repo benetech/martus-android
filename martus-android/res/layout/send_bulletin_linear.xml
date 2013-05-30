@@ -40,8 +40,8 @@
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/attachments_label"
-            android:id="@+id/textView"
+            android:text="@string/attachments_add_label"
+            android:id="@+id/attachments_help_text"
             android:layout_marginTop="4dip"
             android:textSize="16sp"
             />

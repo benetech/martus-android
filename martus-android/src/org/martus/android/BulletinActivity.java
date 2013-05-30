@@ -44,6 +44,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
@@ -84,6 +85,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
     private String attachmentToRemoveName;
     private EditText titleText;
     private EditText summaryText;
+	private TextView attachmentsHelpText;
     private ArrayAdapter<String> attachmentAdapter;
     private boolean shouldShowInstallExplorer = false;
     private IndeterminateProgressDialog indeterminateDialog;
@@ -109,6 +111,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
 
         titleText = (EditText)findViewById(R.id.createBulletinTitle);
         summaryText = (EditText)findViewById(R.id.bulletinSummary);
+	    attachmentsHelpText = (TextView)findViewById(R.id.attachments_help_text);
         if (null == bulletin) {
             attachmentAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
             createEmptyBulletinAndClearFields();
@@ -214,6 +217,7 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
     private void addAttachmentToMap(File attachment) {
         attachmentAdapter.add(attachment.getName());
         bulletinAttachments.put(attachment.getName(), attachment);
+	    attachmentsHelpText.setText(R.string.attachments_added_label);
     }
 
     private ArrayList<File> getFilesFromIntent(Intent intent) {
@@ -531,6 +535,9 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
                 String fileName = attachmentAdapter.getItem(attachmentToRemoveIndex);
                 bulletinAttachments.remove(fileName);
                 attachmentAdapter.remove(fileName);
+	            if (attachmentAdapter.isEmpty()) {
+		            attachmentsHelpText.setText(R.string.attachments_add_label);
+	            }
                 break;
         }
     }

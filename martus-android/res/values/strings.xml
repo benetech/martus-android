@@ -152,7 +152,8 @@
     <string name="invalid_public_code">Public Code doesn\'t match file</string>
     <string name="public_code_validation_empty">Public Code can\'t be empty</string>
     <string name="select_file_picker">Select a file chooser</string>
-    <string name="attachments_label">Attachments (press and hold to remove) :</string>
+    <string name="attachments_add_label">Attachments (press paperclip to add) :</string>
+    <string name="attachments_added_label">Attachments (press and hold to remove) :</string>
     <string name="server_ip_label">Server IP Address:</string>
     <string name="server_ip_hint">Enter Server IP address</string>
     <string name="server_public_code_label">Server Public Code:</string>
