@@ -4,9 +4,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
-        android:focusableInTouchMode="false"
-        android:focusable="true"
-        android:clickable="false">
+        android:focusableInTouchMode="true"
+        android:focusable="true">
 
     <LinearLayout
             android:orientation="vertical"
@@ -35,7 +34,6 @@
                 android:layout_gravity="left|right"
                 android:gravity="left|top"
                 android:layout_marginBottom="8dp"
-                android:focusable="true"
                 android:textSize="18sp"/>
     </LinearLayout>
 
