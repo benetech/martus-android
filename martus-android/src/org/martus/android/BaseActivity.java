@@ -53,8 +53,8 @@ public class BaseActivity extends SherlockFragmentActivity implements Confirmati
     protected ProgressDialog dialog;
     SharedPreferences mySettings;
 
-    private Handler inactivityHandler;
-    private Runnable inactivityCallback;
+    private static Handler inactivityHandler;
+    private LogOutProcess inactivityCallback;
     private static long inactivityTimeout;
 	MartusSecurity martusCrypto;
 
@@ -65,15 +65,22 @@ public class BaseActivity extends SherlockFragmentActivity implements Confirmati
         parentApp = (MartusApplication) this.getApplication();
         confirmationDialogTitle = getString(R.string.confirm_default);
         mySettings = PreferenceManager.getDefaultSharedPreferences(this);
-        inactivityHandler = new EmptyHandler();
-        inactivityCallback = new LogOutProcess(this);
-        int timeoutSetting = Integer.valueOf(mySettings.getString(SettingsActivity.KEY_TIMEOUT_MINUTES, SettingsActivity.DEFAULT_TIMEOUT_MINUTES));
-        setTimeout(timeoutSetting);
+	    initInactivityHandler();
 	    martusCrypto = AppConfig.getInstance().getCrypto();
     }
 
+	private void initInactivityHandler() {
+		if (inactivityHandler == null)
+			inactivityHandler = new EmptyHandler();
+		if (inactivityCallback == null) {
+			inactivityCallback = new LogOutProcess(this);
+		}
+		int timeoutSetting = Integer.valueOf(mySettings.getString(SettingsActivity.KEY_TIMEOUT_MINUTES, SettingsActivity.DEFAULT_TIMEOUT_MINUTES));
+        setTimeout(timeoutSetting);
+	}
+
     public void resetInactivityTimer(){
-        inactivityHandler.removeCallbacks(inactivityCallback);
+	    stopInactivityTimer();
         if (!MartusApplication.isIgnoreInactivity()) {
             inactivityHandler.postDelayed(inactivityCallback, inactivityTimeout);
         } else {
@@ -82,8 +89,8 @@ public class BaseActivity extends SherlockFragmentActivity implements Confirmati
     }
 
     public void stopInactivityTimer(){
-        Log.w(AppConfig.LOG_LABEL, "start stopInactivityTimer");
-        inactivityHandler.removeCallbacks(inactivityCallback);
+        Log.d(AppConfig.LOG_LABEL, "start stopInactivityTimer");
+        inactivityHandler.removeCallbacksAndMessages(null);
     }
 
     public void showLoginRequiredDialog() {

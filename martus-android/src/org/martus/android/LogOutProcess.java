@@ -14,6 +14,7 @@ public class LogOutProcess implements Runnable {
 
     public LogOutProcess(BaseActivity myActivity) {
         this.myActivity = myActivity;
+	    Log.i(AppConfig.LOG_LABEL, "logout process my activity is " + myActivity.getClass().getName());
     }
 
     @Override
@@ -28,6 +29,7 @@ public class LogOutProcess implements Runnable {
             martusCrypto.clearKeyPair();
         }
         if (null != myActivity) {
+	        Log.i(AppConfig.LOG_LABEL, "should attempt to close " + myActivity.getClass().getName());
             myActivity.close();
         }
     }
