@@ -357,13 +357,6 @@ public class BulletinActivity extends BaseActivity implements BulletinSender,
             showMessage(this, getString(R.string.no_network_create_bulletin_warning),
                     getString(R.string.no_network_connection));
         }
-
-        try {
-            verifySavedDesktopKeyFile();
-        } catch (MartusUtilities.FileVerificationException e) {
-            Log.e(AppConfig.LOG_LABEL, "Desktop key file corrupted");
-            onFinishLoginRequiredDialog();
-        }
     }
 
 	@Override
