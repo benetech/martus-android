@@ -28,5 +28,8 @@
     <item android:id="@+id/export_mpi_menu_item"
                 android:title="@string/export_public_account_id_menu_item" />
 
+    <item android:id="@+id/email_mpi_menu_item"
+                    android:title="@string/send_public_account_id_menu_item" />
+
 </menu>
 

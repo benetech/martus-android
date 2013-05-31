@@ -24,11 +24,15 @@ import org.martus.common.network.NetworkInterfaceXmlRpcConstants;
 import org.martus.common.network.NetworkResponse;
 import org.martus.util.StreamableBase64;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -214,22 +218,34 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
 		        Toast.makeText(this, version, Toast.LENGTH_LONG).show();
 		        return true;
 	        case R.id.export_mpi_menu_item:
-		        File externalDir = Environment.getExternalStorageDirectory();
-		        File mpiFile = new File(externalDir, ACCOUNT_ID_FILENAME);
-		        try {
-			        exportPublicInfo(mpiFile);
-			        Toast.makeText(this, getString(R.string.export_public_account_id_success,
-					        mpiFile.getAbsolutePath()), Toast.LENGTH_LONG).show();
-		        } catch (Exception e) {
-			        Log.e(AppConfig.LOG_LABEL, "couldn't export public id", e);
-			        showMessage(this, getString(R.string.export_public_account_id_dialog_error),
-					        getString(R.string.export_public_account_id_dialog_title));
-		        }
+				File mpiFile = getMpiFile();
+		        showMessage(this, mpiFile.getAbsolutePath(), getString(R.string.exported_account_id_file_confirmation));
+		         return true;
+	        case R.id.email_mpi_menu_item:
+		        showHowToSendDialog(this, getString(R.string.send_dialog_title));
 		        return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+	private File getMpiFile()
+	{
+		File externalDir;
+		File mpiFile;
+		externalDir = Environment.getExternalStorageDirectory();
+		mpiFile = new File(externalDir, ACCOUNT_ID_FILENAME);
+		try {
+		    exportPublicInfo(mpiFile);
+
+
+		} catch (Exception e) {
+		    Log.e(AppConfig.LOG_LABEL, "couldn't export public id", e);
+		    showMessage(this, getString(R.string.export_public_account_id_dialog_error),
+		            getString(R.string.export_public_account_id_dialog_title));
+		}
+		return mpiFile;
+	}
 
 	private void exportPublicInfo(File exportFile) throws IOException,
 			StreamableBase64.InvalidBase64Exception,
@@ -613,6 +629,46 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
     private void processPingResult(String result) {
         dialog.dismiss();
         Toast.makeText(this, result, Toast.LENGTH_LONG).show();
+    }
+
+	protected void showHowToSendDialog(Context context, String title) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        alert.setIcon(android.R.drawable.ic_dialog_info)
+             .setTitle(title)
+             .setPositiveButton(R.string.send_dialog_email, new SendEmailButtonListener())
+             .setNegativeButton(R.string.password_dialog_cancel, new CancelSendButtonListener())
+             .setNeutralButton(R.string.send_dialog_bulletin, new SendBulletinButtonListener())
+             .show();
+    }
+
+    public class SendEmailButtonListener implements DialogInterface.OnClickListener {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+	        File mpiFile = getMpiFile();
+            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+            emailIntent.setType("text/plain");
+            Uri uri = Uri.parse("file://" + mpiFile.getAbsolutePath());
+            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+            startActivity(Intent.createChooser(emailIntent, "Send email..."));
+        }
+    }
+
+	public class SendBulletinButtonListener implements DialogInterface.OnClickListener {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+	        File mpiFile = getMpiFile();
+            String filePath = mpiFile.getPath();
+            Intent bulletinIntent = new Intent(MartusActivity.this, BulletinActivity.class);
+            bulletinIntent.putExtra(BulletinActivity.EXTRA_ATTACHMENT, filePath);
+            startActivity(bulletinIntent);
+        }
+    }
+
+	public class CancelSendButtonListener implements DialogInterface.OnClickListener {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+            //do nothing
+        }
     }
 
     private class UploadRightsTask extends AsyncTask<Object, Void, NetworkResponse> {

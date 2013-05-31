@@ -98,12 +98,17 @@
     <string name="view_public_code_menu_item">View Public Code</string>
     <string name="view_public_code_dialog_title">Public Code</string>
     <string name="view_public_code_dialog_error">Unable to show Public Code</string>
+    <string name="send_public_account_id_menu_item">Send Public Account ID</string>
     <string name="export_public_account_id_menu_item">Export Public Account ID</string>
     <string name="export_public_account_id_dialog_title">Export Public Account Error</string>
     <string name="export_public_account_id_dialog_error">Unable to export account ID</string>
     <string name="export_public_account_id_success">Exported to %1$s</string>
     <string formatted="false" name="contact_us_info">If you have any questions or feedback on Martus, please email info@martus.org</string>
     <string name="show_version">Show Version</string>
+    <string name="send_dialog_email">Email</string>
+    <string name="send_dialog_bulletin">Martus Bulletin</string>
+    <string name="send_dialog_title">Send Via</string>
+    <string name="exported_account_id_file_confirmation">Exported To</string>
 
     <!-- ============================== -->
     <!--  bulletin screen  -->
