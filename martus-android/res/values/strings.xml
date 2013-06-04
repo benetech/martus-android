@@ -52,7 +52,7 @@
     <string name="no_upload_rights">Incorrect magic word</string>
     <string name="create_account_dialog_title">Create new password</string>
     <string name="quit_menu_title">Logout</string>
-    <string name="server_menu_title">Choose Server</string>
+    <string name="server_menu_title">Select Server</string>
     <!-- Do Not Translate next line-->
     <string name="market_orbot">market://search?q=pname:org.torproject.android</string>
     <string name="install_orbot_">Install Orbot</string>
