@@ -10,26 +10,28 @@
           android:showAsAction="ifRoom"
         android:title="@string/settings_title" />
 
+    <item android:id="@+id/ping_server_menu_item"
+            android:title="@string/ping_server_menu_item" />
+
     <item android:id="@+id/server_menu_item"
         android:title="@string/server_menu_title" />
-
-    <item android:id="@+id/ping_server_menu_item"
-        android:title="@string/ping_server_menu_item" />
 
     <item android:id="@+id/view_public_code_menu_item"
             android:title="@string/view_public_code_menu_item" />
 
-    <item android:id="@+id/reset_install_menu_item"
-            android:title="@string/reset_to_install" />
-
-    <item android:id="@+id/show_version_menu_item"
-                android:title="@string/show_version" />
+    <item android:id="@+id/email_mpi_menu_item"
+                        android:title="@string/send_public_account_id_menu_item" />
 
     <item android:id="@+id/export_mpi_menu_item"
                 android:title="@string/export_public_account_id_menu_item" />
 
-    <item android:id="@+id/email_mpi_menu_item"
-                    android:title="@string/send_public_account_id_menu_item" />
+    <item android:id="@+id/reset_install_menu_item"
+                android:title="@string/reset_to_install" />
+
+    <item android:id="@+id/show_version_menu_item"
+                    android:title="@string/show_version" />
+
+
 
 </menu>
 
