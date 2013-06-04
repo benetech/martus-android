@@ -47,15 +47,17 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choose_server);
 
-        if (haveVerifiedServerInfo()) {
-            ActionBar actionBar = getSupportActionBar();
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-
         myActivity = this;
         textIp = (EditText)findViewById(R.id.serverIpText);
         textCode = (EditText)findViewById(R.id.serverCodeText);
         textCode.setOnEditorActionListener(this);
+
+	    if (haveVerifiedServerInfo()) {
+            ActionBar actionBar = getSupportActionBar();
+            actionBar.setDisplayHomeAsUpEnabled(true);
+		    textIp.setHint(getServerIP());
+        }
+
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
@@ -184,9 +186,14 @@ public class ServerActivity extends BaseActivity implements TextView.OnEditorAct
         }
     }
 
+	private String getServerIP() {
+		SharedPreferences serverSettings = getSharedPreferences(PREFS_SERVER_IP, MODE_PRIVATE);
+        return serverSettings.getString(SettingsActivity.KEY_SERVER_IP, "");
+	}
+
     private boolean haveVerifiedServerInfo() {
-	    SharedPreferences serverSettings = getSharedPreferences(PREFS_SERVER_IP, MODE_PRIVATE);
-        return serverSettings.getString(SettingsActivity.KEY_SERVER_IP, "").length() > 1;
+	    String serverIP =  getServerIP();
+        return serverIP.length() > 1;
     }
 
     private class CancelButtonHandler implements DialogInterface.OnClickListener {
