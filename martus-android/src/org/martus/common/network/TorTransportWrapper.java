@@ -25,11 +25,18 @@ Boston, MA 02111-1307, USA.
 */
 package org.martus.common.network;
 
+import java.io.File;
+
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcTransportFactory;
 import org.martus.common.MartusLogger;
+import org.martus.common.MartusUtilities;
 import org.martus.common.ProgressMeterInterface;
-//import org.torproject.jtor.TorInitializationListener;
+
+import android.util.Log;
+import com.subgraph.orchid.TorClient;
+import com.subgraph.orchid.TorInitializationListener;
+import com.subgraph.orchid.xmlrpc.OrchidXmlRpcTransportFactory;
 
 
 public class TorTransportWrapper
@@ -46,20 +53,49 @@ public class TorTransportWrapper
 
 		createRealTorClient();
 	}
+	
+	public void setTorDataDirectory(File directory)
+	{
+		tor.getConfig().setDataDirectory(directory);
+	}
 
 	public void setProgressMeter(ProgressMeterInterface initializationProgressMeterToUse)
 	{
-		initializationProgressMeter = initializationProgressMeterToUse;
+		progressMeter = initializationProgressMeterToUse;
 	}
 
 	public void start()
 	{
-		enableRealTorClient();
+		isTorActive = true;
+		updateStatus();
+		if(!isTorReady)
+			new TorInitializer().start();
 	}
 	
 	public void stop()
 	{
 		isTorActive = false;
+		updateStatus();
+	}
+	
+	protected class TorInitializer extends Thread
+	{
+		@Override
+		public void run()
+		{
+			getTor().start();
+		}
+
+	}
+	
+	protected TorClient getTor()
+	{
+		return tor;
+	}
+
+	public boolean isEnabled()
+	{
+		return isTorActive;
 	}
 	
 	public boolean isReady()
@@ -70,6 +106,30 @@ public class TorTransportWrapper
 		return isTorReady;
 	}
 
+	public void updateStatus()
+	{
+		if(progressMeter == null)
+			return;
+		
+		if(isTorActive)
+		{
+			if(isTorReady)
+			{
+				progressMeter.setStatusMessage("TorStatusActive");
+				progressMeter.hideProgressMeter();
+			}
+			else
+			{
+				progressMeter.setStatusMessage("TorStatusInitializing");
+			}
+		}
+		else
+		{
+			progressMeter.setStatusMessage("TorStatusDisabled");
+			progressMeter.hideProgressMeter();
+		}
+	}
+	
 	public XmlRpcTransportFactory createTransport(XmlRpcClient client, SimpleX509TrustManager tm)	throws Exception 
 	{
 		if(!isTorActive)
@@ -83,56 +143,49 @@ public class TorTransportWrapper
 
 	void updateProgress(String message, int percent)
 	{
-		if(initializationProgressMeter != null)
-			initializationProgressMeter.updateProgressMeter(percent, 100);
-		
-		MartusLogger.log("JTor initialization: " + percent + "% - " + message);
+		Log.i("martus","Tor initialization: " + percent + "% - " + message);
+		if(progressMeter != null)
+			progressMeter.updateProgressMeter(percent, 100);
+		updateStatus();
 	}
 
 	void updateProgressComplete()
 	{
-		if(initializationProgressMeter != null)
-			initializationProgressMeter.updateProgressMeter(100, 100);
-		
+		Log.i("martus","Tor initialization complete");
 		isTorReady = true;
+		updateStatus();
 	}
 
 	private void createRealTorClient()
 	{
-//		tor = new TorClient();
-//
-//		class TorInitializationHandler implements TorInitializationListener
-//		{
-//			public void initializationProgress(String message, int percent)
-//			{
-//				updateProgress(message, percent);
-//			}
-//			
-//			public void initializationCompleted()
-//			{
-//				updateProgressComplete();
-//			}
-//
-//		}
+		tor = new TorClient();
+
+		class TorInitializationHandler implements TorInitializationListener
+		{
+			public void initializationProgress(String message, int percent)
+			{
+				updateProgress(message, percent);
+			}
+			
+			public void initializationCompleted()
+			{
+				updateProgressComplete();
+			}
+
+		}
 		
-//		tor.addInitializationListener(new TorInitializationHandler());
+		tor.addInitializationListener(new TorInitializationHandler());
 	}
 	
-	private void enableRealTorClient()
-	{
-//		isTorActive = true;
-//		tor.start();
-	}
-
 	private XmlRpcTransportFactory createRealTorTransportFactory(XmlRpcClient client, SimpleX509TrustManager tm) throws Exception
 	{
 		XmlRpcTransportFactory factory = null;
-//		factory = new JTorXmlRpcTransportFactory(client, tor, MartusUtilities.createSSLContext(tm));
+		factory = new OrchidXmlRpcTransportFactory(client, tor, MartusUtilities.createSSLContext(tm));
 		return factory;
 	}
 
-//	private TorClient tor;
-	private ProgressMeterInterface initializationProgressMeter;
+	private TorClient tor;
+	private ProgressMeterInterface progressMeter;
 
 	private boolean isTorActive;
 	private boolean isTorReady;

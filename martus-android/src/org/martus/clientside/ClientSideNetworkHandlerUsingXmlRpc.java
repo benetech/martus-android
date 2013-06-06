@@ -72,6 +72,8 @@ public class ClientSideNetworkHandlerUsingXmlRpc
 		ports = portsToUse;
 		transport = transportToUse;
 
+		timeoutSecondsForGetServerInfo = DEFAULT_GET_SERVER_INFO_TIMEOUT_SECONDS;
+
 		RESULT_NO_SERVER = new Vector();
 		RESULT_NO_SERVER.add(NetworkInterfaceConstants.NO_SERVER);
 		
@@ -88,6 +90,12 @@ public class ClientSideNetworkHandlerUsingXmlRpc
 			MartusLogger.logException(e);
 			throw new SSLSocketSetupException();
 		}
+	}
+
+	public void setTimeoutGetServerInfo(int newTimeoutSeconds)
+	{
+		MartusLogger.log("Setting getServerInfo timeout to " + newTimeoutSeconds + " seconds");
+		timeoutSecondsForGetServerInfo = newTimeoutSeconds;
 	}
 
 	private void restrictCipherSuites() throws NoSuchAlgorithmException 
@@ -113,7 +121,7 @@ public class ClientSideNetworkHandlerUsingXmlRpc
 	{
 		Vector params = new Vector();
 		params.add(reservedForFuture);
-		Caller caller = new CallerWithTimeout(cmdGetServerInfo, params, secondsToTimeoutGetServerInfo);
+		Caller caller = new CallerWithTimeout(cmdGetServerInfo, params, timeoutSecondsForGetServerInfo);
 		return (Vector)callServer(server, caller);
 	}
 
@@ -414,9 +422,12 @@ public class ClientSideNetworkHandlerUsingXmlRpc
 	SimpleX509TrustManager tm;
 	String server;
 	int[] ports;
+	int timeoutSecondsForGetServerInfo;
 	private TorTransportWrapper transport;
 	
 	static Vector RESULT_NO_SERVER;
 
-	private static final int secondsToTimeoutGetServerInfo = 15;
+	public static final int DEFAULT_GET_SERVER_INFO_TIMEOUT_SECONDS = 60;
+	public static final int WITHOUT_TOR_GET_SERVER_INFO_TIMEOUT_SECONDS = 15;
+	public static final int TOR_GET_SERVER_INFO_TIMEOUT_SECONDS = 60;
 }

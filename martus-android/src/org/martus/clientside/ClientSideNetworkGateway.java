@@ -239,6 +239,11 @@ public class ClientSideNetworkGateway implements BulletinRetrieverGatewayInterfa
 		return tempFile;
 	}
 
+	public void setTimeoutGetServerInfo(int torGetServerInfoTimeoutSeconds)
+	{
+		((ClientSideNetworkHandlerUsingXmlRpc)server).setTimeoutGetServerInfo(torGetServerInfoTimeoutSeconds);
+	}
+
 	final static String defaultReservedString = "";
 
 	NetworkInterface server;

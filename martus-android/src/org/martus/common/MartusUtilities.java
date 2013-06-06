@@ -48,17 +48,17 @@ import javax.net.ssl.TrustManager;
 import org.martus.common.bulletin.BulletinZipUtilities;
 import org.martus.common.crypto.MartusCrypto;
 import org.martus.common.crypto.MartusCrypto.MartusSignatureException;
+import org.martus.common.database.Database.RecordHiddenException;
 import org.martus.common.database.DatabaseKey;
 import org.martus.common.database.ReadableDatabase;
-import org.martus.common.database.Database.RecordHiddenException;
 import org.martus.common.network.SimpleX509TrustManager;
 import org.martus.common.packet.AttachmentPacket;
 import org.martus.common.packet.BulletinHeaderPacket;
 import org.martus.util.StreamFilter;
 import org.martus.util.StreamableBase64;
+import org.martus.util.StreamableBase64.InvalidBase64Exception;
 import org.martus.util.UnicodeReader;
 import org.martus.util.UnicodeWriter;
-import org.martus.util.StreamableBase64.InvalidBase64Exception;
 import org.martus.util.inputstreamwithseek.InputStreamWithSeek;
 
 
@@ -428,13 +428,18 @@ public class MartusUtilities
 
 	public static SSLSocketFactory createSocketFactory(SimpleX509TrustManager tm) throws Exception
 	{
+		SSLContext sslContext = createSSLContext(tm);
+		return sslContext.getSocketFactory();
+	
+	}
+
+	public static SSLContext createSSLContext(SimpleX509TrustManager tm) throws Exception
+	{
 		TrustManager []tma = {tm};
 		SSLContext sslContext = SSLContext.getInstance( "TLS" );
 		SecureRandom secureRandom = new SecureRandom();
 		sslContext.init( null, tma, secureRandom);
-	
-		return sslContext.getSocketFactory();
-	
+		return sslContext;
 	}
 
 	public static void startTimer(TimerTask task, long interval)
