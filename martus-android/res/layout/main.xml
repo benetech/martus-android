@@ -12,7 +12,7 @@
       	android:text="@string/create_sample_bulletin"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="40dip"
-        android:layout_marginBottom="10dip"/>
+        android:layout_marginBottom="40dip"/>
 
     <CheckBox
         android:layout_width="wrap_content"
@@ -47,24 +47,4 @@
         android:padding="8dip"
         />
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical"
-        android:layout_gravity="bottom"
-        android:gravity="center_vertical|center_horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:text="@string/contact_us_info"
-            android:id="@+id/contact_us"
-            android:layout_gravity="center"
-            android:padding="8dip"
-            android:autoLink="email"
-            android:layout_marginTop="10dip"
-            android:paddingTop="12dip"
-            android:background="@drawable/contact_info_background"
-            android:gravity="center"/>
-    </LinearLayout>
 </LinearLayout>

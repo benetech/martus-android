@@ -96,8 +96,10 @@
     <string name="reset_while_sending_title">Can\'t reset yet</string>
     <string name="confirm_tamper_reset_title">Your setup information may have been tampered with</string>
     <string name="confirm_tamper_reset_message">In the interest of security, please reset to a freshly installed state. Pressing the Yes button will start the reset. Martus can not function with a tampered settings file, so pressing No will exit the app.</string>
+    <string name="feedback_menu">Contact Us</string>
     <string name="view_public_code_menu_item">View Public Code</string>
     <string name="help_menu">Help</string>
+    <string name="feedback_dialog_title">Contact Us</string>
     <string name="view_public_code_dialog_title">Public Code</string>
     <string name="view_public_code_dialog_error">Unable to show Public Code</string>
     <string name="send_public_account_id_menu_item">Send Public Account ID</string>

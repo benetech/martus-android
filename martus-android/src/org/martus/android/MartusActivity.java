@@ -42,6 +42,7 @@ import android.support.v4.app.DialogFragment;
 import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -224,10 +225,25 @@ public class MartusActivity extends BaseActivity implements LoginDialog.LoginDia
 	        case R.id.email_mpi_menu_item:
 		        showHowToSendDialog(this, getString(R.string.send_dialog_title));
 		        return true;
+	        case R.id.feedback_menu_item:
+		        showContactUs();
+		        return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+	private void showContactUs()
+	{
+		LayoutInflater li = LayoutInflater.from(this);
+		View view = li.inflate(R.layout.contact_us, null);
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setIcon(android.R.drawable.ic_dialog_email)
+		     .setTitle(R.string.feedback_dialog_title)
+		     .setView(view)
+		     .setPositiveButton(R.string.alert_dialog_ok, new SimpleOkayButtonListener())
+		     .show();
+	}
 
 	private File getMpiFile()
 	{
