@@ -25,14 +25,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-       <activity android:name=".SettingsActivity" android:label="@string/settings_title"></activity>
+       <activity android:name="org.martus.android.SettingsActivity" android:label="@string/settings_title">
+           <intent-filter>
+                        <action android:name="android.intent.action.SEND" />
+                        <category android:name="android.intent.category.DEFAULT" />
+                        <data android:mimeType="*/*" />
+                      </intent-filter>
+       </activity>
        <activity
-               android:name=".DesktopKeyActivity"
+               android:name="org.martus.android.DesktopKeyActivity"
                android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
                android:label="@string/desktop_sync_title">
        </activity>
        <activity
-           android:name=".BulletinActivity"
+           android:name="org.martus.android.BulletinActivity"
            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
            android:uiOptions="splitActionBarWhenNarrow"
            android:label="@string/app_name">
@@ -48,7 +54,7 @@
            </intent-filter>
        </activity>
         <activity
-                android:name=".ServerActivity"
+                android:name="org.martus.android.ServerActivity"
                 android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
                 android:label="@string/choose_server_title"/>
         <activity
@@ -66,7 +72,7 @@
                 </intent-filter>
             </activity>
 
-        <service android:name=".ResendService"/>
+        <service android:name="org.martus.android.ResendService"/>
     </application>
 
 </manifest>
