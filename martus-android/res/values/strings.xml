@@ -85,6 +85,7 @@
         <item quantity="other">You will lose %1$s failed or currently sending bulletins that would be resent on your next login.</item>
     </plurals>
     <string name="reset_to_install">Delete My Account</string>
+    <string name="server_menu">Servers</string>
     <string name="ping_server_menu_item">Check Server</string>
     <string name="ping_result_ok">Server is up</string>
     <string name="ping_result_down">Server is down</string>
@@ -96,9 +97,11 @@
     <string name="confirm_tamper_reset_title">Your setup information may have been tampered with</string>
     <string name="confirm_tamper_reset_message">In the interest of security, please reset to a freshly installed state. Pressing the Yes button will start the reset. Martus can not function with a tampered settings file, so pressing No will exit the app.</string>
     <string name="view_public_code_menu_item">View Public Code</string>
+    <string name="help_menu">Help</string>
     <string name="view_public_code_dialog_title">Public Code</string>
     <string name="view_public_code_dialog_error">Unable to show Public Code</string>
     <string name="send_public_account_id_menu_item">Send Public Account ID</string>
+    <string name="tools_menu">Tools</string>
     <string name="export_public_account_id_menu_item">Export Public Account ID</string>
     <string name="export_public_account_id_dialog_title">Export Public Account Error</string>
     <string name="export_public_account_id_dialog_error">Unable to export account ID</string>
